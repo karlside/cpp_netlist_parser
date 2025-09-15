@@ -1,0 +1,18 @@
+simulator lang=spectre
+global 0
+simulatorOptions options checklimitdest=psf
+parameters vi_sig=vdd/2 cl=0.1f vdd=100m low=0 high=vdd period=20u numSamples=300
+include "/eda/kits/cadence/45nm/gpdk045_v6.0/gpdk045/../models/spectre/gpdk045.scs" section=mc
+
+VDD (vdd 0) vsource dc=vdd type=dc
+VI (driver_in 0) vsource dc=vi_sig type=pulse val0=low val1=high period=period width=period/2
+DRIVER (driver_in driver_out vdd 0) inverter_bitcell
+v_dummy1 (driver_out vi) vsource type=dc
+DUT (vi vo vdd 0) inverter_bitcell
+v_dummy2 (vo load_in) vsource type=dc
+LOAD (load_in load_out vdd 0) inverter_bitcell
+cl (load_out 0) capacitor c=cl
+
+tran tran stop=period annotate=status strobeperiod=period/numSamples
+dcOp dc maxiters=150 maxsteps=10000 annotate=status
+dc dc param=vi_sig start=0 stop=vdd lin=numSamples

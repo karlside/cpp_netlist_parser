@@ -1,0 +1,144 @@
+// From page. 520 of spectre ref
+
+#include <unordered_map>
+#include <string>
+
+// Assuming these are class types declared somewhere:
+class NetlistObject;
+class ControlStatement;
+class Inline;
+class SubCircuitStatement;
+class AnalysisStatement;
+class MonteCarloStatement;
+class InstanceStatement;
+
+std::unordered_map<std::string, NetlistObject*> keywordMap = {
+    {"altergroup", new NetlistObject()},
+    {"correlate", new NetlistObject()},
+    {"else", new NetlistObject()},
+    {"end", new NetlistObject()},
+    {"ends", new NetlistObject()},
+    {"export", new NetlistObject()},
+    {"for", new NetlistObject()},
+    {"function", new NetlistObject()},
+    {"global", new ControlStatement()},
+    {"ic", new NetlistObject()},
+    {"if", new NetlistObject()},
+    {"in", new NetlistObject()},
+    {"inline", new Inline()},
+    {"input", new NetlistObject()},
+    {"invisible", new NetlistObject()},
+    {"library", new NetlistObject()},
+    {"local", new NetlistObject()},
+    {"march", new NetlistObject()},
+    {"model", new NetlistObject()},
+    {"nodeset", new NetlistObject()},
+    {"out", new NetlistObject()},
+    {"output", new NetlistObject()},
+    {"parameters", new ControlStatement()},
+    {"paramset", new NetlistObject()},
+    {"plot", new NetlistObject()},
+    {"print", new NetlistObject()},
+    {"protect", new NetlistObject()},   // 'prot' and 'PROT' are valid abbreviations
+    {"pwr", new NetlistObject()},
+    {"real", new NetlistObject()},
+    {"return", new NetlistObject()},
+    {"save", new NetlistObject()},
+    {"sens", new NetlistObject()},
+    {"statistics", new NetlistObject()},
+    {"subckt", new SubCircuitStatement()},
+    {"to", new NetlistObject()},
+    {"truncate", new NetlistObject()},
+    {"unprotect", new NetlistObject()}, // 'unprot' and 'UNPROT' are valid abbreviations
+    {"vary", new NetlistObject()},
+    {"visible", new NetlistObject()}
+};
+
+
+// NETLIST_RESERVED_WORD = [
+//     'freq',
+//     'scalem',
+//     'temp',
+//     'temper',
+//     'time',
+//     'tnom'
+// ]
+
+// MATH_CONSTANT = [ 
+//     'M_1_PI', 
+//     'M_2_PI', 
+//     'M_2_SQRTPI', 
+//     'M_DEGPERRAD', 
+//     'M_E', 
+//     'M_LN10', 
+//     'M_LN2', 
+//     'M_LOG10E', 
+//     'M_LOG2E', 
+//     'M_PI', 
+//     'M_PI_2', 
+//     'M_PI_4', 
+//     'M_SQRT1_2', 
+//     'M_SQRT2', 
+//     'M_TWO_PI', 
+//     'P_C', 
+//     'P_CELSIUS0', 
+//     'P_EPS0', 
+//     'P_H', 
+//     'P_K', 
+//     'P_Q', 
+//     'P_U0', 
+// ]
+
+std::unordered_map<std::string, AnalysisStatement*> simKeywordMap = {
+    {"ac", new AnalysisStatement()},
+    {"acmatch", new AnalysisStatement()},
+    {"alter", new AnalysisStatement()},
+    {"altergroup", new AnalysisStatement()},
+    {"check", new AnalysisStatement()},
+    {"checklimit", new AnalysisStatement()},
+    {"cosim", new AnalysisStatement()},
+    {"dc", new AnalysisStatement()},
+    {"dcmatch", new AnalysisStatement()},
+    {"envlp", new AnalysisStatement()},
+    {"hp", new AnalysisStatement()},
+    {"hbac", new AnalysisStatement()},
+    {"hbnoise", new AnalysisStatement()},
+    {"hbsp", new AnalysisStatement()},
+    {"hbstb", new AnalysisStatement()},
+    {"hbxf", new AnalysisStatement()},
+    {"info", new AnalysisStatement()},
+    {"lf", new AnalysisStatement()},
+    {"loadpull", new AnalysisStatement()},
+    {"montecarlo", new MonteCarloStatement()},
+    {"noise", new AnalysisStatement()},
+    {"options", new InstanceStatement()},
+    {"pac", new AnalysisStatement()},
+    {"pnoise", new AnalysisStatement()},
+    {"psp", new AnalysisStatement()},
+    {"pss", new AnalysisStatement()},
+    {"pstb", new AnalysisStatement()},
+    {"pxf", new AnalysisStatement()},
+    {"pz", new AnalysisStatement()},
+    {"qpac", new AnalysisStatement()},
+    {"qpnoise", new AnalysisStatement()},
+    {"qpsp", new AnalysisStatement()},
+    {"qpss", new AnalysisStatement()},
+    {"qpxf", new AnalysisStatement()},
+    {"reliability", new AnalysisStatement()},
+    {"set", new AnalysisStatement()},
+    {"shell", new AnalysisStatement()},
+    {"sp", new AnalysisStatement()},
+    {"stb", new AnalysisStatement()},
+    {"stress", new AnalysisStatement()},
+    {"sweep", new AnalysisStatement()},
+    {"tdr", new AnalysisStatement()},
+    {"thermal", new AnalysisStatement()},
+    {"tran", new AnalysisStatement()},
+    {"uti", new AnalysisStatement()},
+    {"xf", new AnalysisStatement()}
+};
+
+std::unordered_map<std::string, BaseStatement*> otherKeywordMap = {
+    {"simulator", new SimulatorStatement()},
+    {"include", new Include()}
+};
