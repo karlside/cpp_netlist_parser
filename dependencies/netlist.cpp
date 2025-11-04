@@ -31,7 +31,6 @@ void Netlist::load_netlist_from_file(
 
   while (true) {
     if (INIT == state) {
-      std::cout << "STATE: INIT" << std::endl;
       line = std::make_unique<Line>();
       next_state = READ_CHAR;
     }
@@ -41,33 +40,18 @@ void Netlist::load_netlist_from_file(
       if (!*file)
         break;
       if (!std::isspace(ch)) {
-        std::cout << "CHAR: " << ch << std::endl;
+        // std::cout << "CHAR: " << ch << std::endl;
         word += ch;
       } else {
-        std::cout << ch << std::endl;
-        // if ("" != word) {
-        //   std::cout << "not empty" << std::endl;
-        //   line->add(word);
-        // }
-        // if ("\\" == word) {
-        //   std::cout << "line break char" << std::endl;
-        //   line->add(word);
-        //   ch = file->get(); // Read the new_line char, but do nothing with
-        //   it.
-        //   // TODO: read_until_new_line()
-        // }
-        // if (" " == word) {
-        //   std::cout << "SPACE" << std::endl;
-        // }
+        line->add(word);
+        word = "";
         if ('\n' == ch) {
-          // std::cout << "NEW LINE" << std::endl;
           next_state = ADD_LINE;
         }
       }
     }
 
     if (ADD_LINE == state) {
-      std::cout << "STATE: ADD_LINE: " << &line << std::endl;
       add_line(std::move(line));
       next_state = INIT;
     }
