@@ -1,19 +1,20 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include <vector>
+#include "word.h"
 #include <string>
+#include <vector>
 
 class Line {
 public:
-  void add(std::string word);
-  std::string at(int index) const;
+  void add(Word word);
+  Word at(int index) const;
   int length() const;
 
-  friend std::ostream& operator<<(std::ostream& os, const Line& rhs);
+  friend std::ostream &operator<<(std::ostream &os, const Line &rhs);
 
 private:
-  std::vector<std::string> entries{};
+  std::vector<Word> entries{};
 };
 
 #endif

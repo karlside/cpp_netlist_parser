@@ -1,6 +1,7 @@
 #include "dependencies/line.h"
 #include "dependencies/netlist.h"
 #include "dependencies/netlistObjects.h"
+#include "dependencies/word.h"
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -17,14 +18,11 @@ int main() {
   std::cout << "PRINTING NETLIST:" << std::endl;
   std::cout << netlist << std::endl;
 
-  // std::unique_ptr<Line> my_line = std::make_unique<Line>();
-  // my_line->add("test");
-  // my_line->add("line");
-  // Netlist my_netlist;
-  // my_netlist.add_line(std::move(my_line));
-  // my_line = std::make_unique<Line>();
-  // my_line->add("more");
-  // my_netlist.add_line(std::move(my_line));
-  // std::cout << my_netlist << std::endl;
+  // Word word0("");
+  // Word word1(R"(\\)");
+  // Line my_line;
+  // my_line.add(word0);
+  // my_line.add(word1);
+  // std::cout << my_line << std::endl;
   return 0;
 }

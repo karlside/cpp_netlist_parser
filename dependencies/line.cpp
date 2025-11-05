@@ -2,9 +2,9 @@
 #include <string>
 #include <vector>
 
-void Line::add(std::string word) { entries.push_back(word); }
+void Line::add(Word word) { entries.push_back(word); }
 
-std::string Line::at(int index) const { return entries.at(index); }
+Word Line::at(int index) const { return entries.at(index); }
 
 int Line::length() const { return entries.size(); }
 
