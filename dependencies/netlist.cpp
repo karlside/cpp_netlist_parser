@@ -22,7 +22,6 @@ std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
 
 enum State { NEW_LINE, READ_CHAR, ADD_CHAR, ADD_WORD, ADD_LINE, DONE };
 void print_state(State state) {
-  // return;
   switch (state) {
   case NEW_LINE:
     std::cout << "NEW_LINE";
@@ -94,6 +93,7 @@ void Netlist::load_netlist_from_file(
       break;
 
     case State::ADD_LINE:
+      // auto obj_line = line.objectify;
       add_line(std::move(line));
       next_state = NEW_LINE;
       break;

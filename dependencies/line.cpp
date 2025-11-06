@@ -1,12 +1,19 @@
 #include "line.h"
+#include <memory>
 #include <string>
 #include <vector>
 
-void Line::add(Word word) { entries.push_back(word); }
+Line::Line() : entries{std::make_unique<std::vector<Word>>()} {}
 
-Word Line::at(int index) const { return entries.at(index); }
+void Line::add(Word word) { entries->push_back(word); }
 
-int Line::length() const { return entries.size(); }
+Word Line::at(int index) const { return entries->at(index); }
+
+int Line::length() const { return entries->size(); }
+
+// std::unique_ptr<Line> objectify() {
+//   // Read through the entires, and identify what type of object the line is
+// }
 
 std::ostream &operator<<(std::ostream &os, const Line &rhs) {
   std::string whitespace{
