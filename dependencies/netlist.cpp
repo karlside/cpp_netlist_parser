@@ -83,7 +83,7 @@ void Netlist::load_netlist_from_file(
       break;
 
     case State::ADD_WORD:
-      line->add(word);
+      line->add(Word(word));
       word = "";
       if ('\n' == ch) {
         next_state = ADD_LINE;
@@ -98,8 +98,8 @@ void Netlist::load_netlist_from_file(
       next_state = NEW_LINE;
       break;
 
-      // case State::DONE:
-      //   break;
+    case State::DONE:
+      break;
     }
 
     state = next_state;
