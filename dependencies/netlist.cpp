@@ -93,13 +93,13 @@ void Netlist::load_netlist_from_file(
       break;
 
     case State::ADD_LINE:
-      // auto obj_line = line.objectify;
-      add_line(std::move(line));
+      // std::unique_ptr<Line> obj_line = line->objectify();
+      add_line(std::move(line->objectify()));
       next_state = NEW_LINE;
       break;
 
-    case State::DONE:
-      break;
+      // case State::DONE:
+      //   break;
     }
 
     state = next_state;

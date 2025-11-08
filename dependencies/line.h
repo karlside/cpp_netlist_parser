@@ -9,10 +9,11 @@
 class Line {
 public:
   Line();
+  Line(std::unique_ptr<std::vector<Word>> input);
   void add(Word word);
   Word at(int index) const;
   int length() const;
-  // std::unique_ptr<Line> objectify(); // Return a 'dynamicly dispateched' line
+  std::unique_ptr<Line> objectify(); // Return a 'dynamicly dispateched' line
   // object based in line content
 
   friend std::ostream &operator<<(std::ostream &os, const Line &rhs);
@@ -20,12 +21,14 @@ public:
   virtual ~Line() = default;
 
 private:
+protected:
   std::unique_ptr<std::vector<Word>> entries{};
 };
 
-class SimulatorStatement : Line {
+class SimulatorStatement : public Line {
 public:
-  SimulatorStatement(std::string text);
+  // SimulatorStatement(std::unique_ptr<std::vector<Word>> entires);
+  SimulatorStatement(std::unique_ptr<std::vector<Word>> input);
 
 private:
 };
