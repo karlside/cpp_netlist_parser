@@ -4,6 +4,10 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <unordered_map>
+
+std::unordered_map<std::string, std::string> ignore_newline_keywords = {
+    {R"(\\)", "\n"}, {"subckt", "ends"}};
 
 void Netlist::add_line(std::unique_ptr<Line> line) {
   list.push_back(std::move(line));
@@ -56,7 +60,8 @@ void Netlist::load_netlist_from_file(
   std::string word;
   State state{NEW_LINE};
   State next_state{NEW_LINE};
-  bool ignore_next_newline{false};
+  bool ignore_newline{false};
+  std::string keyword;
 
   while (State::DONE != state) {
     // print_state(state);
@@ -86,15 +91,20 @@ void Netlist::load_netlist_from_file(
 
     case State::ADD_WORD:
       line->add(Word(word));
-      if (R"(\\)" == word) {
-        ignore_next_newline = true;
+      if (ignore_newline_keywords.find(word) != ignore_newline_keywords.end()) {
+        keyword = ignore_newline_keywords.at(word);
+        ignore_newline = true;
         next_state = READ_CHAR;
       } else if ('\n' == ch) {
-        if (ignore_next_newline) {
-          ignore_next_newline = false;
+        if (ignore_newline) {
+          if (keyword == word)
+            ignore_newline = false;
           next_state = READ_CHAR;
+          // The problem lies here - the keyword is checked at newline char.
+          // This is wrong. It has to be checked
+        } else {
+          next_state = ADD_LINE;
         }
-        next_state = ADD_LINE;
       } else {
         next_state = READ_CHAR;
       }
@@ -103,6 +113,7 @@ void Netlist::load_netlist_from_file(
 
     case State::ADD_LINE:
       // std::unique_ptr<Line> obj_line = line->objectify();
+      std::cout << *line << std::endl;
       add_line(std::move(line->objectify()));
       next_state = NEW_LINE;
       break;
@@ -117,7 +128,7 @@ void Netlist::load_netlist_from_file(
 
 std::ostream &operator<<(std::ostream &os, const Netlist &rhs) {
   for (const std::unique_ptr<Line> &line : rhs.list) {
-    std::cout << *line << std::endl;
+    std::cout << line->get_text() << std::endl;
   }
   return os;
 }
