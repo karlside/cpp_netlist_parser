@@ -29,3 +29,18 @@ While the FSM is running, adding up characters to make Words, I can add some log
 
 This can be done at a later stage, and don't need to happen to implement the above idea. 
 
+## All of the above is wrong
+I think I would rather have word just be single class. Then have Line have the logic described above.
+
+Words have the following members.
+
+string text;
+string key;
+string value;
+bool has_value;
+void parse();
+bool has_been_parsed;
+void add_char(char input);
+string get_text()
+
+When characters are added using add_char, they are appended to text. When calling parse() the text is parsed into key and value. 
