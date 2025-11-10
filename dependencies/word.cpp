@@ -15,7 +15,12 @@ void BaseWord::set_key(std::string input) {}
 void BaseWord::set_value(std::string input) {}
 std::string BaseWord::get_key() const { return key; }
 std::string BaseWord::get_value() const { return value; }
-std::string BaseWord::get_text() const { return key; }
+std::string BaseWord::get_text() const {
+  if (has_value())
+    return get_key() + "=" + get_value();
+  else
+    return get_key();
+}
 
 std::ostream &operator<<(std::ostream &os, const BaseWord &rhs) {
   os << rhs.get_text();
@@ -27,8 +32,9 @@ std::ostream &operator<<(std::ostream &os, const BaseWord &rhs) {
 // ------------
 
 Word::Word(std::string input) {
-  std::getline(std::istringstream(input), key, '=');
-  std::getline(std::istringstream(input), value);
+  std::istringstream iss(input);
+  std::getline(iss, key, '=');
+  std::getline(iss, value);
   if (value.empty())
     _has_value = false;
 }

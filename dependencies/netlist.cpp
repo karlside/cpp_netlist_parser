@@ -21,6 +21,7 @@ std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
 }
 
 enum State { NEW_LINE, READ_CHAR, ADD_CHAR, ADD_WORD, ADD_LINE, DONE };
+
 void print_state(State state) {
   switch (state) {
   case NEW_LINE:
@@ -55,6 +56,7 @@ void Netlist::load_netlist_from_file(
   std::string word;
   State state{NEW_LINE};
   State next_state{NEW_LINE};
+  bool ignore_next_newline{false};
 
   while (State::DONE != state) {
     // print_state(state);
@@ -70,10 +72,10 @@ void Netlist::load_netlist_from_file(
       ch = file->get();
       if (!*file) {
         next_state = DONE;
-      } else if (!std::isspace(ch)) {
-        next_state = ADD_CHAR;
-      } else {
+      } else if (std::isspace(ch)) {
         next_state = ADD_WORD;
+      } else {
+        next_state = ADD_CHAR;
       }
       break;
 
@@ -84,12 +86,19 @@ void Netlist::load_netlist_from_file(
 
     case State::ADD_WORD:
       line->add(Word(word));
-      word = "";
-      if ('\n' == ch) {
+      if (R"(\\)" == word) {
+        ignore_next_newline = true;
+        next_state = READ_CHAR;
+      } else if ('\n' == ch) {
+        if (ignore_next_newline) {
+          ignore_next_newline = false;
+          next_state = READ_CHAR;
+        }
         next_state = ADD_LINE;
       } else {
         next_state = READ_CHAR;
       }
+      word = "";
       break;
 
     case State::ADD_LINE:

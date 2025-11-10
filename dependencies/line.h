@@ -12,6 +12,7 @@ public:
   Line(std::unique_ptr<std::vector<BaseWord>> input);
   void add(BaseWord word);
   BaseWord at(int index) const;
+  std::string get_text() const;
   int length() const;
   std::unique_ptr<Line> objectify(); // Return a 'dynamicly dispateched' line
   // object based in line content
@@ -23,7 +24,6 @@ public:
 private:
 protected:
   std::unique_ptr<std::vector<BaseWord>> entries{};
-  // virtual void analyse_entries();
 };
 
 class SimulatorStatement : public Line {
