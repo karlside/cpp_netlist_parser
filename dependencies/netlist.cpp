@@ -24,7 +24,17 @@ std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
   return file;
 }
 
-enum State { NEW_LINE, READ_CHAR, ADD_CHAR, ADD_WORD, ADD_LINE, DONE };
+enum State {
+  NEW_LINE,
+  READ_CHAR,
+  ADD_CHAR,
+  ADD_WORD,
+  ADD_LINE,
+  READ_CHAR_IGNORE_NEWLINE,
+  ADD_CHAR_IGNORE_NEWLINE,
+  ADD_WORD_IGNORE_NEWLINE,
+  DONE
+};
 
 void print_state(State state) {
   switch (state) {
@@ -93,18 +103,9 @@ void Netlist::load_netlist_from_file(
       line->add(Word(word));
       if (ignore_newline_keywords.find(word) != ignore_newline_keywords.end()) {
         keyword = ignore_newline_keywords.at(word);
-        ignore_newline = true;
-        next_state = READ_CHAR;
+        next_state = READ_CHAR_IGNORE_NEWLINE;
       } else if ('\n' == ch) {
-        if (ignore_newline) {
-          if (keyword == word)
-            ignore_newline = false;
-          next_state = READ_CHAR;
-          // The problem lies here - the keyword is checked at newline char.
-          // This is wrong. It has to be checked
-        } else {
-          next_state = ADD_LINE;
-        }
+        next_state = ADD_LINE;
       } else {
         next_state = READ_CHAR;
       }
@@ -113,9 +114,38 @@ void Netlist::load_netlist_from_file(
 
     case State::ADD_LINE:
       // std::unique_ptr<Line> obj_line = line->objectify();
-      std::cout << *line << std::endl;
       add_line(std::move(line->objectify()));
       next_state = NEW_LINE;
+      break;
+
+    case State::READ_CHAR_IGNORE_NEWLINE:
+      ch = file->get();
+      if (!*file) {
+        // TODO: I might need some exception to make sure the line is added
+        next_state = DONE;
+      } else if (std::isspace(ch)) {
+        next_state = ADD_WORD_IGNORE_NEWLINE;
+      } else {
+        next_state = ADD_CHAR_IGNORE_NEWLINE;
+      }
+      break;
+
+    case State::ADD_CHAR_IGNORE_NEWLINE:
+      word += ch;
+      next_state = READ_CHAR_IGNORE_NEWLINE;
+      break;
+
+    case State::ADD_WORD_IGNORE_NEWLINE:
+      line->add(Word(word));
+      if (keyword == word)
+        if ('\n' == ch) {
+          next_state = ADD_LINE;
+        } else {
+          next_state = READ_CHAR;
+        }
+      else
+        next_state = READ_CHAR_IGNORE_NEWLINE;
+      word = "";
       break;
 
     case State::DONE:
