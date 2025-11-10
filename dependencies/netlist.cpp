@@ -53,6 +53,15 @@ void print_state(State state) {
   case ADD_LINE:
     std::cout << "ADD_LINE";
     break;
+  case READ_CHAR_IGNORE_NEWLINE:
+    std::cout << "READ_CHAR_IGNORE_NEWLINE";
+    break;
+  case ADD_CHAR_IGNORE_NEWLINE:
+    std::cout << "ADD_CHAR_IGNORE_NEWLINE";
+    break;
+  case ADD_WORD_IGNORE_NEWLINE:
+    std::cout << "ADD_WORD_IGNORE_NEWLINE";
+    break;
   case DONE:
     std::cout << "DONE";
     break;
@@ -67,7 +76,7 @@ void Netlist::load_netlist_from_file(
     const std::unique_ptr<std::fstream> &file) {
   char ch;
   std::unique_ptr<Line> line;
-  std::string word;
+  std::unique_ptr<Word> word = std::make_unique<Word>();
   State state{NEW_LINE};
   State next_state{NEW_LINE};
   bool ignore_newline{false};
@@ -95,21 +104,22 @@ void Netlist::load_netlist_from_file(
       break;
 
     case State::ADD_CHAR:
-      word += ch;
+      word->add_char(ch);
       next_state = READ_CHAR;
       break;
 
     case State::ADD_WORD:
-      line->add(Word(word));
-      if (ignore_newline_keywords.find(word) != ignore_newline_keywords.end()) {
-        keyword = ignore_newline_keywords.at(word);
+      if (ignore_newline_keywords.find(word->get_text()) !=
+          ignore_newline_keywords.end()) {
+        keyword = ignore_newline_keywords.at(word->get_text());
         next_state = READ_CHAR_IGNORE_NEWLINE;
       } else if ('\n' == ch) {
         next_state = ADD_LINE;
       } else {
         next_state = READ_CHAR;
       }
-      word = "";
+      line->add(std::move(word));
+      word = std::make_unique<Word>();
       break;
 
     case State::ADD_LINE:
@@ -131,13 +141,12 @@ void Netlist::load_netlist_from_file(
       break;
 
     case State::ADD_CHAR_IGNORE_NEWLINE:
-      word += ch;
+      word->add_char(ch);
       next_state = READ_CHAR_IGNORE_NEWLINE;
       break;
 
     case State::ADD_WORD_IGNORE_NEWLINE:
-      line->add(Word(word));
-      if (keyword == word)
+      if (keyword == word->get_text())
         if ('\n' == ch) {
           next_state = ADD_LINE;
         } else {
@@ -145,7 +154,8 @@ void Netlist::load_netlist_from_file(
         }
       else
         next_state = READ_CHAR_IGNORE_NEWLINE;
-      word = "";
+      line->add(std::move(word));
+      word = std::make_unique<Word>();
       break;
 
     case State::DONE:

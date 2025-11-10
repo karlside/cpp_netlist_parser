@@ -1,10 +1,12 @@
 #include "word.h"
+#include <exception>
 #include <iostream>
 #include <sstream>
 
 // ----------------
 // --- BaswWord ---
 // ----------------
+Word::Word() {}
 Word::Word(std::string input) {
   std::istringstream iss(input);
   std::getline(iss, key, '=');
@@ -14,17 +16,22 @@ Word::Word(std::string input) {
 }
 
 void Word::add_char(char input) {
-  // TODO: Throw exception if has_been_parsed == true;
+  if (has_been_parsed())
+    throw std::runtime_error(
+        "Cannot add more characters when a Word has been parsed");
   text += input;
 };
 
 void Word::add_string(std::string input) {
-  // TODO: Throw exception if has_been_parsed == true;
+  if (has_been_parsed())
+    throw std::runtime_error("Cannot add strings when a Word has been parsed");
   text += input;
 }
 
 void Word::parse() {
-  // TODO: Throw exception if has_been_parsed == true;
+  if (has_been_parsed())
+    throw std::runtime_error(
+        "Word has already been parsed. Cannot re-parse a word");
   std::istringstream iss(text);
   std::getline(iss, key, '=');
   std::getline(iss, value);
@@ -45,6 +52,7 @@ void Word::set_key(std::string input) {}
 void Word::set_value(std::string input) {}
 std::string Word::get_key() const { return key; }
 std::string Word::get_value() const { return value; }
+
 std::string Word::get_text() const {
   if (!has_been_parsed())
     return text;
