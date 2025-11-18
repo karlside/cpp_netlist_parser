@@ -14,6 +14,7 @@ public:
   std::shared_ptr<Word> *at(int index) const;
   std::string get_text() const;
   int length() const;
+  bool is_done() const;
   std::unique_ptr<Line> objectify(); // Return a 'dynamicly dispateched' line
   // object based in line content
 
@@ -23,6 +24,7 @@ public:
 
 private:
 protected:
+  bool _is_done{false};
   std::unique_ptr<std::vector<std::shared_ptr<Word>>> entries{};
 };
 

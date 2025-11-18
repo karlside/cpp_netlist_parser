@@ -11,6 +11,8 @@ public:
   void add_string(std::string input);
   void parse();
   bool has_been_parsed() const;
+  bool is_done() const;
+  bool newline() const;
 
   void activate();
   void deactivate();
@@ -35,6 +37,8 @@ protected:
   bool _is_active{false}; // is set when being parsed
   bool _has_value{false}; // is set when being parsed
   bool _has_been_parsed{false};
+  bool _is_done{false};
+  bool _newline{false};
 };
 
 #endif

@@ -4,22 +4,33 @@
 #include <sstream>
 
 // ----------------
-// --- BaswWord ---
+// --- BaseWord ---
 // ----------------
 Word::Word() {}
-Word::Word(std::string input) {
-  std::istringstream iss(input);
+Word::Word(std::string text) {
+  std::istringstream iss(text);
   std::getline(iss, key, '=');
   std::getline(iss, value);
   if (value.empty())
     _has_value = false;
 }
 
-void Word::add_char(char input) {
+void Word::add_char(char ch) {
   if (has_been_parsed())
     throw std::runtime_error(
         "Cannot add more characters when a Word has been parsed");
-  text += input;
+  if (' ' == ch) {
+    _is_done = true;
+    return;
+  } else if ('\n' == ch) {
+    _is_done = true;
+    _newline = true;
+    return;
+  } else if (std::isspace(ch)) {
+    // 'catch all' for other whitespace characters
+    return;
+  }
+  text += ch;
 };
 
 void Word::add_string(std::string input) {
@@ -42,6 +53,8 @@ void Word::parse() {
 }
 
 bool Word::has_been_parsed() const { return _has_been_parsed; }
+bool Word::is_done() const { return _is_done; }
+bool Word::newline() const { return _newline; }
 
 void Word::activate() { _is_active = true; }
 void Word::deactivate() { _is_active = false; }

@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-// TODO: The line has to use unqie_ptr<Word> instead of just Word objects.
-//       This inlcudes the entires vector as well
 Line::Line()
     : entries{std::make_unique<std::vector<std::shared_ptr<Word>>>()} {}
 Line::Line(std::unique_ptr<std::vector<std::shared_ptr<Word>>> input) {
@@ -13,8 +11,13 @@ Line::Line(std::unique_ptr<std::vector<std::shared_ptr<Word>>> input) {
 }
 
 void Line::add(std::shared_ptr<Word> word) {
+  if (word->newline())
+    _is_done = true;
+  if (R"(\\)" == word->get_text())
+    _is_done = false;
   entries->push_back(std::move(word));
 }
+
 std::shared_ptr<Word> *Line::at(int index) const { return &entries->at(index); }
 
 std::string Line::get_text() const {
@@ -30,6 +33,8 @@ std::string Line::get_text() const {
   return ret_text;
 }
 int Line::length() const { return entries->size(); }
+
+bool Line::is_done() const { return _is_done; }
 
 std::unique_ptr<Line> Line::objectify() {
   for (std::shared_ptr<Word> &word : *entries) {

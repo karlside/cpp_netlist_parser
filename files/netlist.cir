@@ -1,4 +1,4 @@
-simulator lang=spectre 
+simulator lang=spectre \\
 global 0
 subckt some text
 more text

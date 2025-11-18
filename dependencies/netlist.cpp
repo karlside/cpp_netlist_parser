@@ -24,47 +24,21 @@ std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
   return file;
 }
 
-enum State {
-  START,
-  NEW_LINE,
-  READ_CHAR,
-  ADD_CHAR,
-  ADD_WORD,
-  ADD_LINE,
-  READ_CHAR_IGNORE_NEWLINE,
-  ADD_CHAR_IGNORE_NEWLINE,
-  ADD_WORD_IGNORE_NEWLINE,
-  DONE
-};
+enum State { START, READ_CHAR, ADD_WORD, ADD_LINE, DONE };
 
 void print_state(State state) {
   switch (state) {
   case START:
     std::cout << "START";
     break;
-  case NEW_LINE:
-    std::cout << "NEW_LINE";
-    break;
   case READ_CHAR:
     std::cout << "READ_CHAR";
-    break;
-  case ADD_CHAR:
-    std::cout << "ADD_CHAR";
     break;
   case ADD_WORD:
     std::cout << "ADD_WORD";
     break;
   case ADD_LINE:
     std::cout << "ADD_LINE";
-    break;
-  case READ_CHAR_IGNORE_NEWLINE:
-    std::cout << "READ_CHAR_IGNORE_NEWLINE";
-    break;
-  case ADD_CHAR_IGNORE_NEWLINE:
-    std::cout << "ADD_CHAR_IGNORE_NEWLINE";
-    break;
-  case ADD_WORD_IGNORE_NEWLINE:
-    std::cout << "ADD_WORD_IGNORE_NEWLINE";
     break;
   case DONE:
     std::cout << "DONE";
@@ -80,7 +54,8 @@ void Netlist::load_netlist_from_file(
     const std::unique_ptr<std::fstream> &file) {
   char ch;
   std::unique_ptr<Line> line;
-  std::shared_ptr<Word> word = std::make_shared<Word>();
+  std::shared_ptr<Word> word;
+  std::shared_ptr<Word> previous_word;
   State state{START};
   State next_state{START};
   bool ignore_newline{false};
@@ -92,10 +67,8 @@ void Netlist::load_netlist_from_file(
     switch (state) {
 
     case State::START:
-      next_state = NEW_LINE;
-      break;
-
-    case State::NEW_LINE:
+      word = std::make_shared<Word>();
+      previous_word = word;
       line = std::make_unique<Line>();
       next_state = READ_CHAR;
       break;
@@ -104,66 +77,31 @@ void Netlist::load_netlist_from_file(
       ch = file->get();
       if (!*file) {
         next_state = DONE;
-      } else if (std::isspace(ch)) {
+        break;
+      }
+      word->add_char(ch);
+      if (word->is_done()) {
         next_state = ADD_WORD;
       } else {
-        next_state = ADD_CHAR;
+        next_state = READ_CHAR;
       }
       break;
 
-    case State::ADD_CHAR:
-      word->add_char(ch);
-      next_state = READ_CHAR;
-      break;
-
     case State::ADD_WORD:
-      if (ignore_newline_keywords.find(word->get_text()) !=
-          ignore_newline_keywords.end()) {
-        keyword = ignore_newline_keywords.at(word->get_text());
-        next_state = READ_CHAR_IGNORE_NEWLINE;
-      } else if ('\n' == ch) {
+      line->add(word);
+      previous_word = word;
+      word = std::make_shared<Word>();
+      if (line->is_done()) {
         next_state = ADD_LINE;
       } else {
         next_state = READ_CHAR;
       }
-      line->add(word);
-      word = std::make_shared<Word>();
       break;
 
     case State::ADD_LINE:
-      // std::unique_ptr<Line> obj_line = line->objectify();
       add_line(std::move(line->objectify()));
-      next_state = NEW_LINE;
-      break;
-
-    case State::READ_CHAR_IGNORE_NEWLINE:
-      ch = file->get();
-      if (!*file) {
-        // TODO: I might need some exception to make sure the line is added
-        next_state = DONE;
-      } else if (std::isspace(ch)) {
-        next_state = ADD_WORD_IGNORE_NEWLINE;
-      } else {
-        next_state = ADD_CHAR_IGNORE_NEWLINE;
-      }
-      break;
-
-    case State::ADD_CHAR_IGNORE_NEWLINE:
-      word->add_char(ch);
-      next_state = READ_CHAR_IGNORE_NEWLINE;
-      break;
-
-    case State::ADD_WORD_IGNORE_NEWLINE:
-      if (keyword == word->get_text())
-        if ('\n' == ch) {
-          next_state = ADD_LINE;
-        } else {
-          next_state = READ_CHAR;
-        }
-      else
-        next_state = READ_CHAR_IGNORE_NEWLINE;
-      line->add(std::move(word));
-      word = std::make_unique<Word>();
+      line = std::make_unique<Line>();
+      next_state = READ_CHAR;
       break;
 
     case State::DONE:
