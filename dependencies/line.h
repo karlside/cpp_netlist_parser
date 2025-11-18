@@ -9,9 +9,9 @@
 class Line {
 public:
   Line();
-  Line(std::unique_ptr<std::vector<std::unique_ptr<Word>>> input);
-  void add(std::unique_ptr<Word> word);
-  std::unique_ptr<Word> *at(int index) const;
+  Line(std::unique_ptr<std::vector<std::shared_ptr<Word>>> input);
+  void add(std::shared_ptr<Word> word);
+  std::shared_ptr<Word> *at(int index) const;
   std::string get_text() const;
   int length() const;
   std::unique_ptr<Line> objectify(); // Return a 'dynamicly dispateched' line
@@ -23,12 +23,12 @@ public:
 
 private:
 protected:
-  std::unique_ptr<std::vector<std::unique_ptr<Word>>> entries{};
+  std::unique_ptr<std::vector<std::shared_ptr<Word>>> entries{};
 };
 
 class SimulatorStatement : public Line {
 public:
-  SimulatorStatement(std::unique_ptr<std::vector<std::unique_ptr<Word>>> input);
+  SimulatorStatement(std::unique_ptr<std::vector<std::shared_ptr<Word>>> input);
 
 private:
 protected:

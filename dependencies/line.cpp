@@ -7,19 +7,19 @@
 // TODO: The line has to use unqie_ptr<Word> instead of just Word objects.
 //       This inlcudes the entires vector as well
 Line::Line()
-    : entries{std::make_unique<std::vector<std::unique_ptr<Word>>>()} {}
-Line::Line(std::unique_ptr<std::vector<std::unique_ptr<Word>>> input) {
+    : entries{std::make_unique<std::vector<std::shared_ptr<Word>>>()} {}
+Line::Line(std::unique_ptr<std::vector<std::shared_ptr<Word>>> input) {
   entries = std::move(input);
 }
 
-void Line::add(std::unique_ptr<Word> word) {
+void Line::add(std::shared_ptr<Word> word) {
   entries->push_back(std::move(word));
 }
-std::unique_ptr<Word> *Line::at(int index) const { return &entries->at(index); }
+std::shared_ptr<Word> *Line::at(int index) const { return &entries->at(index); }
 
 std::string Line::get_text() const {
   std::string ret_text;
-  for (std::unique_ptr<Word> &word : *entries) {
+  for (std::shared_ptr<Word> &word : *entries) {
     std::string text = word->get_text();
     ret_text += text;
     if (R"(\\)" == text)
@@ -32,7 +32,7 @@ std::string Line::get_text() const {
 int Line::length() const { return entries->size(); }
 
 std::unique_ptr<Line> Line::objectify() {
-  for (std::unique_ptr<Word> &word : *entries) {
+  for (std::shared_ptr<Word> &word : *entries) {
     if ("simulator" == word->get_text()) {
       std::unique_ptr<SimulatorStatement> ret_obj =
           std::make_unique<SimulatorStatement>(std::move(entries));
@@ -49,7 +49,7 @@ std::ostream &operator<<(std::ostream &os, const Line &rhs) {
 }
 
 SimulatorStatement::SimulatorStatement(
-    std::unique_ptr<std::vector<std::unique_ptr<Word>>> input) {
+    std::unique_ptr<std::vector<std::shared_ptr<Word>>> input) {
   entries = std::move(input);
 };
 

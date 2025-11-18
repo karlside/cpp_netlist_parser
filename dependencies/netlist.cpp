@@ -25,6 +25,7 @@ std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
 }
 
 enum State {
+  START,
   NEW_LINE,
   READ_CHAR,
   ADD_CHAR,
@@ -38,6 +39,9 @@ enum State {
 
 void print_state(State state) {
   switch (state) {
+  case START:
+    std::cout << "START";
+    break;
   case NEW_LINE:
     std::cout << "NEW_LINE";
     break;
@@ -76,9 +80,9 @@ void Netlist::load_netlist_from_file(
     const std::unique_ptr<std::fstream> &file) {
   char ch;
   std::unique_ptr<Line> line;
-  std::unique_ptr<Word> word = std::make_unique<Word>();
-  State state{NEW_LINE};
-  State next_state{NEW_LINE};
+  std::shared_ptr<Word> word = std::make_shared<Word>();
+  State state{START};
+  State next_state{START};
   bool ignore_newline{false};
   std::string keyword;
 
@@ -86,6 +90,10 @@ void Netlist::load_netlist_from_file(
     // print_state(state);
 
     switch (state) {
+
+    case State::START:
+      next_state = NEW_LINE;
+      break;
 
     case State::NEW_LINE:
       line = std::make_unique<Line>();
@@ -118,8 +126,8 @@ void Netlist::load_netlist_from_file(
       } else {
         next_state = READ_CHAR;
       }
-      line->add(std::move(word));
-      word = std::make_unique<Word>();
+      line->add(word);
+      word = std::make_shared<Word>();
       break;
 
     case State::ADD_LINE:
