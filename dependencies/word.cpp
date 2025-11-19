@@ -94,3 +94,10 @@ std::ostream &operator<<(std::ostream &os, const Word &rhs) {
   os << rhs.get_text();
   return os;
 }
+
+std::unique_ptr<Word> operator+(std::unique_ptr<Word> lhs,
+                                const std::unique_ptr<Word> &rhs) {
+  for (char ch : rhs->get_text())
+    lhs->add_char(ch);
+  return lhs;
+}

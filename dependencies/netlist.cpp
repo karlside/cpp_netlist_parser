@@ -1,5 +1,6 @@
 #include "netlist.h"
 #include "line.h"
+#include "word.h"
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -56,6 +57,13 @@ void print_state(State state) {
   std::cout << std::endl;
 }
 
+// std::unique_ptr<Word> operator+(std::unique_ptr<Word> lhs,
+//                                 const std::unique_ptr<Word> &rhs) {
+//   for (char ch : rhs->get_text())
+//     lhs->add_char(ch);
+//   return lhs;
+// }
+
 void Netlist::load_netlist_from_file(
     const std::unique_ptr<std::fstream> &file) {
   char ch;
@@ -86,8 +94,8 @@ void Netlist::load_netlist_from_file(
       word->add_char(ch);
       if (word->attach_to_prev()) {
         // TODO: Find some way of adding two words to combine them
-        word = line->pop_word();
-        word->add_char(ch);
+        word = std::move(line->pop_word()) + word;
+        // word->add_char(ch);
       } else if (word->is_done()) {
         next_state = ADD_WORD;
       } else {

@@ -53,4 +53,7 @@ protected:
   bool _add_whitespace{false};
 };
 
+std::unique_ptr<Word> operator+(std::unique_ptr<Word> lhs,
+                                const std::unique_ptr<Word> &rhs);
+
 #endif
