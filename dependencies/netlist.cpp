@@ -93,9 +93,7 @@ void Netlist::load_netlist_from_file(
       }
       word->add_char(ch);
       if (word->attach_to_prev()) {
-        // TODO: Find some way of adding two words to combine them
         word = std::move(line->pop_word()) + word;
-        // word->add_char(ch);
       } else if (word->is_done()) {
         next_state = ADD_WORD;
       } else {

@@ -41,15 +41,17 @@ protected:
   std::string text;
   std::string key;
   std::string value;
+
   bool _is_active{false};
   bool _has_value{false};
   bool _has_been_parsed{false};
   bool _attach_to_prev{false};
   bool _is_done{false};
-  void set_end_of_line();
   bool _is_end_of_line{false};
   bool _skip_whitespace{false};
   bool _add_whitespace{false};
+
+  void set_end_of_line();
 };
 
 #endif
