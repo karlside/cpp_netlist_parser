@@ -11,6 +11,7 @@ public:
   Line();
   Line(std::unique_ptr<std::vector<std::shared_ptr<Word>>> input);
   void add(std::shared_ptr<Word> word);
+  std::shared_ptr<Word> pop_word();
   std::shared_ptr<Word> *at(int index) const;
   std::string get_text() const;
   int length() const;

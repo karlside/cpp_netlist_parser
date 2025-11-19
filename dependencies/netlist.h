@@ -8,6 +8,7 @@
 class Netlist {
 public:
   void add_line(std::unique_ptr<Line> line);
+  std::unique_ptr<Line> pop_line();
   void load_netlist_from_file(const std::unique_ptr<std::fstream> &file);
   std::unique_ptr<std::fstream> load_file(std::string file_path);
 

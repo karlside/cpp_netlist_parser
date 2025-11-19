@@ -13,6 +13,12 @@ void Netlist::add_line(std::unique_ptr<Line> line) {
   list.push_back(std::move(line));
 }
 
+std::unique_ptr<Line> Netlist::pop_line() {
+  std::unique_ptr<Line> temp_line = std::move(list.back());
+  list.pop_back();
+  return std::move(temp_line);
+}
+
 std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
   std::unique_ptr<std::fstream> file =
       std::make_unique<std::fstream>(file_path);
@@ -80,7 +86,12 @@ void Netlist::load_netlist_from_file(
         break;
       }
       word->add_char(ch);
-      if (word->is_done()) {
+      if (word->attach_to_prev()) {
+        // previous_word->add_char(
+        //     ch); // TODO: change to add_string(word.get_text())
+        word = line->pop_word();
+        word->add_char(ch);
+      } else if (word->is_done()) {
         next_state = ADD_WORD;
       } else {
         next_state = READ_CHAR;

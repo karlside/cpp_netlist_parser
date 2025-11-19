@@ -1,4 +1,5 @@
 #include "word.h"
+#include <cassert>
 #include <exception>
 #include <iostream>
 #include <sstream>
@@ -7,6 +8,7 @@
 // --- BaseWord ---
 // ----------------
 Word::Word() {}
+
 Word::Word(std::string text) {
   std::istringstream iss(text);
   std::getline(iss, key, '=');
@@ -15,23 +17,45 @@ Word::Word(std::string text) {
     _has_value = false;
 }
 
+void Word::set_done(bool input) { _is_done = input; }
+
+void Word::set_end_of_line() {
+  _is_done = true;
+  _is_end_of_line = true;
+}
+
 void Word::add_char(char ch) {
   if (has_been_parsed())
     throw std::runtime_error(
         "Cannot add more characters when a Word has been parsed");
-  if (' ' == ch) {
-    _is_done = true;
+  if ('\n' == ch) {
+    set_end_of_line();
     return;
-  } else if ('\n' == ch) {
-    _is_done = true;
-    _newline = true;
+  } else if (' ' == ch) {
+    assert(!(_skip_whitespace && _add_whitespace));
+    if (_skip_whitespace)
+      return;
+    if (!_add_whitespace) {
+      set_done();
+      return;
+    }
+  } else if ('=' == ch) {
+    if ("" == text)
+      _attach_to_prev = true;
+    _skip_whitespace = true;
+    // TODO: add some keyword
+  } else if (std::isspace(ch))
     return;
-  } else if (std::isspace(ch)) {
-    // 'catch all' for other whitespace characters
-    return;
-  }
   text += ch;
 };
+
+bool Word::check_keyword(char ch) {
+  if (!_wait_for_keyword || ch == keyword) {
+    _wait_for_keyword = false;
+    return true;
+  }
+  return false;
+}
 
 void Word::add_string(std::string input) {
   if (has_been_parsed())
@@ -52,19 +76,8 @@ void Word::parse() {
   _has_been_parsed = true;
 }
 
-bool Word::has_been_parsed() const { return _has_been_parsed; }
-bool Word::is_done() const { return _is_done; }
-bool Word::newline() const { return _newline; }
-
-void Word::activate() { _is_active = true; }
-void Word::deactivate() { _is_active = false; }
-bool Word::is_active() const { return _is_active; }
-bool Word::has_value() const { return _has_value; }
-
 void Word::set_key(std::string input) {}
 void Word::set_value(std::string input) {}
-std::string Word::get_key() const { return key; }
-std::string Word::get_value() const { return value; }
 
 std::string Word::get_text() const {
   if (!has_been_parsed())

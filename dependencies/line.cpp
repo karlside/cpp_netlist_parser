@@ -11,11 +11,18 @@ Line::Line(std::unique_ptr<std::vector<std::shared_ptr<Word>>> input) {
 }
 
 void Line::add(std::shared_ptr<Word> word) {
-  if (word->newline())
+  if (word->is_end_of_line())
     _is_done = true;
   if (R"(\\)" == word->get_text())
     _is_done = false;
   entries->push_back(std::move(word));
+}
+
+std::shared_ptr<Word> Line::pop_word() {
+  std::shared_ptr<Word> temp_word = entries->back();
+  entries->pop_back();
+  temp_word->set_done(false);
+  return temp_word;
 }
 
 std::shared_ptr<Word> *Line::at(int index) const { return &entries->at(index); }
