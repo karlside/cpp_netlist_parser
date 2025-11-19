@@ -60,8 +60,7 @@ void Netlist::load_netlist_from_file(
     const std::unique_ptr<std::fstream> &file) {
   char ch;
   std::unique_ptr<Line> line;
-  std::shared_ptr<Word> word;
-  std::shared_ptr<Word> previous_word;
+  std::unique_ptr<Word> word;
   State state{START};
   State next_state{START};
   bool ignore_newline{false};
@@ -73,8 +72,7 @@ void Netlist::load_netlist_from_file(
     switch (state) {
 
     case State::START:
-      word = std::make_shared<Word>();
-      previous_word = word;
+      word = std::make_unique<Word>();
       line = std::make_unique<Line>();
       next_state = READ_CHAR;
       break;
@@ -87,8 +85,7 @@ void Netlist::load_netlist_from_file(
       }
       word->add_char(ch);
       if (word->attach_to_prev()) {
-        // previous_word->add_char(
-        //     ch); // TODO: change to add_string(word.get_text())
+        // TODO: Find some way of adding two words to combine them
         word = line->pop_word();
         word->add_char(ch);
       } else if (word->is_done()) {
@@ -99,9 +96,8 @@ void Netlist::load_netlist_from_file(
       break;
 
     case State::ADD_WORD:
-      line->add(word);
-      previous_word = word;
-      word = std::make_shared<Word>();
+      line->add(std::move(word));
+      word = std::make_unique<Word>();
       if (line->is_done()) {
         next_state = ADD_LINE;
       } else {

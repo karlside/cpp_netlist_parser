@@ -1,6 +1,7 @@
 #ifndef WORD_H
 #define WORD_H
 
+#include <memory>
 #include <string>
 
 class Word {
