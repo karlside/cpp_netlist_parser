@@ -18,17 +18,11 @@ public:
   void activate() { _is_active = true; }
   void deactivate() { _is_active = false; }
   bool is_active() const { return _is_active; }
-  bool has_value() const { return _has_value; }
 
-  void set_done(bool input = true);
   bool is_done() const { return _is_done; }
   bool is_end_of_line() const { return _is_end_of_line; }
   bool is_append_to_prev_word() const { return _append_to_prev_word; }
 
-  virtual void set_key(std::string input);
-  virtual void set_value(std::string input);
-  virtual std::string get_key() const { return key; }
-  virtual std::string get_value() const { return value; }
   virtual std::string get_text() const;
 
   friend std::ostream &operator<<(std::ostream &os, const Word &rhs);
@@ -38,19 +32,19 @@ public:
   virtual ~Word() = default;
 
 private:
+  bool _has_been_parsed{false};
+  bool _is_done{false};
+  void set_done() { _is_done = true; }
+
 protected:
   std::string text;
-  std::string key;
-  std::string value;
 
   bool _is_active{false};
-  bool _has_value{false};
-  bool _has_been_parsed{false};
   bool _append_to_prev_word{false};
-  bool _is_done{false};
   bool _is_end_of_line{false};
   bool _skip_whitespace{false};
   bool _add_whitespace{false};
+  const void is_done_or_parsed();
 
   void set_end_of_line();
   void set_append_to_prev_word(char ch);
@@ -62,6 +56,24 @@ protected:
   Keyword keyword;
   const std::unordered_map<char, Keyword> keyword_map = {
       {'=', ANY}, {'(', CLOSING_PARENTHESIS}};
+};
+
+class KeyValueWord : Word {
+public:
+  KeyValueWord(std::string input);
+  void set_key(std::string input) { key = input; }
+  void set_value(std::string input) { value = input; }
+  std::string get_key() const { return key; }
+  std::string get_value() const { return value; }
+  std::string get_text() const;
+  bool has_value() const { return _has_value; }
+
+private:
+  const bool _is_done{true};
+  const bool _has_been_parsed{true};
+  std::string key;
+  std::string value;
+  bool _has_value{false};
 };
 
 #endif

@@ -21,7 +21,6 @@ void Line::add(std::unique_ptr<Word> word) {
 std::unique_ptr<Word> Line::pop_word() {
   std::unique_ptr<Word> temp_word = std::move(entries->back());
   entries->pop_back();
-  temp_word->set_done(false);
   return temp_word;
 }
 

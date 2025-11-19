@@ -9,16 +9,6 @@
 // ----------------
 Word::Word() {}
 
-Word::Word(std::string text) {
-  std::istringstream iss(text);
-  std::getline(iss, key, '=');
-  std::getline(iss, value);
-  if (value.empty())
-    _has_value = false;
-}
-
-void Word::set_done(bool input) { _is_done = input; }
-
 void Word::set_end_of_line() {
   _is_done = true;
   _is_end_of_line = true;
@@ -37,7 +27,6 @@ void Word::set_add_whitespace(char ch) {
 }
 
 void Word::clear_whitespace_flag(char ch) {
-
   switch (keyword) {
   case NONE:
     return;
@@ -55,11 +44,17 @@ void Word::clear_whitespace_flag(char ch) {
   keyword = NONE;
 }
 
-void Word::add_char(char ch) {
-  clear_whitespace_flag(ch);
+const void Word::is_done_or_parsed() {
   if (has_been_parsed())
     throw std::runtime_error(
         "Cannot add more characters when a Word has been parsed");
+  if (is_done())
+    throw std::runtime_error("Cannot add more characters when a Word is done");
+}
+
+void Word::add_char(char ch) {
+  is_done_or_parsed();
+  clear_whitespace_flag(ch);
   if ('\n' == ch) {
     set_end_of_line();
     return;
@@ -80,11 +75,10 @@ void Word::add_char(char ch) {
   } else if (std::isspace(ch))
     return;
   text += ch;
-};
+}
 
 void Word::add_string(std::string input) {
-  if (has_been_parsed())
-    throw std::runtime_error("Cannot add strings when a Word has been parsed");
+  is_done_or_parsed();
   for (char ch : input)
     add_char(ch);
 }
@@ -94,27 +88,15 @@ void Word::parse() {
     throw std::runtime_error(
         "Word has already been parsed. Cannot re-parse a word");
   std::istringstream iss(text);
-  std::getline(iss, key, '=');
-  std::getline(iss, value);
-  if (value.empty())
-    _has_value = false;
+  // std::getline(iss, key, '=');
+  // std::getline(iss, value);
+  // if (value.empty())
+  //   _has_value = false;
   activate();
   _has_been_parsed = true;
 }
 
-void Word::set_key(std::string input) {}
-void Word::set_value(std::string input) {}
-
-std::string Word::get_text() const {
-  if (!has_been_parsed())
-    return text;
-  else if (!is_active())
-    return "";
-  else if (has_value())
-    return get_key() + "=" + get_value();
-  else
-    return get_key();
-}
+std::string Word::get_text() const { return text; }
 
 std::ostream &operator<<(std::ostream &os, const Word &rhs) {
   os << rhs.get_text();
@@ -125,15 +107,42 @@ std::unique_ptr<Word> operator+(std::unique_ptr<Word> lhs,
                                 const std::unique_ptr<Word> &rhs) {
   // for (char ch : rhs->get_text())
   //   lhs->add_char(ch);
-  lhs->add_string(rhs->get_text());
   lhs->_is_active = rhs->_is_active;
-  lhs->_has_value = rhs->_has_value;
   lhs->_has_been_parsed = rhs->_has_been_parsed;
-  lhs->_append_to_prev_word = false; // This function is the operation of
-                                     // attaching to the previous word.
+  lhs->_append_to_prev_word =
+      false; // The _append_to_prev_word flag is cleared during this operation
   lhs->_is_done = rhs->_is_done;
   lhs->_is_end_of_line = rhs->_is_end_of_line;
   lhs->_skip_whitespace = rhs->_skip_whitespace;
   lhs->_add_whitespace = rhs->_add_whitespace;
+  try {
+    lhs->add_string(rhs->get_text()); // This operation has to be done after the
+                                      // _is_done flag is cleared
+  } catch (const std::exception &e) {
+    throw std::runtime_error("Error while adding two Word objects");
+  }
   return lhs;
+}
+
+// --------------------
+// --- KeyValueWord ---
+// --------------------
+
+KeyValueWord::KeyValueWord(std::string text) {
+  std::istringstream iss(text);
+  std::getline(iss, key, '=');
+  std::getline(iss, value);
+  if (value.empty())
+    _has_value = false;
+  else
+    _has_value = true;
+}
+
+std::string KeyValueWord::get_text() const {
+  if (!is_active())
+    return "";
+  else if (has_value())
+    return get_key() + "=" + get_value();
+  else
+    return get_key();
 }
