@@ -41,7 +41,7 @@ void Word::add_char(char ch) {
     }
   } else if ('=' == ch) {
     if ("" == text)
-      _attach_to_prev = true;
+      _append_to_prev_word = true;
     _skip_whitespace = true;
     // TODO: add some keyword
   } else if (std::isspace(ch))
@@ -96,8 +96,8 @@ std::unique_ptr<Word> operator+(std::unique_ptr<Word> lhs,
   lhs->_is_active = rhs->_is_active;
   lhs->_has_value = rhs->_has_value;
   lhs->_has_been_parsed = rhs->_has_been_parsed;
-  lhs->_attach_to_prev = false; // This function is the operation of attaching
-                                // to the previous word.
+  lhs->_append_to_prev_word = false; // This function is the operation of
+                                     // attaching to the previous word.
   lhs->_is_done = rhs->_is_done;
   lhs->_is_end_of_line = rhs->_is_end_of_line;
   lhs->_skip_whitespace = rhs->_skip_whitespace;

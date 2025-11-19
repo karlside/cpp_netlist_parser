@@ -22,7 +22,7 @@ public:
   void set_done(bool input = true);
   bool is_done() const { return _is_done; }
   bool is_end_of_line() const { return _is_end_of_line; }
-  bool is_attach_to_prev() const { return _attach_to_prev; }
+  bool is_append_to_prev_word() const { return _append_to_prev_word; }
 
   virtual void set_key(std::string input);
   virtual void set_value(std::string input);
@@ -45,7 +45,7 @@ protected:
   bool _is_active{false};
   bool _has_value{false};
   bool _has_been_parsed{false};
-  bool _attach_to_prev{false};
+  bool _append_to_prev_word{false};
   bool _is_done{false};
   bool _is_end_of_line{false};
   bool _skip_whitespace{false};
