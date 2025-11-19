@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 class Word {
 public:
@@ -52,6 +53,15 @@ protected:
   bool _add_whitespace{false};
 
   void set_end_of_line();
+  void set_append_to_prev_word(char ch);
+  void set_skip_whitespace(char ch);
+  void set_add_whitespace(char ch);
+  void clear_whitespace_flag(char ch);
+
+  enum Keyword { NONE, ANY, CLOSING_PARENTHESIS };
+  Keyword keyword;
+  const std::unordered_map<char, Keyword> keyword_map = {
+      {'=', ANY}, {'(', CLOSING_PARENTHESIS}};
 };
 
 #endif

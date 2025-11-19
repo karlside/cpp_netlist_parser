@@ -24,7 +24,39 @@ void Word::set_end_of_line() {
   _is_end_of_line = true;
 }
 
+void Word::set_append_to_prev_word(char ch) { _append_to_prev_word = true; }
+
+void Word::set_skip_whitespace(char ch) {
+  keyword = keyword_map.at(ch);
+  _skip_whitespace = true;
+}
+
+void Word::set_add_whitespace(char ch) {
+  keyword = keyword_map.at(ch);
+  _add_whitespace = true;
+}
+
+void Word::clear_whitespace_flag(char ch) {
+
+  switch (keyword) {
+  case NONE:
+    return;
+  case ANY:
+    if (' ' == ch)
+      return;
+    break;
+  case CLOSING_PARENTHESIS:
+    if (')' != ch)
+      return;
+    break;
+  }
+  _skip_whitespace = false;
+  _add_whitespace = false;
+  keyword = NONE;
+}
+
 void Word::add_char(char ch) {
+  clear_whitespace_flag(ch);
   if (has_been_parsed())
     throw std::runtime_error(
         "Cannot add more characters when a Word has been parsed");
@@ -41,9 +73,10 @@ void Word::add_char(char ch) {
     }
   } else if ('=' == ch) {
     if ("" == text)
-      _append_to_prev_word = true;
-    _skip_whitespace = true;
-    // TODO: add some keyword
+      set_append_to_prev_word(ch);
+    set_skip_whitespace(ch);
+  } else if ('(' == ch) {
+    set_add_whitespace(ch);
   } else if (std::isspace(ch))
     return;
   text += ch;
