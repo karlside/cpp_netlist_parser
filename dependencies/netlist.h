@@ -15,6 +15,8 @@ public:
   friend std::ostream &operator<<(std::ostream &os, const Netlist &rhs);
 
 private:
+  std::unique_ptr<Word> attach_to_prev_word(std::unique_ptr<Line> &line,
+                                            std::unique_ptr<Word> word);
   std::vector<std::unique_ptr<Line>> list{};
 };
 

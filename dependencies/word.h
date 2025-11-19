@@ -22,7 +22,7 @@ public:
   void set_done(bool input = true);
   bool is_done() const { return _is_done; }
   bool is_end_of_line() const { return _is_end_of_line; }
-  bool attach_to_prev() const { return _attach_to_prev; }
+  bool is_attach_to_prev() const { return _attach_to_prev; }
 
   virtual void set_key(std::string input);
   virtual void set_value(std::string input);
