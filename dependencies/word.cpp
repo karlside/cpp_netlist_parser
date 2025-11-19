@@ -49,18 +49,11 @@ void Word::add_char(char ch) {
   text += ch;
 };
 
-bool Word::check_keyword(char ch) {
-  if (!_wait_for_keyword || ch == keyword) {
-    _wait_for_keyword = false;
-    return true;
-  }
-  return false;
-}
-
 void Word::add_string(std::string input) {
   if (has_been_parsed())
     throw std::runtime_error("Cannot add strings when a Word has been parsed");
-  text += input;
+  for (char ch : input)
+    add_char(ch);
 }
 
 void Word::parse() {
@@ -97,7 +90,17 @@ std::ostream &operator<<(std::ostream &os, const Word &rhs) {
 
 std::unique_ptr<Word> operator+(std::unique_ptr<Word> lhs,
                                 const std::unique_ptr<Word> &rhs) {
-  for (char ch : rhs->get_text())
-    lhs->add_char(ch);
+  // for (char ch : rhs->get_text())
+  //   lhs->add_char(ch);
+  lhs->add_string(rhs->get_text());
+  lhs->_is_active = rhs->_is_active;
+  lhs->_has_value = rhs->_has_value;
+  lhs->_has_been_parsed = rhs->_has_been_parsed;
+  lhs->_attach_to_prev = false; // This function is the operation of attaching
+                                // to the previous word.
+  lhs->_is_done = rhs->_is_done;
+  lhs->_is_end_of_line = rhs->_is_end_of_line;
+  lhs->_skip_whitespace = rhs->_skip_whitespace;
+  lhs->_add_whitespace = rhs->_add_whitespace;
   return lhs;
 }

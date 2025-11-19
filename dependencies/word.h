@@ -31,6 +31,8 @@ public:
   virtual std::string get_text() const;
 
   friend std::ostream &operator<<(std::ostream &os, const Word &rhs);
+  friend std::unique_ptr<Word> operator+(std::unique_ptr<Word> lhs,
+                                         const std::unique_ptr<Word> &rhs);
 
   virtual ~Word() = default;
 
@@ -46,14 +48,8 @@ protected:
   bool _is_done{false};
   void set_end_of_line();
   bool _is_end_of_line{false};
-  bool _wait_for_keyword{false};
-  char keyword;
-  bool check_keyword(char ch);
   bool _skip_whitespace{false};
   bool _add_whitespace{false};
 };
-
-std::unique_ptr<Word> operator+(std::unique_ptr<Word> lhs,
-                                const std::unique_ptr<Word> &rhs);
 
 #endif
