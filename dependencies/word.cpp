@@ -1,6 +1,7 @@
 #include "word.h"
+#include "exceptions.h"
 #include <cassert>
-#include <exception>
+// #include <exception>
 #include <iostream>
 #include <sstream>
 
@@ -44,24 +45,12 @@ void Word::clear_whitespace_flag(char ch) {
   keyword = NONE;
 }
 
-const void Word::check_is_parsed_or_done() {
-  check_has_been_parsed();
-  check_is_done();
-}
-
-const void Word::check_has_been_parsed() {
-  if (has_been_parsed())
-    throw std::runtime_error(
-        "Cannot add more characters when a Word has been parsed");
-}
-
-const void Word::check_is_done() {
-  if (is_done())
-    throw std::runtime_error("Cannot add more characters when a Word is done");
-}
-
 void Word::add_char(char ch) {
-  check_is_parsed_or_done();
+  if (has_been_parsed())
+    throw WordIsParsedError(
+        "Cannot add more characters when a Word has been parsed");
+  if (is_done())
+    throw WordIsDoneError("Cannot add more characters when a Word is done");
   clear_whitespace_flag(ch);
   if ('\n' == ch) {
     set_end_of_line();
@@ -86,13 +75,19 @@ void Word::add_char(char ch) {
 }
 
 void Word::add_string(std::string input) {
-  check_is_parsed_or_done();
-  for (char ch : input)
-    add_char(ch);
+  try {
+    for (char ch : input)
+      add_char(ch);
+  } catch (const WordIsParsedError &e) {
+    throw WordIsParsedError("Cannot add string when word is parsed.");
+  } catch (const WordIsDoneError &e) {
+    throw WordIsDoneError("Cannot add string when word is done.");
+  }
 }
 
 void Word::parse() {
-  check_has_been_parsed();
+  if (has_been_parsed())
+    throw std::runtime_error("Cannot reparse Word that has been parsed");
   // std::istringstream iss(text);
   // std::getline(iss, key, '=');
   // std::getline(iss, value);

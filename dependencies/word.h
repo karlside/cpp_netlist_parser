@@ -39,10 +39,6 @@ private:
 protected:
   std::string text;
 
-  const void check_is_parsed_or_done();
-  const void check_has_been_parsed();
-  const void check_is_done();
-
   bool _is_active{false};
   bool _append_to_prev_word{false};
   bool _is_end_of_line{false};
