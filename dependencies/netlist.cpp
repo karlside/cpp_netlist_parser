@@ -26,7 +26,6 @@ std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
   // if (!*file || file->is_open()) {
   if (!*file) {
     // TODO: Throw exception
-    throw std::runtime_error("Failed to open file: " + file_path);
   }
   return file;
 }
@@ -73,6 +72,7 @@ void Netlist::load_netlist_from_file(
   State next_state{START};
   bool ignore_newline{false};
   std::string keyword;
+  std::unique_ptr<Word> temp_word;
 
   while (State::DONE != state) {
     // print_state(state);
@@ -102,7 +102,9 @@ void Netlist::load_netlist_from_file(
       break;
 
     case State::ADD_WORD:
-      line->add(std::move(word));
+      temp_word = word->objectify();
+      temp_word->parse();
+      line->add(std::move(temp_word));
       word = std::make_unique<Word>();
       if (line->is_done()) {
         next_state = ADD_LINE;
@@ -127,7 +129,8 @@ void Netlist::load_netlist_from_file(
 
 std::ostream &operator<<(std::ostream &os, const Netlist &rhs) {
   for (const std::unique_ptr<Line> &line : rhs.list) {
-    std::cout << line->get_text() << std::endl;
+    // std::cout << line->get_text() << std::endl;
+    os << line->get_text() << std::endl;
   }
   return os;
 }

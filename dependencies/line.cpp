@@ -11,8 +11,9 @@ Line::Line(std::unique_ptr<std::vector<std::unique_ptr<Word>>> input) {
 }
 
 void Line::add(std::unique_ptr<Word> word) {
-  if (word->is_end_of_line())
+  if (word->is_end_of_line()) {
     _is_done = true;
+  }
   if (R"(\\)" == word->get_text())
     _is_done = false;
   entries->push_back(std::move(word));

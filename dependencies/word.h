@@ -9,10 +9,12 @@ class Word {
 public:
   Word();
   Word(std::string input);
+  Word(const Word *input_word);
 
   void add_char(char input);
   void add_string(std::string input);
-  void parse();
+  std::unique_ptr<Word> objectify() const;
+  virtual void parse();
   bool has_been_parsed() const { return _has_been_parsed; }
 
   void activate() { _is_active = true; }
@@ -35,6 +37,7 @@ private:
   bool _has_been_parsed{false};
   bool _is_done{false};
   void set_done() { _is_done = true; }
+  bool is_double_whitespace(char ch) const;
 
 protected:
   std::string text;
@@ -57,22 +60,40 @@ protected:
       {'=', ANY}, {'(', CLOSING_PARENTHESIS}};
 };
 
-class KeyValueWord : Word {
+class KeyValueWord : public Word {
 public:
+  KeyValueWord();
   KeyValueWord(std::string input);
+  KeyValueWord(const Word *input_word);
+
   void set_key(std::string input) { key = input; }
   void set_value(std::string input) { value = input; }
   std::string get_key() const { return key; }
   std::string get_value() const { return value; }
   std::string get_text() const;
   bool has_value() const { return _has_value; }
+  virtual void parse();
 
 private:
   const bool _is_done{true};
-  const bool _has_been_parsed{true};
+  bool _has_been_parsed{false};
   std::string key;
   std::string value;
   bool _has_value{false};
+};
+
+class PortWord : public Word {
+public:
+  PortWord();
+  PortWord(std::string input);
+  PortWord(const Word *input_word);
+
+  std::string get_text() const { return "(" + text + ")"; }
+  void parse();
+
+private:
+  const bool _is_done{true};
+  bool _has_been_parsed{false};
 };
 
 #endif
