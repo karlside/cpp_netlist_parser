@@ -41,6 +41,7 @@ void Word::clear_whitespace_flag(char ch) {
   case NONE:
     return;
   case ANY:
+    // TODO: Should I use std::isspace() to catch tab charcter and such?
     if (' ' == ch)
       return;
     break;
@@ -71,8 +72,6 @@ void Word::add_char(char ch) {
   if (is_done())
     throw WordIsDoneError("Cannot add more characters when a Word is done");
   clear_whitespace_flag(ch);
-  if (is_double_whitespace(ch))
-    return;
   if ('\n' == ch) {
     set_end_of_line();
     return;
@@ -81,9 +80,13 @@ void Word::add_char(char ch) {
     if (_skip_whitespace)
       return;
     if (!_add_whitespace) {
-      set_done();
+      if (0 != text.size()) // This makes sure double whitespaces are not added
+                            // as empty words..
+        set_done();
       return;
     }
+    if (is_double_whitespace(ch))
+      return;
   } else if ('=' == ch) {
     if ("" == text)
       set_append_to_prev_word(ch);
@@ -108,13 +111,8 @@ void Word::add_string(std::string input) {
 
 enum WordType { BASEWORD, KEYVALUE, PORT };
 std::unique_ptr<Word> Word::objectify() const {
-  // PLAN:
-  // Read through the text one word at the time.
-  // Exit from the loop when an identifier is detected
-  // std::string buffer;
   WordType word_type{BASEWORD};
   for (char ch : get_text()) {
-    // buffer += ch;
     if ('=' == ch) {
       word_type = KEYVALUE;
       break;
