@@ -32,9 +32,12 @@ std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
 
 std::unique_ptr<Word> Netlist::append_to_prev_word(std::unique_ptr<Line> &line,
                                                    std::unique_ptr<Word> word) {
-  if (0 == line->length())
+  if (0 == line->length()) {
     return word;
-  return std::move(line->pop_word()) + word;
+  }
+  std::unique_ptr<Word> ret_word = std::move(line->pop_word());
+  ret_word->append(*word);
+  return ret_word;
 }
 
 enum State { START, READ_CHAR, ADD_WORD, ADD_LINE, DONE };
@@ -94,6 +97,7 @@ void Netlist::load_netlist_from_file(
       word->add_char(ch);
       if (word->is_append_to_prev_word()) {
         word = append_to_prev_word(line, std::move(word));
+
       } else if (word->is_done()) {
         next_state = ADD_WORD;
       } else {

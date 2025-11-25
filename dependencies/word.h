@@ -24,12 +24,11 @@ public:
   bool is_done() const { return _is_done; }
   bool is_end_of_line() const { return _is_end_of_line; }
   bool is_append_to_prev_word() const { return _append_to_prev_word; }
+  void append(const Word &input_word);
 
-  virtual std::string get_text() const;
+  virtual std::string get_text() const { return text; }
 
   friend std::ostream &operator<<(std::ostream &os, const Word &rhs);
-  friend std::unique_ptr<Word> operator+(std::unique_ptr<Word> lhs,
-                                         const std::unique_ptr<Word> &rhs);
 
   virtual ~Word() = default;
 
@@ -63,8 +62,8 @@ protected:
 class KeyValueWord : public Word {
 public:
   KeyValueWord();
-  KeyValueWord(std::string input);
-  KeyValueWord(const Word *input_word);
+  KeyValueWord(std::string input) { add_string(input); }
+  KeyValueWord(const Word *input_word) { append(*input_word); }
 
   void set_key(std::string input) { key = input; }
   void set_value(std::string input) { value = input; }
@@ -85,8 +84,8 @@ private:
 class PortWord : public Word {
 public:
   PortWord();
-  PortWord(std::string input);
-  PortWord(const Word *input_word);
+  PortWord(std::string input) { add_string(input); };
+  PortWord(const Word *input_word) { append(*input_word); }
 
   std::string get_text() const { return "(" + text + ")"; }
   void parse();

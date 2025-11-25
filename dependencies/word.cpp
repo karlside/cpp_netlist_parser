@@ -136,65 +136,37 @@ std::unique_ptr<Word> Word::objectify() const {
 void Word::parse() {
   if (has_been_parsed())
     throw std::runtime_error("Cannot reparse Word that has been parsed");
-  // std::istringstream iss(text);
-  // std::getline(iss, key, '=');
-  // std::getline(iss, value);
-  // if (value.empty())
-  //   _has_value = false;
   activate();
   _has_been_parsed = true;
 }
 
-std::string Word::get_text() const { return text; }
+void Word::append(const Word &input_word) {
+  _is_done = false;
+  _has_been_parsed = false;
+  try {
+    add_string(input_word.get_text());
+  } catch (const std::exception &e) {
+    throw std::runtime_error("Error while appending to word");
+  }
+  _is_active = input_word._is_active;
+  _has_been_parsed = input_word._has_been_parsed;
+  _append_to_prev_word = false; // The _append_to_prev_word flag is cleared
+                                // during the addition operation
+  _is_done = input_word._is_done;
+  _has_been_parsed = input_word._has_been_parsed;
+  _is_end_of_line = input_word._is_end_of_line;
+  _skip_whitespace = input_word._skip_whitespace;
+  _add_whitespace = input_word._add_whitespace;
+}
 
 std::ostream &operator<<(std::ostream &os, const Word &rhs) {
   os << rhs.get_text();
   return os;
 }
 
-std::unique_ptr<Word> operator+(std::unique_ptr<Word> lhs,
-                                const std::unique_ptr<Word> &rhs) {
-  // for (char ch : rhs->get_text())
-  //   lhs->add_char(ch);
-  lhs->_is_active = rhs->_is_active;
-  lhs->_has_been_parsed = rhs->_has_been_parsed;
-  lhs->_append_to_prev_word =
-      false; // The _append_to_prev_word flag is cleared during this operation
-  lhs->_is_done = rhs->_is_done;
-  lhs->_is_end_of_line = rhs->_is_end_of_line;
-  lhs->_skip_whitespace = rhs->_skip_whitespace;
-  lhs->_add_whitespace = rhs->_add_whitespace;
-  try {
-    lhs->add_string(rhs->get_text()); // This operation has to be done after
-                                      // the _is_done flag is cleared
-  } catch (const std::exception &e) {
-    throw std::runtime_error("Error while adding two Word objects");
-  }
-  return lhs;
-}
-
 // --------------------
 // --- KeyValueWord ---
 // --------------------
-
-KeyValueWord::KeyValueWord() {}
-
-KeyValueWord::KeyValueWord(std::string input) {
-  add_string(input);
-  // std::istringstream iss(input);
-  // std::getline(iss, key, '=');
-  // std::getline(iss, value);
-  // if (value.empty())
-  //   _has_value = false;
-  // else
-  //   _has_value = true;
-}
-
-KeyValueWord::KeyValueWord(const Word *input_word) {
-  add_string(input_word->get_text());
-  if (input_word->is_end_of_line())
-    set_end_of_line();
-}
 
 void KeyValueWord::parse() {
   std::istringstream iss(text);
@@ -202,14 +174,12 @@ void KeyValueWord::parse() {
   std::getline(iss, value);
   if (!value.empty())
     _has_value = true;
-  _is_active = true;
+  activate();
   _has_been_parsed = true;
 }
 
 std::string KeyValueWord::get_text() const {
-  if (!is_active()) {
-    return "";
-  } else if (!_has_been_parsed) {
+  if (!_has_been_parsed) {
     return text;
   } else if (has_value()) {
     return get_key() + "=" + get_value();
@@ -222,18 +192,12 @@ std::string KeyValueWord::get_text() const {
 // --- PortWord ---
 // ----------------
 
-PortWord::PortWord(const Word *input_word) {
-  add_string(input_word->get_text());
-  if (input_word->is_end_of_line())
-    set_end_of_line();
-}
-
 void PortWord::parse() {
   std::string dump;
   std::istringstream iss(text);
   std::getline(iss, dump, '(');
   std::getline(iss, dump, ' ');
   std::getline(iss, text, ')');
-  _is_active = true;
+  activate();
   _has_been_parsed = true;
 }
