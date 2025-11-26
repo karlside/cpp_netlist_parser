@@ -1,18 +1,20 @@
 #ifndef WORD_H
 #define WORD_H
 
+#include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
 
 class Word {
 public:
-  Word();
-  Word(std::string input);
-  Word(const Word *input_word);
+  Word() {}
+  Word(std::string input) { add_string(input); }
+  Word(const Word *input_word) { append_word(*input_word); }
 
   void add_char(char input);
   void add_string(std::string input);
+  void append_word(const Word &input_word);
   std::unique_ptr<Word> objectify() const;
   virtual void parse();
   bool has_been_parsed() const { return _has_been_parsed; }
@@ -24,7 +26,6 @@ public:
   bool is_done() const { return _is_done; }
   bool is_end_of_line() const { return _is_end_of_line; }
   bool is_append_to_prev_word() const { return _append_to_prev_word; }
-  void append(const Word &input_word);
 
   virtual std::string get_text() const { return text; }
 
@@ -63,7 +64,7 @@ class KeyValueWord : public Word {
 public:
   KeyValueWord();
   KeyValueWord(std::string input) { add_string(input); }
-  KeyValueWord(const Word *input_word) { append(*input_word); }
+  KeyValueWord(const Word *input_word) { append_word(*input_word); }
 
   void set_key(std::string input) { key = input; }
   void set_value(std::string input) { value = input; }
@@ -85,7 +86,7 @@ class PortWord : public Word {
 public:
   PortWord();
   PortWord(std::string input) { add_string(input); };
-  PortWord(const Word *input_word) { append(*input_word); }
+  PortWord(const Word *input_word) { append_word(*input_word); }
 
   std::string get_text() const { return "(" + text + ")"; }
   void parse();

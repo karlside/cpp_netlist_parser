@@ -8,17 +8,6 @@
 // ----------------
 // --- BaseWord ---
 // ----------------
-Word::Word() {}
-
-Word::Word(std::string input) { add_string(input); }
-
-Word::Word(const Word *input_word) {
-  // TODO: Is there more stuff that needs to be copied? Prolly all of it?
-  add_string(input_word->get_text());
-  if (input_word->is_end_of_line())
-    set_end_of_line();
-}
-
 void Word::set_end_of_line() {
   _is_done = true;
   _is_end_of_line = true;
@@ -134,13 +123,15 @@ std::unique_ptr<Word> Word::objectify() const {
 }
 
 void Word::parse() {
+  // TODO: Do I need this parse function?
+  // Should _is_active default to true?
   if (has_been_parsed())
     throw std::runtime_error("Cannot reparse Word that has been parsed");
   activate();
   _has_been_parsed = true;
 }
 
-void Word::append(const Word &input_word) {
+void Word::append_word(const Word &input_word) {
   _is_done = false;
   _has_been_parsed = false;
   try {
