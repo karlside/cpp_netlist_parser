@@ -36,7 +36,7 @@ std::unique_ptr<Word> Netlist::append_to_prev_word(std::unique_ptr<Line> &line,
     return word;
   }
   std::unique_ptr<Word> ret_word = std::move(line->pop_word());
-  ret_word->append(*word);
+  ret_word->append_word(*word);
   return ret_word;
 }
 
@@ -75,7 +75,6 @@ void Netlist::load_netlist_from_file(
   State next_state{START};
   bool ignore_newline{false};
   std::string keyword;
-  std::unique_ptr<Word> temp_word;
 
   while (State::DONE != state) {
     // print_state(state);
@@ -106,9 +105,9 @@ void Netlist::load_netlist_from_file(
       break;
 
     case State::ADD_WORD:
-      temp_word = word->objectify();
-      temp_word->parse();
-      line->add(std::move(temp_word));
+      word = word->objectify();
+      word->parse();
+      line->add_word(std::move(word));
       word = std::make_unique<Word>();
       if (line->is_done()) {
         next_state = ADD_LINE;
