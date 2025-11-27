@@ -10,12 +10,12 @@
 std::unordered_map<std::string, std::string> ignore_newline_keywords = {
     {R"(\\)", "\n"}, {"subckt", "ends"}};
 
-void Netlist::add_line(std::unique_ptr<Statement> line) {
+void Netlist::add_line(std::shared_ptr<Statement> line) {
   list.push_back(std::move(line));
 }
 
-std::unique_ptr<Statement> Netlist::pop_line() {
-  std::unique_ptr<Statement> temp = std::move(list.back());
+std::shared_ptr<Statement> Netlist::pop_line() {
+  std::shared_ptr<Statement> temp = std::move(list.back());
   list.pop_back();
   return std::move(temp);
 }
@@ -30,12 +30,12 @@ std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
   return file;
 }
 
-std::unique_ptr<Word> Netlist::append_to_prev_word(std::unique_ptr<Line> &line,
-                                                   std::unique_ptr<Word> word) {
+std::shared_ptr<Word> Netlist::append_to_prev_word(std::shared_ptr<Line> &line,
+                                                   std::shared_ptr<Word> word) {
   if (0 == line->length()) {
     return word;
   }
-  std::unique_ptr<Word> ret_word = std::move(line->pop_word());
+  std::shared_ptr<Word> ret_word = std::move(line->pop_word());
   ret_word->append_word(*word);
   return ret_word;
 }
@@ -69,8 +69,8 @@ void print_state(State state) {
 void Netlist::load_netlist_from_file(
     const std::unique_ptr<std::fstream> &file) {
   char ch;
-  std::unique_ptr<Line> line;
-  std::unique_ptr<Word> word;
+  std::shared_ptr<Line> line;
+  std::shared_ptr<Word> word;
   State state{START};
   State next_state{START};
   bool ignore_newline{false};
@@ -82,8 +82,8 @@ void Netlist::load_netlist_from_file(
     switch (state) {
 
     case State::START:
-      word = std::make_unique<Word>();
-      line = std::make_unique<Line>();
+      word = std::make_shared<Word>();
+      line = std::make_shared<Line>();
       next_state = READ_CHAR;
       break;
 
@@ -108,7 +108,7 @@ void Netlist::load_netlist_from_file(
       word = word->objectify();
       word->parse();
       line->add_word(std::move(word));
-      word = std::make_unique<Word>();
+      word = std::make_shared<Word>();
       if (line->is_done()) {
         next_state = ADD_LINE;
       } else {
@@ -118,7 +118,7 @@ void Netlist::load_netlist_from_file(
 
     case State::ADD_LINE:
       add_line(std::move(line->objectify()));
-      line = std::make_unique<Line>();
+      line = std::make_shared<Line>();
       next_state = READ_CHAR;
       break;
 
@@ -131,7 +131,7 @@ void Netlist::load_netlist_from_file(
 }
 
 std::ostream &operator<<(std::ostream &os, const Netlist &rhs) {
-  for (const std::unique_ptr<Statement> &statement : rhs.list) {
+  for (const std::shared_ptr<Statement> &statement : rhs.list) {
     // std::cout << line->get_text() << std::endl;
     os << statement->get_text() << std::endl;
   }

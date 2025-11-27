@@ -15,7 +15,7 @@ public:
   void add_char(char input);
   void add_string(std::string input);
   void append_word(const Word &input_word);
-  std::unique_ptr<Word> objectify() const;
+  std::shared_ptr<Word> objectify() const;
   virtual void parse();
   bool has_been_parsed() const { return _has_been_parsed; }
 

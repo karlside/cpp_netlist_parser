@@ -99,7 +99,7 @@ void Word::add_string(std::string input) {
 }
 
 enum WordType { BASEWORD, KEYVALUE, PORT };
-std::unique_ptr<Word> Word::objectify() const {
+std::shared_ptr<Word> Word::objectify() const {
   WordType word_type{BASEWORD};
   for (char ch : get_text()) {
     if ('=' == ch) {
@@ -113,13 +113,13 @@ std::unique_ptr<Word> Word::objectify() const {
   }
   switch (word_type) {
   case BASEWORD:
-    return std::make_unique<Word>(this);
+    return std::make_shared<Word>(this);
   case KEYVALUE:
-    return std::make_unique<KeyValueWord>(this);
+    return std::make_shared<KeyValueWord>(this);
   case PORT:
-    return std::make_unique<PortWord>(this);
+    return std::make_shared<PortWord>(this);
   }
-  return std::make_unique<Word>();
+  return std::make_shared<Word>();
 }
 
 void Word::parse() {
