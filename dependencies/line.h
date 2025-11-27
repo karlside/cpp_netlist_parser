@@ -6,17 +6,40 @@
 #include <string>
 #include <vector>
 
+class Statement {
+public:
+  Statement(std::unique_ptr<std::vector<std::unique_ptr<Word>>> input);
+
+  void activate() { _is_active = true; }
+  void deactivate() { _is_active = false; }
+  bool is_active() { return _is_active; }
+
+  void add_param(
+      std::string input_string); // Parse the input and turn it into a word
+  std::string get_text() const;
+  virtual std::string get_list() const;
+
+  friend std::ostream &operator<<(std::ostream &os, const Statement &rhs);
+
+  ~Statement() = default;
+
+protected:
+  bool _is_active;
+  std::unique_ptr<std::vector<std::unique_ptr<Word>>> list;
+};
+
 class Line {
 public:
   Line();
   Line(std::unique_ptr<std::vector<std::unique_ptr<Word>>> input);
-  void add(std::unique_ptr<Word> word);
+  void add_word(std::unique_ptr<Word> word);
   std::unique_ptr<Word> pop_word();
   std::unique_ptr<Word> *at(int index) const;
   std::string get_text() const;
   int length() const;
   bool is_done() const;
-  std::unique_ptr<Line> objectify(); // Return a 'dynamicly dispateched' line
+  std::unique_ptr<Statement>
+  objectify(); // Return a 'dynamicly dispateched' line
   // object based in line content
 
   friend std::ostream &operator<<(std::ostream &os, const Line &rhs);
@@ -29,13 +52,9 @@ protected:
   std::unique_ptr<std::vector<std::unique_ptr<Word>>> entries{};
 };
 
-class SimulatorStatement : public Line {
-public:
-  SimulatorStatement(std::unique_ptr<std::vector<std::unique_ptr<Word>>> input);
-
-private:
-protected:
-  void analyse_entries();
-};
-
+// class FirstWordDefinedStatement : public Statement {
+// public:
+//   std::string get_list(); // Return the list of param, but skip the first
+//   entire
+// };
 #endif

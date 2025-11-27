@@ -10,14 +10,14 @@
 std::unordered_map<std::string, std::string> ignore_newline_keywords = {
     {R"(\\)", "\n"}, {"subckt", "ends"}};
 
-void Netlist::add_line(std::unique_ptr<Line> line) {
+void Netlist::add_line(std::unique_ptr<Statement> line) {
   list.push_back(std::move(line));
 }
 
-std::unique_ptr<Line> Netlist::pop_line() {
-  std::unique_ptr<Line> temp_line = std::move(list.back());
+std::unique_ptr<Statement> Netlist::pop_line() {
+  std::unique_ptr<Statement> temp = std::move(list.back());
   list.pop_back();
-  return std::move(temp_line);
+  return std::move(temp);
 }
 
 std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
@@ -131,9 +131,9 @@ void Netlist::load_netlist_from_file(
 }
 
 std::ostream &operator<<(std::ostream &os, const Netlist &rhs) {
-  for (const std::unique_ptr<Line> &line : rhs.list) {
+  for (const std::unique_ptr<Statement> &statement : rhs.list) {
     // std::cout << line->get_text() << std::endl;
-    os << line->get_text() << std::endl;
+    os << statement->get_text() << std::endl;
   }
   return os;
 }

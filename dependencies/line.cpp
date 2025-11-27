@@ -10,7 +10,7 @@ Line::Line(std::unique_ptr<std::vector<std::unique_ptr<Word>>> input) {
   entries = std::move(input);
 }
 
-void Line::add(std::unique_ptr<Word> word) {
+void Line::add_word(std::unique_ptr<Word> word) {
   if (word->is_end_of_line()) {
     _is_done = true;
   }
@@ -43,15 +43,15 @@ int Line::length() const { return entries->size(); }
 
 bool Line::is_done() const { return _is_done; }
 
-std::unique_ptr<Line> Line::objectify() {
+std::unique_ptr<Statement> Line::objectify() {
   for (std::unique_ptr<Word> &word : *entries) {
     if ("simulator" == word->get_text()) {
-      std::unique_ptr<SimulatorStatement> ret_obj =
-          std::make_unique<SimulatorStatement>(std::move(entries));
+      std::unique_ptr<Statement> ret_obj =
+          std::make_unique<Statement>(std::move(entries));
       return ret_obj;
     }
   }
-  return std::make_unique<Line>(std::move(entries));
+  return std::make_unique<Statement>(std::move(entries));
   // Read through the entires, and identify what type of object the line is
 }
 
@@ -60,9 +60,40 @@ std::ostream &operator<<(std::ostream &os, const Line &rhs) {
   return os;
 }
 
-SimulatorStatement::SimulatorStatement(
-    std::unique_ptr<std::vector<std::unique_ptr<Word>>> input) {
-  entries = std::move(input);
-};
+// -----------------
+// --- Statement ---
+// -----------------
 
-void SimulatorStatement::analyse_entries() {}
+Statement::Statement(
+    std::unique_ptr<std::vector<std::unique_ptr<Word>>> input) {
+  list = std::move(input);
+}
+
+std::string Statement::get_text() const {
+  std::string ret_text;
+  // TODO: Test is_active() here
+  for (std::unique_ptr<Word> &word : *list) {
+    if (!word->is_active())
+      continue;
+    std::string text = word->get_text();
+    ret_text += text;
+    if (R"(\\)" == text)
+      ret_text += "\n";
+    else
+      ret_text += " ";
+  }
+  return ret_text;
+}
+
+std::ostream &operator<<(std::ostream &os, const Statement &rhs) {
+  os << rhs.get_text();
+  return os;
+}
+
+std::string Statement::get_list() const {
+  // I guess the list should be a shared pointer,
+  //  with a vector of shared pointers to the words...
+  //  That way I can pass the shared pointers around and make changes
+  //  to the word anywhere, without worring about
+  //  memory saftey..
+}
