@@ -5,9 +5,13 @@
 #include <iostream>
 #include <sstream>
 
-// ----------------
-// --- BaseWord ---
-// ----------------
+// ---------------------
+// --- StatementWord ---
+// ---------------------
+
+// ------------
+// --- Word ---
+// ------------
 void Word::set_end_of_line() {
   _is_done = true;
   _is_end_of_line = true;
@@ -99,7 +103,7 @@ void Word::add_string(std::string input) {
 }
 
 enum WordType { BASEWORD, KEYVALUE, PORT };
-std::shared_ptr<Word> Word::objectify() const {
+std::shared_ptr<StatementWord> Word::objectify() const {
   WordType word_type{BASEWORD};
   for (char ch : get_text()) {
     if ('=' == ch) {
@@ -113,13 +117,13 @@ std::shared_ptr<Word> Word::objectify() const {
   }
   switch (word_type) {
   case BASEWORD:
-    return std::make_shared<Word>(this);
+    return std::make_shared<StatementWord>(get_text());
   case KEYVALUE:
-    return std::make_shared<KeyValueWord>(this);
+    return std::make_shared<KeyValueWord>(get_text());
   case PORT:
-    return std::make_shared<PortWord>(this);
+    return std::make_shared<PortWord>(get_text());
   }
-  return std::make_shared<Word>();
+  return std::make_shared<StatementWord>(get_text());
 }
 
 void Word::parse() {
@@ -150,9 +154,23 @@ void Word::append_word(const Word &input_word) {
   _add_whitespace = input_word._add_whitespace;
 }
 
+void Word::merge_word_in_front(const std::string input_text) {
+  text = input_text + text;
+  _append_to_prev_word = false;
+}
+
 std::ostream &operator<<(std::ostream &os, const Word &rhs) {
   os << rhs.get_text();
   return os;
+}
+
+// ---------------------
+// --- StatementWord ---
+// ---------------------
+
+void StatementWord::add_string(std::string input) {
+  text = input;
+  parse();
 }
 
 // --------------------

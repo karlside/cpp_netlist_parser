@@ -8,7 +8,7 @@
 
 class Statement {
 public:
-  Statement(std::shared_ptr<std::vector<std::shared_ptr<Word>>> input);
+  Statement(std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input);
 
   void activate() { _is_active = true; }
   void deactivate() { _is_active = false; }
@@ -25,16 +25,16 @@ public:
 
 protected:
   bool _is_active;
-  std::shared_ptr<std::vector<std::shared_ptr<Word>>> list;
+  std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> list;
 };
 
 class Line {
 public:
   Line();
-  Line(std::shared_ptr<std::vector<std::shared_ptr<Word>>> input);
-  void add_word(std::shared_ptr<Word> word);
-  std::shared_ptr<Word> pop_word();
-  std::shared_ptr<Word> *at(int index) const;
+  Line(std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input);
+  void add_word(std::unique_ptr<Word> word);
+  std::shared_ptr<StatementWord> pop_word();
+  std::shared_ptr<StatementWord> *at(int index) const;
   std::string get_text() const;
   int length() const;
   bool is_done() const;
@@ -49,7 +49,7 @@ public:
 private:
 protected:
   bool _is_done{false};
-  std::shared_ptr<std::vector<std::shared_ptr<Word>>> entries{};
+  std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> entries{};
 };
 
 // class FirstWordDefinedStatement : public Statement {

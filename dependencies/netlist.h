@@ -15,8 +15,8 @@ public:
   friend std::ostream &operator<<(std::ostream &os, const Netlist &rhs);
 
 private:
-  std::shared_ptr<Word> append_to_prev_word(std::shared_ptr<Line> &line,
-                                            std::shared_ptr<Word> word);
+  std::unique_ptr<Word> merge_to_prev_word(std::shared_ptr<Line> &line,
+                                           std::unique_ptr<Word> word);
   std::vector<std::shared_ptr<Statement>> list{};
 };
 

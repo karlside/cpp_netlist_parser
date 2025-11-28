@@ -30,14 +30,16 @@ std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
   return file;
 }
 
-std::shared_ptr<Word> Netlist::append_to_prev_word(std::shared_ptr<Line> &line,
-                                                   std::shared_ptr<Word> word) {
+std::unique_ptr<Word> Netlist::merge_to_prev_word(std::shared_ptr<Line> &line,
+                                                  std::unique_ptr<Word> word) {
   if (0 == line->length()) {
     return word;
   }
-  std::shared_ptr<Word> ret_word = std::move(line->pop_word());
-  ret_word->append_word(*word);
-  return ret_word;
+  std::shared_ptr<StatementWord> statementWord = line->pop_word();
+  // Because the word retrived from the line is already objectified it needs to
+  // be prepended to the unobjectified word
+  word->merge_word_in_front(statementWord->get_text());
+  return word;
 }
 
 enum State { START, READ_CHAR, ADD_WORD, ADD_LINE, DONE };
@@ -69,8 +71,8 @@ void print_state(State state) {
 void Netlist::load_netlist_from_file(
     const std::unique_ptr<std::fstream> &file) {
   char ch;
+  std::unique_ptr<Word> word;
   std::shared_ptr<Line> line;
-  std::shared_ptr<Word> word;
   State state{START};
   State next_state{START};
   bool ignore_newline{false};
@@ -82,7 +84,7 @@ void Netlist::load_netlist_from_file(
     switch (state) {
 
     case State::START:
-      word = std::make_shared<Word>();
+      word = std::make_unique<Word>();
       line = std::make_shared<Line>();
       next_state = READ_CHAR;
       break;
@@ -95,8 +97,8 @@ void Netlist::load_netlist_from_file(
       }
       word->add_char(ch);
       if (word->is_append_to_prev_word()) {
-        word = append_to_prev_word(line, std::move(word));
-
+        word = merge_to_prev_word(line, std::move(word));
+        next_state = READ_CHAR;
       } else if (word->is_done()) {
         next_state = ADD_WORD;
       } else {
@@ -105,10 +107,11 @@ void Netlist::load_netlist_from_file(
       break;
 
     case State::ADD_WORD:
-      word = word->objectify();
-      word->parse();
+      // TODO: Objectify should happen inside add_word
+      // word = word->objectify();
+      // word->parse();
       line->add_word(std::move(word));
-      word = std::make_shared<Word>();
+      word = std::make_unique<Word>();
       if (line->is_done()) {
         next_state = ADD_LINE;
       } else {

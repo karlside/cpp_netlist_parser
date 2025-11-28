@@ -6,6 +6,27 @@
 #include <string>
 #include <unordered_map>
 
+class StatementWord {
+public:
+  StatementWord() {}
+  StatementWord(std::string input) { add_string(input); }
+
+  void activate() { _is_active = true; }
+  void deactivate() { _is_active = false; }
+  bool is_active() { return _is_active; }
+
+  virtual std::string get_text() { return text; }
+
+  virtual ~StatementWord() = default;
+
+protected:
+  bool _is_active{true};
+
+  std::string text;
+  void add_string(std::string input);
+  virtual void parse() { /* Do nothing */ }
+};
+
 class Word {
 public:
   Word() {}
@@ -15,7 +36,8 @@ public:
   void add_char(char input);
   void add_string(std::string input);
   void append_word(const Word &input_word);
-  std::shared_ptr<Word> objectify() const;
+  void merge_word_in_front(const std::string text);
+  std::shared_ptr<StatementWord> objectify() const;
   virtual void parse();
   bool has_been_parsed() const { return _has_been_parsed; }
 
@@ -60,11 +82,11 @@ protected:
       {'=', ANY}, {'(', CLOSING_PARENTHESIS}};
 };
 
-class KeyValueWord : public Word {
+class KeyValueWord : public StatementWord {
 public:
   KeyValueWord();
   KeyValueWord(std::string input) { add_string(input); }
-  KeyValueWord(const Word *input_word) { append_word(*input_word); }
+  // KeyValueWord(const Word *input_word) { append_word(*input_word); }
 
   void set_key(std::string input) { key = input; }
   void set_value(std::string input) { value = input; }
@@ -72,7 +94,7 @@ public:
   std::string get_value() const { return value; }
   std::string get_text() const;
   bool has_value() const { return _has_value; }
-  virtual void parse();
+  void parse();
 
 private:
   const bool _is_done{true};
@@ -82,11 +104,11 @@ private:
   bool _has_value{false};
 };
 
-class PortWord : public Word {
+class PortWord : public StatementWord {
 public:
   PortWord();
   PortWord(std::string input) { add_string(input); };
-  PortWord(const Word *input_word) { append_word(*input_word); }
+  // PortWord(const Word *input_word) { append_word(*input_word); }
 
   std::string get_text() const { return "(" + text + ")"; }
   void parse();

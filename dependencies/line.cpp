@@ -5,31 +5,35 @@
 #include <vector>
 
 Line::Line()
-    : entries{std::make_shared<std::vector<std::shared_ptr<Word>>>()} {}
-Line::Line(std::shared_ptr<std::vector<std::shared_ptr<Word>>> input) {
+    : entries{std::make_shared<std::vector<std::shared_ptr<StatementWord>>>()} {
+}
+Line::Line(std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input) {
   entries = std::move(input);
 }
 
-void Line::add_word(std::shared_ptr<Word> word) {
+void Line::add_word(std::unique_ptr<Word> word) {
   if (word->is_end_of_line()) {
     _is_done = true;
   }
   if (R"(\\)" == word->get_text())
     _is_done = false;
-  entries->push_back(std::move(word));
+  std::shared_ptr statementWord = word->objectify();
+  entries->push_back(statementWord);
 }
 
-std::shared_ptr<Word> Line::pop_word() {
-  std::shared_ptr<Word> temp_word = std::move(entries->back());
+std::shared_ptr<StatementWord> Line::pop_word() {
+  std::shared_ptr<StatementWord> temp_word = std::move(entries->back());
   entries->pop_back();
   return temp_word;
 }
 
-std::shared_ptr<Word> *Line::at(int index) const { return &entries->at(index); }
+std::shared_ptr<StatementWord> *Line::at(int index) const {
+  return &entries->at(index);
+}
 
 std::string Line::get_text() const {
   std::string ret_text;
-  for (std::shared_ptr<Word> &word : *entries) {
+  for (std::shared_ptr<StatementWord> word : *entries) {
     std::string text = word->get_text();
     ret_text += text;
     if (R"(\\)" == text)
@@ -44,7 +48,7 @@ int Line::length() const { return entries->size(); }
 bool Line::is_done() const { return _is_done; }
 
 std::shared_ptr<Statement> Line::objectify() {
-  for (std::shared_ptr<Word> &word : *entries) {
+  for (std::shared_ptr<StatementWord> &word : *entries) {
     if ("simulator" == word->get_text()) {
       std::shared_ptr<Statement> ret_obj =
           std::make_shared<Statement>(std::move(entries));
@@ -65,14 +69,14 @@ std::ostream &operator<<(std::ostream &os, const Line &rhs) {
 // -----------------
 
 Statement::Statement(
-    std::shared_ptr<std::vector<std::shared_ptr<Word>>> input) {
+    std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input) {
   list = std::move(input);
 }
 
 std::string Statement::get_text() const {
   std::string ret_text;
   // TODO: Test is_active() here
-  for (std::shared_ptr<Word> &word : *list) {
+  for (std::shared_ptr<StatementWord> &word : *list) {
     if (!word->is_active())
       continue;
     std::string text = word->get_text();
@@ -96,4 +100,5 @@ std::string Statement::get_list() const {
   //  That way I can pass the shared pointers around and make changes
   //  to the word anywhere, without worring about
   //  memory saftey..
+  return "";
 }
