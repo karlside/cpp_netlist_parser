@@ -1,9 +1,3 @@
-simulator   lang = spectre more
-global 0
-device (  1   2 3) some more
-subckt some text
-more text
-ends \\
-more
-hallo
-hei 
+simluator   lang= spectre more
+Cin ( 1   2  3)
+

@@ -19,31 +19,41 @@ void Word::set_end_of_line() {
 
 void Word::set_append_to_prev_word(char ch) { _append_to_prev_word = true; }
 
-void Word::set_skip_whitespace(char ch) {
+void Word::set_ignore_whitespace(char ch) {
   keyword = keyword_map.at(ch);
-  _skip_whitespace = true;
+  _ignore_whitespace = true;
+  _add_whitespace = false;
 }
 
 void Word::set_add_whitespace(char ch) {
   keyword = keyword_map.at(ch);
+  _ignore_whitespace = false;
   _add_whitespace = true;
 }
 
 void Word::clear_whitespace_flag(char ch) {
+  // std::cout << keyword << " " << ch << std::endl;
   switch (keyword) {
   case NONE:
     return;
   case ANY:
-    // TODO: Should I use std::isspace() to catch tab charcter and such?
     if (' ' == ch)
       return;
+    break;
+  case OPENING_PARENTHESIS:
+    if (' ' == ch)
+      return;
+    else {
+      set_add_whitespace(')');
+      return;
+    }
     break;
   case CLOSING_PARENTHESIS:
     if (')' != ch)
       return;
     break;
   }
-  _skip_whitespace = false;
+  _ignore_whitespace = false;
   _add_whitespace = false;
   keyword = NONE;
 }
@@ -64,30 +74,43 @@ void Word::add_char(char ch) {
         "Cannot add more characters when a Word has been parsed");
   if (is_done())
     throw WordIsDoneError("Cannot add more characters when a Word is done");
+
   clear_whitespace_flag(ch);
-  if ('\n' == ch) {
+
+  switch (ch) {
+  case '\n':
     set_end_of_line();
     return;
-  } else if (' ' == ch) {
-    assert(!(_skip_whitespace && _add_whitespace));
-    if (_skip_whitespace)
-      return;
-    if (!_add_whitespace) {
-      if (0 != text.size()) // This makes sure double whitespaces are not added
-                            // as empty words..
+
+  case ' ':
+    assert(!(_ignore_whitespace && _add_whitespace));
+    if (!_add_whitespace && !_ignore_whitespace) {
+      if (0 != text.size()) {
+        // This makes sure double whitespaces are not added as empty words..
         set_done();
+      }
       return;
     }
-    if (is_double_whitespace(ch))
+    if (_add_whitespace) {
+      if (is_double_whitespace(ch))
+        return;
+      break;
+    }
+    if (_ignore_whitespace)
       return;
-  } else if ('=' == ch) {
+
+  case '=':
     if ("" == text)
       set_append_to_prev_word(ch);
-    set_skip_whitespace(ch);
-  } else if ('(' == ch) {
-    set_add_whitespace(ch);
-  } else if (std::isspace(ch))
-    return;
+    set_ignore_whitespace(ch);
+    break;
+
+  case '(':
+    set_ignore_whitespace(ch);
+    // case std::isspace():
+    //   return;
+  }
+
   text += ch;
 }
 
@@ -150,7 +173,7 @@ void Word::append_word(const Word &input_word) {
   _is_done = input_word._is_done;
   _has_been_parsed = input_word._has_been_parsed;
   _is_end_of_line = input_word._is_end_of_line;
-  _skip_whitespace = input_word._skip_whitespace;
+  _ignore_whitespace = input_word._ignore_whitespace;
   _add_whitespace = input_word._add_whitespace;
 }
 
