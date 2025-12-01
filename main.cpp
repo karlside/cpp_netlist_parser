@@ -18,11 +18,9 @@ int main() {
   std::cout << "PRINTING NETLIST:" << std::endl;
   std::cout << netlist << std::endl;
 
-  // Word word0("");
-  // Word word1(R"(\\)");
-  // Line my_line;
-  // my_line.add(word0);
-  // my_line.add(word1);
-  // std::cout << my_line << std::endl;
+  // Word my_word("(1 2 3)");
+  // std::shared_ptr<StatementWord> stWord = my_word.objectify();
+  // std::cout << my_word.get_text() << std::endl;
+  // std::cout << stWord->get_text() << std::endl;
   return 0;
 }

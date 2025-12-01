@@ -15,7 +15,7 @@ public:
   void deactivate() { _is_active = false; }
   bool is_active() { return _is_active; }
 
-  virtual std::string get_text() { return text; }
+  virtual std::string get_text() const { return text; }
 
   virtual ~StatementWord() = default;
 

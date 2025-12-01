@@ -202,10 +202,11 @@ std::string KeyValueWord::get_text() const {
 // ----------------
 
 void PortWord::parse() {
+  // TODO: parse don't handle input formating in a good way.
   std::string dump;
   std::istringstream iss(text);
   std::getline(iss, dump, '(');
-  std::getline(iss, dump, ' ');
+  // std::getline(iss, dump, ' ');
   std::getline(iss, text, ')');
   activate();
   _has_been_parsed = true;
