@@ -21,10 +21,11 @@ public:
 
 protected:
   bool _is_active{true};
+  bool _has_been_parsed{false};
 
   std::string text;
   void add_string(std::string input);
-  virtual void parse() { /* Do nothing */ }
+  virtual void parse() { _has_been_parsed = true; }
 };
 
 class Word {
@@ -98,7 +99,6 @@ public:
 
 private:
   const bool _is_done{true};
-  bool _has_been_parsed{false};
   std::string key;
   std::string value;
   bool _has_value{false};
@@ -115,7 +115,6 @@ public:
 
 private:
   const bool _is_done{true};
-  bool _has_been_parsed{false};
 };
 
 #endif
