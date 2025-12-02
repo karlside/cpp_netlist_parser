@@ -61,6 +61,7 @@ private:
   bool _is_done{false};
   void set_done() { _is_done = true; }
   bool is_double_whitespace(char ch) const;
+  void remove_previous_whitespace();
 
 protected:
   std::string text;

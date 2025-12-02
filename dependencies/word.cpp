@@ -51,6 +51,7 @@ void Word::clear_whitespace_flag(char ch) {
   case CLOSING_PARENTHESIS:
     if (')' != ch)
       return;
+    remove_previous_whitespace();
     break;
   }
   _ignore_whitespace = false;
@@ -66,6 +67,12 @@ bool Word::is_double_whitespace(char ch) const {
   if (' ' == ch && ' ' == text.at(last_index - 1))
     return true;
   return false;
+}
+
+void Word::remove_previous_whitespace() {
+  if (' ' != text.at(text.size() - 1))
+    return;
+  text.pop_back();
 }
 
 void Word::add_char(char ch) {
