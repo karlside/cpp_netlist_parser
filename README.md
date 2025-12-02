@@ -44,3 +44,9 @@ void add_char(char input);
 string get_text()
 
 When characters are added using add_char, they are appended to text. When calling parse() the text is parsed into key and value. 
+
+# Input Formatting
+The goal is to format everything as it is read in, then move the text around using pointers. This ensures that the text is only 'read' once. 
+
+## Copy on write apporeache
+For derivetives of StatementWord, where different entries are assigned to different variables text are only moved to the different variables once it becomes necessary. 
