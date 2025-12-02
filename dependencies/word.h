@@ -61,6 +61,7 @@ private:
   bool _is_done{false};
   void set_done() { _is_done = true; }
   bool is_double_whitespace(char ch) const;
+  void remove_previous_whitespace();
 
 protected:
   std::string text;
@@ -68,19 +69,19 @@ protected:
   bool _is_active{false};
   bool _append_to_prev_word{false};
   bool _is_end_of_line{false};
-  bool _skip_whitespace{false};
+  bool _ignore_whitespace{false};
   bool _add_whitespace{false};
 
   void set_end_of_line();
   void set_append_to_prev_word(char ch);
-  void set_skip_whitespace(char ch);
+  void set_ignore_whitespace(char ch);
   void set_add_whitespace(char ch);
   void clear_whitespace_flag(char ch);
 
-  enum Keyword { NONE, ANY, CLOSING_PARENTHESIS };
+  enum Keyword { NONE, ANY, OPENING_PARENTHESIS, CLOSING_PARENTHESIS };
   Keyword keyword;
   const std::unordered_map<char, Keyword> keyword_map = {
-      {'=', ANY}, {'(', CLOSING_PARENTHESIS}};
+      {'=', ANY}, {'(', OPENING_PARENTHESIS}, {')', CLOSING_PARENTHESIS}};
 };
 
 class KeyValueWord : public StatementWord {
