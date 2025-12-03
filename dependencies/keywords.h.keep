@@ -12,6 +12,9 @@ class AnalysisStatement;
 class MonteCarloStatement;
 class InstanceStatement;
 
+enum ObjectType { */ fill in here '*/}
+//TODO: ask chatgtp to fill in
+
 std::unordered_map<std::string, NetlistObject*> keywordMap = {
     {"altergroup", new NetlistObject()},
     {"correlate", new NetlistObject()},

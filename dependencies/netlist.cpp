@@ -107,9 +107,6 @@ void Netlist::load_netlist_from_file(
       break;
 
     case State::ADD_WORD:
-      // TODO: Objectify should happen inside add_word
-      // word = word->objectify();
-      // word->parse();
       line->add_word(std::move(word));
       word = std::make_unique<Word>();
       if (line->is_done()) {

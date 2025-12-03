@@ -1,10 +1,13 @@
 #ifndef WORD_H
 #define WORD_H
 
+#include "keywords.h"
 #include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
+
+// enum WordKeyword { NONE, SIMULATOR, KEYVALUE, PORT };
 
 class StatementWord {
 public:
@@ -13,13 +16,15 @@ public:
 
   void activate() { _is_active = true; }
   void deactivate() { _is_active = false; }
-  bool is_active() { return _is_active; }
+  bool is_active() const { return _is_active; }
+  ObjectType get_keyword() const { return _keyword; }
 
   virtual std::string get_text() const { return text; }
 
   virtual ~StatementWord() = default;
 
 protected:
+  ObjectType _keyword = NONE;
   bool _is_active{true};
   bool _has_been_parsed{false};
 
@@ -63,7 +68,6 @@ private:
   bool is_double_whitespace(char ch) const;
   void remove_previous_whitespace();
 
-protected:
   std::string text;
 
   bool _is_active{false};
@@ -84,6 +88,11 @@ protected:
       {'=', ANY}, {'(', OPENING_PARENTHESIS}, {')', CLOSING_PARENTHESIS}};
 };
 
+class SimulatorWord : public StatementWord {
+protected:
+  ObjectType _keyword = SIMULATOR;
+};
+
 class KeyValueWord : public StatementWord {
 public:
   KeyValueWord();
@@ -99,6 +108,7 @@ public:
   void parse();
 
 private:
+  ObjectType _keyword = KEYVALUE;
   const bool _is_done{true};
   std::string key;
   std::string value;
@@ -115,6 +125,7 @@ public:
   void parse();
 
 private:
+  ObjectType _keyword = PORT;
   const bool _is_done{true};
 };
 

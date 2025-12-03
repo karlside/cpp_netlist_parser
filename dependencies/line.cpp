@@ -15,6 +15,7 @@ void Line::add_word(std::unique_ptr<Word> word) {
   if (word->is_end_of_line()) {
     _is_done = true;
   }
+  // TODO: Change this to some falg instead of using get_text()
   if (R"(\\)" == word->get_text())
     _is_done = false;
   std::shared_ptr statementWord = word->objectify();

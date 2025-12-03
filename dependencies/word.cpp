@@ -2,6 +2,7 @@
 #include "exceptions.h"
 #include <cassert>
 // #include <exception>
+#include "keywords.h"
 #include <iostream>
 #include <sstream>
 
@@ -132,25 +133,34 @@ void Word::add_string(std::string input) {
   }
 }
 
-enum WordType { BASEWORD, KEYVALUE, PORT };
 std::shared_ptr<StatementWord> Word::objectify() const {
-  WordType word_type{BASEWORD};
+  ObjectType word_obj_type{ObjectType::NONE};
+  if (keywordMap.find(get_text()) != keywordMap.end()) {
+    word_obj_type = keywordMap.at(get_text());
+  } else if (simKeywordMap.find(get_text()) != simKeywordMap.end()) {
+    word_obj_type = simKeywordMap.at(get_text());
+  } else if (otherKeywordMap.find(get_text()) != otherKeywordMap.end()) {
+    word_obj_type = otherKeywordMap.at(get_text());
+  }
   for (char ch : get_text()) {
     if ('=' == ch) {
-      word_type = KEYVALUE;
+      word_obj_type = ObjectType::KEYVALUE;
       break;
     }
     if ('(' == ch) {
-      word_type = PORT;
+      word_obj_type = ObjectType::PORT;
       break;
     }
   }
-  switch (word_type) {
-  case BASEWORD:
+  if (ObjectType::NONE == word_obj_type) {
+    // check get_text() vs. list of keywords
+  }
+  switch (word_obj_type) {
+  case ObjectType::NONE:
     return std::make_shared<StatementWord>(get_text());
-  case KEYVALUE:
+  case ObjectType::KEYVALUE:
     return std::make_shared<KeyValueWord>(get_text());
-  case PORT:
+  case ObjectType::PORT:
     return std::make_shared<PortWord>(get_text());
   }
   return std::make_shared<StatementWord>(get_text());
