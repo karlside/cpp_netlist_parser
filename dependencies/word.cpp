@@ -21,20 +21,20 @@ void Word::set_end_of_line() {
 void Word::set_append_to_prev_word(char ch) { _append_to_prev_word = true; }
 
 void Word::set_ignore_whitespace(char ch) {
-  keyword = keyword_map.at(ch);
+  charKeyword = char_keyword_map.at(ch);
   _ignore_whitespace = true;
   _add_whitespace = false;
 }
 
 void Word::set_add_whitespace(char ch) {
-  keyword = keyword_map.at(ch);
+  charKeyword = char_keyword_map.at(ch);
   _ignore_whitespace = false;
   _add_whitespace = true;
 }
 
 void Word::clear_whitespace_flag(char ch) {
   // std::cout << keyword << " " << ch << std::endl;
-  switch (keyword) {
+  switch (charKeyword) {
   case NONE:
     return;
   case ANY:
@@ -57,7 +57,7 @@ void Word::clear_whitespace_flag(char ch) {
   }
   _ignore_whitespace = false;
   _add_whitespace = false;
-  keyword = NONE;
+  charKeyword = NONE;
 }
 
 bool Word::is_double_whitespace(char ch) const {
@@ -77,9 +77,6 @@ void Word::remove_previous_whitespace() {
 }
 
 void Word::add_char(char ch) {
-  if (has_been_parsed())
-    throw WordIsParsedError(
-        "Cannot add more characters when a Word has been parsed");
   if (is_done())
     throw WordIsDoneError("Cannot add more characters when a Word is done");
 
@@ -166,29 +163,16 @@ std::shared_ptr<StatementWord> Word::objectify() {
   return std::make_shared<StatementWord>(std::move(text));
 }
 
-void Word::parse() {
-  // TODO: Do I need this parse function?
-  // Should _is_active default to true?
-  if (has_been_parsed())
-    throw std::runtime_error("Cannot reparse Word that has been parsed");
-  activate();
-  _has_been_parsed = true;
-}
-
 void Word::append_word(const Word &input_word) {
   _is_done = false;
-  _has_been_parsed = false;
   try {
     add_string(input_word.get_text());
   } catch (const std::exception &e) {
     throw std::runtime_error("Error while appending to word");
   }
-  _is_active = input_word._is_active;
-  _has_been_parsed = input_word._has_been_parsed;
   _append_to_prev_word = false; // The _append_to_prev_word flag is cleared
                                 // during the addition operation
   _is_done = input_word._is_done;
-  _has_been_parsed = input_word._has_been_parsed;
   _is_end_of_line = input_word._is_end_of_line;
   _ignore_whitespace = input_word._ignore_whitespace;
   _add_whitespace = input_word._add_whitespace;
@@ -219,16 +203,16 @@ void StatementWord::add_string(std::string input) {
 
 void KeyValueWord::parse() {
   std::istringstream iss(*text);
-  std::getline(iss, key, '=');
-  std::getline(iss, value);
-  if (!value.empty())
+  std::getline(iss, *key, '=');
+  std::getline(iss, *value);
+  if (!value->empty())
     _has_value = true;
   activate();
   _has_been_parsed = true;
 }
 
-std::string KeyValueWord::get_text() const {
-  if (!_has_been_parsed) {
+std::string KeyValueWord::get_text() {
+  if (!has_been_parsed()) {
     return *text;
   } else if (has_value()) {
     return get_key() + "=" + get_value();
@@ -237,9 +221,26 @@ std::string KeyValueWord::get_text() const {
   }
 }
 
+std::string KeyValueWord::get_key() {
+  if (!has_been_parsed())
+    parse();
+  return *key;
+}
+
+std::string KeyValueWord::get_value() {
+  if (!has_been_parsed())
+    parse();
+  return *value;
+}
+
 // ----------------
 // --- PortWord ---
 // ----------------
+std::string PortWord::get_text() const {
+  if (!has_been_parsed())
+    return *text;
+  return "(" + *text + ")";
+}
 
 void PortWord::parse() {
   // TODO: parse don't handle input formating in a good way.
@@ -250,4 +251,11 @@ void PortWord::parse() {
   std::getline(iss, *text, ')');
   activate();
   _has_been_parsed = true;
+}
+
+std::string PortWord::get_port() {
+  // TODO: this has not been tested
+  if (!has_been_parsed())
+    parse();
+  return *text;
 }

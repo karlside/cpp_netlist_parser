@@ -27,6 +27,7 @@ protected:
   ObjectType _keyword = NONE;
   bool _is_active{true};
   bool _has_been_parsed{false};
+  bool has_been_parsed() const { return _has_been_parsed; }
 
   std::shared_ptr<std::string> text;
   void add_string(std::string input);
@@ -45,12 +46,6 @@ public:
   void append_word(const Word &input_word);
   void merge_word_in_front(const std::string text);
   std::shared_ptr<StatementWord> objectify();
-  virtual void parse();
-  bool has_been_parsed() const { return _has_been_parsed; }
-
-  void activate() { _is_active = true; }
-  void deactivate() { _is_active = false; }
-  bool is_active() const { return _is_active; }
 
   bool is_done() const { return _is_done; }
   bool is_end_of_line() const { return _is_end_of_line; }
@@ -63,7 +58,6 @@ public:
   virtual ~Word() = default;
 
 private:
-  bool _has_been_parsed{false};
   bool _is_done{false};
   void set_done() { _is_done = true; }
   bool is_double_whitespace(char ch) const;
@@ -71,7 +65,6 @@ private:
 
   std::unique_ptr<std::string> text;
 
-  bool _is_active{false};
   bool _append_to_prev_word{false};
   bool _is_end_of_line{false};
   bool _ignore_whitespace{false};
@@ -83,9 +76,9 @@ private:
   void set_add_whitespace(char ch);
   void clear_whitespace_flag(char ch);
 
-  enum Keyword { NONE, ANY, OPENING_PARENTHESIS, CLOSING_PARENTHESIS };
-  Keyword keyword;
-  const std::unordered_map<char, Keyword> keyword_map = {
+  enum CharKeyword { NONE, ANY, OPENING_PARENTHESIS, CLOSING_PARENTHESIS };
+  CharKeyword charKeyword;
+  const std::unordered_map<char, CharKeyword> char_keyword_map = {
       {'=', ANY}, {'(', OPENING_PARENTHESIS}, {')', CLOSING_PARENTHESIS}};
 };
 
@@ -100,19 +93,19 @@ public:
   KeyValueWord(std::unique_ptr<std::string> input) { text = std::move(input); }
   // KeyValueWord(const Word *input_word) { append_word(*input_word); }
 
-  void set_key(std::string input) { key = input; }
-  void set_value(std::string input) { value = input; }
-  std::string get_key() const { return key; }
-  std::string get_value() const { return value; }
-  std::string get_text() const;
+  void set_key(std::string input) { *key = input; }
+  void set_value(std::string input) { *value = input; }
+  std::string get_key();
+  std::string get_value();
+  std::string get_text();
   bool has_value() const { return _has_value; }
   void parse();
 
 private:
   ObjectType _keyword = KEYVALUE;
   const bool _is_done{true};
-  std::string key;
-  std::string value;
+  std::shared_ptr<std::string> key;
+  std::shared_ptr<std::string> value;
   bool _has_value{false};
 };
 
@@ -123,8 +116,9 @@ public:
 
   // PortWord(const Word *input_word) { append_word(*input_word); }
 
-  std::string get_text() const { return "(" + *text + ")"; }
+  std::string get_text() const;
   void parse();
+  std::string get_port();
 
 private:
   ObjectType _keyword = PORT;
