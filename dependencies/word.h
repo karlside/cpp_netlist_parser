@@ -12,14 +12,14 @@
 class StatementWord {
 public:
   StatementWord() {}
-  StatementWord(std::string input) { add_string(input); }
+  StatementWord(std::unique_ptr<std::string> input) { text = std::move(input); }
 
   void activate() { _is_active = true; }
   void deactivate() { _is_active = false; }
   bool is_active() const { return _is_active; }
   ObjectType get_keyword() const { return _keyword; }
 
-  virtual std::string get_text() const { return text; }
+  virtual std::string get_text() const { return *text; }
 
   virtual ~StatementWord() = default;
 
@@ -28,14 +28,15 @@ protected:
   bool _is_active{true};
   bool _has_been_parsed{false};
 
-  std::string text;
+  std::shared_ptr<std::string> text;
   void add_string(std::string input);
   virtual void parse() { _has_been_parsed = true; }
 };
 
 class Word {
+
 public:
-  Word() {}
+  Word() : text(std::make_unique<std::string>()) {}
   Word(std::string input) { add_string(input); }
   Word(const Word *input_word) { append_word(*input_word); }
 
@@ -43,7 +44,7 @@ public:
   void add_string(std::string input);
   void append_word(const Word &input_word);
   void merge_word_in_front(const std::string text);
-  std::shared_ptr<StatementWord> objectify() const;
+  std::shared_ptr<StatementWord> objectify();
   virtual void parse();
   bool has_been_parsed() const { return _has_been_parsed; }
 
@@ -55,7 +56,7 @@ public:
   bool is_end_of_line() const { return _is_end_of_line; }
   bool is_append_to_prev_word() const { return _append_to_prev_word; }
 
-  virtual std::string get_text() const { return text; }
+  virtual std::string get_text() const { return *text; }
 
   friend std::ostream &operator<<(std::ostream &os, const Word &rhs);
 
@@ -68,7 +69,7 @@ private:
   bool is_double_whitespace(char ch) const;
   void remove_previous_whitespace();
 
-  std::string text;
+  std::unique_ptr<std::string> text;
 
   bool _is_active{false};
   bool _append_to_prev_word{false};
@@ -96,7 +97,7 @@ protected:
 class KeyValueWord : public StatementWord {
 public:
   KeyValueWord();
-  KeyValueWord(std::string input) { add_string(input); }
+  KeyValueWord(std::unique_ptr<std::string> input) { text = std::move(input); }
   // KeyValueWord(const Word *input_word) { append_word(*input_word); }
 
   void set_key(std::string input) { key = input; }
@@ -118,10 +119,11 @@ private:
 class PortWord : public StatementWord {
 public:
   PortWord();
-  PortWord(std::string input) { add_string(input); };
+  PortWord(std::unique_ptr<std::string> input) { text = std::move(input); }
+
   // PortWord(const Word *input_word) { append_word(*input_word); }
 
-  std::string get_text() const { return "(" + text + ")"; }
+  std::string get_text() const { return "(" + *text + ")"; }
   void parse();
 
 private:

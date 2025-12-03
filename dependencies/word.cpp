@@ -62,18 +62,18 @@ void Word::clear_whitespace_flag(char ch) {
 
 bool Word::is_double_whitespace(char ch) const {
   // check if the current character and the previous one is both whitespacees
-  int last_index = text.size();
+  int last_index = text->size();
   if (0 == last_index)
     return false;
-  if (' ' == ch && ' ' == text.at(last_index - 1))
+  if (' ' == ch && ' ' == text->at(last_index - 1))
     return true;
   return false;
 }
 
 void Word::remove_previous_whitespace() {
-  if (' ' != text.at(text.size() - 1))
+  if (' ' != text->at(text->size() - 1))
     return;
-  text.pop_back();
+  text->pop_back();
 }
 
 void Word::add_char(char ch) {
@@ -93,7 +93,7 @@ void Word::add_char(char ch) {
   case ' ':
     assert(!(_ignore_whitespace && _add_whitespace));
     if (!_add_whitespace && !_ignore_whitespace) {
-      if (0 != text.size()) {
+      if (0 != text->size()) {
         // This makes sure double whitespaces are not added as empty words..
         set_done();
       }
@@ -108,7 +108,7 @@ void Word::add_char(char ch) {
       return;
 
   case '=':
-    if ("" == text)
+    if ("" == *text)
       set_append_to_prev_word(ch);
     set_ignore_whitespace(ch);
     break;
@@ -119,7 +119,7 @@ void Word::add_char(char ch) {
     //   return;
   }
 
-  text += ch;
+  *text += ch;
 }
 
 void Word::add_string(std::string input) {
@@ -133,7 +133,7 @@ void Word::add_string(std::string input) {
   }
 }
 
-std::shared_ptr<StatementWord> Word::objectify() const {
+std::shared_ptr<StatementWord> Word::objectify() {
   ObjectType word_obj_type{ObjectType::NONE};
   if (keywordMap.find(get_text()) != keywordMap.end()) {
     word_obj_type = keywordMap.at(get_text());
@@ -157,13 +157,13 @@ std::shared_ptr<StatementWord> Word::objectify() const {
   }
   switch (word_obj_type) {
   case ObjectType::NONE:
-    return std::make_shared<StatementWord>(get_text());
+    return std::make_shared<StatementWord>(std::move(text));
   case ObjectType::KEYVALUE:
-    return std::make_shared<KeyValueWord>(get_text());
+    return std::make_shared<KeyValueWord>(std::move(text));
   case ObjectType::PORT:
-    return std::make_shared<PortWord>(get_text());
+    return std::make_shared<PortWord>(std::move(text));
   }
-  return std::make_shared<StatementWord>(get_text());
+  return std::make_shared<StatementWord>(std::move(text));
 }
 
 void Word::parse() {
@@ -195,7 +195,7 @@ void Word::append_word(const Word &input_word) {
 }
 
 void Word::merge_word_in_front(const std::string input_text) {
-  text = input_text + text;
+  *text = input_text + *text;
   _append_to_prev_word = false;
 }
 
@@ -209,7 +209,7 @@ std::ostream &operator<<(std::ostream &os, const Word &rhs) {
 // ---------------------
 
 void StatementWord::add_string(std::string input) {
-  text = input;
+  *text = input;
   parse();
 }
 
@@ -218,7 +218,7 @@ void StatementWord::add_string(std::string input) {
 // --------------------
 
 void KeyValueWord::parse() {
-  std::istringstream iss(text);
+  std::istringstream iss(*text);
   std::getline(iss, key, '=');
   std::getline(iss, value);
   if (!value.empty())
@@ -229,7 +229,7 @@ void KeyValueWord::parse() {
 
 std::string KeyValueWord::get_text() const {
   if (!_has_been_parsed) {
-    return text;
+    return *text;
   } else if (has_value()) {
     return get_key() + "=" + get_value();
   } else {
@@ -244,10 +244,10 @@ std::string KeyValueWord::get_text() const {
 void PortWord::parse() {
   // TODO: parse don't handle input formating in a good way.
   std::string dump;
-  std::istringstream iss(text);
+  std::istringstream iss(*text);
   std::getline(iss, dump, '(');
   // std::getline(iss, dump, ' ');
-  std::getline(iss, text, ')');
+  std::getline(iss, *text, ')');
   activate();
   _has_been_parsed = true;
 }
