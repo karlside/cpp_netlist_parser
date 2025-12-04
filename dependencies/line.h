@@ -17,11 +17,11 @@ public:
 
   void activate() { _is_active = true; }
   void deactivate() { _is_active = false; }
-  bool is_active() { return _is_active; }
+  bool is_active() const { return _is_active; }
 
   void add_param(
       std::string input_string); // Parse the input and turn it into a word
-  std::string get_text() const;
+  const std::string &get_text();
   virtual std::string get_list() const;
 
   friend std::ostream &operator<<(std::ostream &os, const Statement &rhs);
@@ -31,6 +31,9 @@ public:
 protected:
   bool _is_active;
   std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> list;
+  std::string text;
+  void build_text();
+  bool _text_is_built{false};
 };
 
 // ------------
@@ -46,14 +49,11 @@ public:
   std::shared_ptr<StatementWord> *at(int index) const {
     return &entries->at(index);
   }
-  std::string get_text() const;
+  const std::string &get_text();
   int length() const { return entries->size(); }
   bool is_done() const { return _is_done; }
 
-  std::shared_ptr<Statement>
-  objectify(); // Return a 'dynamicly dispateched' line
-  // object based in line content
-  std::shared_ptr<Statement> get_obj_from_keyword(ObjectType obj_keyword);
+  std::shared_ptr<Statement> objectify();
 
   friend std::ostream &operator<<(std::ostream &os, const Line &rhs);
 
@@ -61,8 +61,12 @@ public:
 
 private:
 protected:
+  std::shared_ptr<Statement> get_obj_from_keyword(ObjectType obj_keyword);
   bool _is_done{false};
+  bool _text_is_built{false};
   std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> entries{};
+  void build_text();
+  std::string text;
 };
 
 // -------------------------------
@@ -80,7 +84,6 @@ public:
 };
 
 class SimulatorStatement : public SkipFirstWordStatement {
-  // class SimulatorStatement : public Statement {
 public:
   SimulatorStatement(
       std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input)

@@ -28,17 +28,25 @@ std::shared_ptr<StatementWord> Line::pop_word() {
   return temp_word;
 }
 
-std::string Line::get_text() const {
-  std::string ret_text;
+const std::string &Line::get_text() {
+  if (!_text_is_built)
+    build_text();
+  return text;
+}
+
+void Line::build_text() {
+  std::string new_text;
   for (std::shared_ptr<StatementWord> word : *entries) {
-    std::string text = word->get_text();
-    ret_text += text;
+    std::string word_text = word->get_text();
+    new_text += word_text;
     if (R"(\\)" == text)
-      ret_text += "\n";
+      new_text += "\n";
     else
-      ret_text += " ";
+      new_text += " ";
   }
-  return ret_text;
+  new_text.pop_back(); // Remove last whitespace
+  text = new_text;
+  _text_is_built = true;
 }
 
 std::shared_ptr<Statement> Line::get_obj_from_keyword(ObjectType obj_keyword) {
@@ -65,7 +73,7 @@ std::shared_ptr<Statement> Line::objectify() {
   return std::make_shared<Statement>(std::move(entries));
 }
 
-std::ostream &operator<<(std::ostream &os, const Line &rhs) {
+std::ostream &operator<<(std::ostream &os, Line &rhs) {
   os << rhs.get_text();
   return os;
 }
@@ -79,23 +87,30 @@ Statement::Statement(
   list = std::move(input);
 }
 
-std::string Statement::get_text() const {
-  std::string ret_text;
-  // TODO: Test is_active() here
+const std::string &Statement::get_text() {
+  if (!_text_is_built)
+    build_text();
+  return text;
+}
+
+void Statement::build_text() {
+  std::string new_text;
   for (std::shared_ptr<StatementWord> &word : *list) {
     if (!word->is_active())
       continue;
     std::string text = word->get_text();
-    ret_text += text;
+    new_text += text;
     if (R"(\\)" == text)
-      ret_text += "\n";
+      new_text += "\n";
     else
-      ret_text += " ";
+      new_text += " ";
   }
-  return ret_text;
+  new_text.pop_back(); // Remove last whitespace
+  text = new_text;
+  _text_is_built = true;
 }
 
-std::ostream &operator<<(std::ostream &os, const Statement &rhs) {
+std::ostream &operator<<(std::ostream &os, Statement &rhs) {
   os << rhs.get_text();
   return os;
 }
