@@ -35,13 +35,13 @@ void Word::set_add_whitespace(char ch) {
 void Word::clear_whitespace_flag(char ch) {
   // std::cout << keyword << " " << ch << std::endl;
   switch (charKeyword) {
-  case NONE:
+  case CharKeyword::NONE:
     return;
-  case ANY:
+  case CharKeyword::ANY:
     if (' ' == ch)
       return;
     break;
-  case OPENING_PARENTHESIS:
+  case CharKeyword::OPENING_PARENTHESIS:
     if (' ' == ch)
       return;
     else {
@@ -49,7 +49,7 @@ void Word::clear_whitespace_flag(char ch) {
       return;
     }
     break;
-  case CLOSING_PARENTHESIS:
+  case CharKeyword::CLOSING_PARENTHESIS:
     if (')' != ch)
       return;
     remove_previous_whitespace();
@@ -57,7 +57,7 @@ void Word::clear_whitespace_flag(char ch) {
   }
   _ignore_whitespace = false;
   _add_whitespace = false;
-  charKeyword = NONE;
+  charKeyword = CharKeyword::NONE;
 }
 
 bool Word::is_double_whitespace(char ch) const {

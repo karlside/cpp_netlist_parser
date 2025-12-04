@@ -24,7 +24,7 @@ public:
   virtual ~StatementWord() = default;
 
 protected:
-  ObjectType _keyword = NONE;
+  ObjectType _keyword{ObjectType::NONE};
   bool _is_active{true};
   bool _has_been_parsed{false};
   bool has_been_parsed() const { return _has_been_parsed; }
@@ -84,7 +84,7 @@ private:
 
 class SimulatorWord : public StatementWord {
 protected:
-  ObjectType _keyword = SIMULATOR;
+  ObjectType _keyword{ObjectType::SIMULATOR};
 };
 
 class KeyValueWord : public StatementWord {
@@ -102,7 +102,7 @@ public:
   void parse();
 
 private:
-  ObjectType _keyword = KEYVALUE;
+  ObjectType _keyword{ObjectType::KEYVALUE};
   const bool _is_done{true};
   std::shared_ptr<std::string> key;
   std::shared_ptr<std::string> value;
@@ -121,7 +121,7 @@ public:
   std::string get_port();
 
 private:
-  ObjectType _keyword = PORT;
+  ObjectType _keyword{ObjectType::PORT};
   const bool _is_done{true};
 };
 
