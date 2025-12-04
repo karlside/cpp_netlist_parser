@@ -33,7 +33,6 @@ void Word::set_add_whitespace(char ch) {
 }
 
 void Word::clear_whitespace_flag(char ch) {
-  // std::cout << keyword << " " << ch << std::endl;
   switch (charKeyword) {
   case CharKeyword::NONE:
     return;
@@ -139,14 +138,16 @@ std::shared_ptr<StatementWord> Word::objectify() {
   } else if (otherKeywordMap.find(get_text()) != otherKeywordMap.end()) {
     word_obj_type = otherKeywordMap.at(get_text());
   }
-  for (char ch : get_text()) {
-    if ('=' == ch) {
-      word_obj_type = ObjectType::KEYVALUE;
-      break;
-    }
-    if ('(' == ch) {
-      word_obj_type = ObjectType::PORT;
-      break;
+  if (ObjectType::NONE == word_obj_type) {
+    for (char ch : get_text()) {
+      if ('=' == ch) {
+        word_obj_type = ObjectType::KEYVALUE;
+        break;
+      }
+      if ('(' == ch) {
+        word_obj_type = ObjectType::PORT;
+        break;
+      }
     }
   }
   if (ObjectType::NONE == word_obj_type) {
@@ -155,6 +156,8 @@ std::shared_ptr<StatementWord> Word::objectify() {
   switch (word_obj_type) {
   case ObjectType::NONE:
     return std::make_shared<StatementWord>(std::move(text));
+  case ObjectType::SIMULATOR:
+    return std::make_shared<SimulatorWord>(std::move(text));
   case ObjectType::KEYVALUE:
     return std::make_shared<KeyValueWord>(std::move(text));
   case ObjectType::PORT:
@@ -197,6 +200,16 @@ void StatementWord::add_string(std::string input) {
   parse();
 }
 
+// ---------------------
+// --- SimulatorWord ---
+// ---------------------
+
+std::string SimulatorWord::get_text() {
+  if (!has_been_parsed())
+    return *text;
+  return *text;
+}
+
 // --------------------
 // --- KeyValueWord ---
 // --------------------
@@ -236,7 +249,7 @@ std::string KeyValueWord::get_value() {
 // ----------------
 // --- PortWord ---
 // ----------------
-std::string PortWord::get_text() const {
+std::string PortWord::get_text() {
   if (!has_been_parsed())
     return *text;
   return "(" + *text + ")";

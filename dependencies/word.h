@@ -17,9 +17,9 @@ public:
   void activate() { _is_active = true; }
   void deactivate() { _is_active = false; }
   bool is_active() const { return _is_active; }
-  ObjectType get_keyword() const { return _keyword; }
 
-  virtual std::string get_text() const { return *text; }
+  virtual const ObjectType &get_keyword() const { return _keyword; }
+  virtual std::string get_text() { return *text; }
 
   virtual ~StatementWord() = default;
 
@@ -83,6 +83,13 @@ private:
 };
 
 class SimulatorWord : public StatementWord {
+public:
+  SimulatorWord(std::unique_ptr<std::string> input)
+      : StatementWord(std::move(input)) {}
+
+  const ObjectType &get_keyword() const { return _keyword; }
+  std::string get_text();
+
 protected:
   ObjectType _keyword{ObjectType::SIMULATOR};
 };
@@ -90,8 +97,10 @@ protected:
 class KeyValueWord : public StatementWord {
 public:
   KeyValueWord();
-  KeyValueWord(std::unique_ptr<std::string> input) { text = std::move(input); }
-  // KeyValueWord(const Word *input_word) { append_word(*input_word); }
+  KeyValueWord(std::unique_ptr<std::string> input)
+      : StatementWord(std::move(input)) {}
+
+  const ObjectType &get_keyword() const { return _keyword; }
 
   void set_key(std::string input) { *key = input; }
   void set_value(std::string input) { *value = input; }
@@ -112,11 +121,12 @@ private:
 class PortWord : public StatementWord {
 public:
   PortWord();
-  PortWord(std::unique_ptr<std::string> input) { text = std::move(input); }
+  PortWord(std::unique_ptr<std::string> input)
+      : StatementWord(std::move(input)) {}
 
-  // PortWord(const Word *input_word) { append_word(*input_word); }
+  const ObjectType &get_keyword() const { return _keyword; }
 
-  std::string get_text() const;
+  std::string get_text();
   void parse();
   std::string get_port();
 

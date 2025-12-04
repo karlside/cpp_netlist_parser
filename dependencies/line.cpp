@@ -28,10 +28,6 @@ std::shared_ptr<StatementWord> Line::pop_word() {
   return temp_word;
 }
 
-std::shared_ptr<StatementWord> *Line::at(int index) const {
-  return &entries->at(index);
-}
-
 std::string Line::get_text() const {
   std::string ret_text;
   for (std::shared_ptr<StatementWord> word : *entries) {
@@ -44,20 +40,29 @@ std::string Line::get_text() const {
   }
   return ret_text;
 }
-int Line::length() const { return entries->size(); }
 
-bool Line::is_done() const { return _is_done; }
+std::shared_ptr<Statement> Line::get_obj_from_keyword(ObjectType obj_keyword) {
+  switch (obj_keyword) {
+  case ObjectType::SIMULATOR:
+    return std::make_shared<SimulatorStatement>(entries);
+  case ObjectType::PORT:
+    return std::make_shared<PortStatement>(entries);
+  }
+  return nullptr;
+}
 
 std::shared_ptr<Statement> Line::objectify() {
   for (std::shared_ptr<StatementWord> &word : *entries) {
-    if ("simulator" == word->get_text()) {
-      std::shared_ptr<Statement> ret_obj =
-          std::make_shared<Statement>(std::move(entries));
-      return ret_obj;
-    }
+    // TODO: Some function that returns the correct object based on keyword
+    if (ObjectType::NONE == word->get_keyword())
+      continue;
+    std::shared_ptr<Statement> ret_obj =
+        get_obj_from_keyword(word->get_keyword());
+    if (nullptr == ret_obj)
+      continue;
+    return ret_obj;
   }
   return std::make_shared<Statement>(std::move(entries));
-  // Read through the entires, and identify what type of object the line is
 }
 
 std::ostream &operator<<(std::ostream &os, const Line &rhs) {
@@ -103,3 +108,17 @@ std::string Statement::get_list() const {
   //  memory saftey..
   return "";
 }
+
+// --------------------------
+// --- SimulatorStatement ---
+// --------------------------
+
+// ---------------------
+// --- PortStatement ---
+// ---------------------
+//
+// PortStatement::PortStatement(
+//     std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input) {
+//   // list = std::move(input);
+//   Statement(input);
+// }

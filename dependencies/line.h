@@ -6,8 +6,13 @@
 #include <string>
 #include <vector>
 
+// -----------------
+// --- Statement ---
+// -----------------
+
 class Statement {
 public:
+  Statement() {};
   Statement(std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input);
 
   void activate() { _is_active = true; }
@@ -28,19 +33,27 @@ protected:
   std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> list;
 };
 
+// ------------
+// --- Line ---
+// ------------
+
 class Line {
 public:
   Line();
   Line(std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input);
   void add_word(std::unique_ptr<Word> word);
   std::shared_ptr<StatementWord> pop_word();
-  std::shared_ptr<StatementWord> *at(int index) const;
+  std::shared_ptr<StatementWord> *at(int index) const {
+    return &entries->at(index);
+  }
   std::string get_text() const;
-  int length() const;
-  bool is_done() const;
+  int length() const { return entries->size(); }
+  bool is_done() const { return _is_done; }
+
   std::shared_ptr<Statement>
   objectify(); // Return a 'dynamicly dispateched' line
   // object based in line content
+  std::shared_ptr<Statement> get_obj_from_keyword(ObjectType obj_keyword);
 
   friend std::ostream &operator<<(std::ostream &os, const Line &rhs);
 
@@ -52,9 +65,47 @@ protected:
   std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> entries{};
 };
 
-// class FirstWordDefinedStatement : public Statement {
-// public:
-//   std::string get_list(); // Return the list of param, but skip the first
-//   entire
-// };
+// -------------------------------
+// --- SkipSecondWordStatement ---
+// -------------------------------
+
+class SkipFirstWordStatement : public Statement {
+public:
+  SkipFirstWordStatement() {};
+  SkipFirstWordStatement(
+      std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input)
+      : Statement(input) {}
+
+  ~SkipFirstWordStatement() = default;
+};
+
+class SimulatorStatement : public SkipFirstWordStatement {
+  // class SimulatorStatement : public Statement {
+public:
+  SimulatorStatement(
+      std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input)
+      : SkipFirstWordStatement(input) {}
+};
+
+// -------------------------------
+// --- SkipSecondWordStatement ---
+// -------------------------------
+
+class SkipSecondWordStatement : public Statement {
+public:
+  SkipSecondWordStatement() {};
+  SkipSecondWordStatement(
+      std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input)
+      : Statement(input) {}
+
+  ~SkipSecondWordStatement() = default;
+};
+
+class PortStatement : public SkipSecondWordStatement {
+public:
+  PortStatement(
+      std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input)
+      : SkipSecondWordStatement(input) {}
+};
+
 #endif
