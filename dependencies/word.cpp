@@ -195,7 +195,7 @@ std::ostream &operator<<(std::ostream &os, const Word &rhs) {
 // --- StatementWord ---
 // ---------------------
 
-void StatementWord::add_string(std::string input) {
+void StatementWord::set_text(std::string input) {
   *text = input;
   parse();
 }
@@ -204,7 +204,7 @@ void StatementWord::add_string(std::string input) {
 // --- SimulatorWord ---
 // ---------------------
 
-std::string SimulatorWord::get_text() {
+const std::string &SimulatorWord::get_text() {
   if (!has_been_parsed())
     return *text;
   return *text;
@@ -216,59 +216,67 @@ std::string SimulatorWord::get_text() {
 
 void KeyValueWord::parse() {
   std::istringstream iss(*text);
-  std::getline(iss, *key, '=');
-  std::getline(iss, *value);
-  if (!value->empty())
+  std::getline(iss, key, '=');
+  std::getline(iss, value);
+  if (!value.empty())
     _has_value = true;
-  activate();
   _has_been_parsed = true;
 }
 
-std::string KeyValueWord::get_text() {
-  if (!has_been_parsed()) {
-    return *text;
-  } else if (has_value()) {
-    return get_key() + "=" + get_value();
-  } else {
-    return get_key();
-  }
+void KeyValueWord::build_text() {
+  if (has_value())
+    *text = key + "=" + value;
+  else
+    *text = key;
 }
 
-std::string KeyValueWord::get_key() {
-  if (!has_been_parsed())
-    parse();
-  return *key;
+void KeyValueWord::set_key(std::string input) {
+  key = input;
+  build_text();
 }
 
-std::string KeyValueWord::get_value() {
+void KeyValueWord::set_value(std::string input) {
+  value = input;
+  build_text();
+}
+
+const std::string &KeyValueWord::get_key() {
   if (!has_been_parsed())
     parse();
-  return *value;
+  return key;
+}
+
+const std::string &KeyValueWord::get_value() {
+  if (!has_been_parsed())
+    parse();
+  return value;
 }
 
 // ----------------
 // --- PortWord ---
 // ----------------
-std::string PortWord::get_text() {
-  if (!has_been_parsed())
-    return *text;
-  return "(" + *text + ")";
-}
 
 void PortWord::parse() {
   // TODO: parse don't handle input formating in a good way.
   std::string dump;
-  std::istringstream iss(*text);
+  std::istringstream iss(port);
   std::getline(iss, dump, '(');
   // std::getline(iss, dump, ' ');
-  std::getline(iss, *text, ')');
-  activate();
+  std::getline(iss, port, ')');
   _has_been_parsed = true;
 }
 
-std::string PortWord::get_port() {
+void PortWord::build_text() { *text = "(" + port + ")"; }
+
+void PortWord::set_port(std::string input) {
+  // TODO: input formatting?
+  port = input;
+  build_text();
+}
+
+const std::string &PortWord::get_port() {
   // TODO: this has not been tested
   if (!has_been_parsed())
     parse();
-  return *text;
+  return port;
 }

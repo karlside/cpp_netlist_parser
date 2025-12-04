@@ -18,8 +18,8 @@ public:
   void deactivate() { _is_active = false; }
   bool is_active() const { return _is_active; }
 
-  virtual const ObjectType &get_keyword() const { return _keyword; }
-  virtual std::string get_text() { return *text; }
+  virtual ObjectType get_keyword() const { return _keyword; }
+  virtual const std::string &get_text() { return *text; }
 
   virtual ~StatementWord() = default;
 
@@ -30,7 +30,7 @@ protected:
   bool has_been_parsed() const { return _has_been_parsed; }
 
   std::shared_ptr<std::string> text;
-  void add_string(std::string input);
+  void set_text(std::string input);
   virtual void parse() { _has_been_parsed = true; }
 };
 
@@ -51,7 +51,7 @@ public:
   bool is_end_of_line() const { return _is_end_of_line; }
   bool is_append_to_prev_word() const { return _append_to_prev_word; }
 
-  virtual std::string get_text() const { return *text; }
+  virtual const std::string &get_text() const { return *text; }
 
   friend std::ostream &operator<<(std::ostream &os, const Word &rhs);
 
@@ -87,8 +87,8 @@ public:
   SimulatorWord(std::unique_ptr<std::string> input)
       : StatementWord(std::move(input)) {}
 
-  const ObjectType &get_keyword() const { return _keyword; }
-  std::string get_text();
+  ObjectType get_keyword() const { return _keyword; }
+  const std::string &get_text();
 
 protected:
   ObjectType _keyword{ObjectType::SIMULATOR};
@@ -100,22 +100,23 @@ public:
   KeyValueWord(std::unique_ptr<std::string> input)
       : StatementWord(std::move(input)) {}
 
-  const ObjectType &get_keyword() const { return _keyword; }
+  ObjectType get_keyword() const { return _keyword; }
 
-  void set_key(std::string input) { *key = input; }
-  void set_value(std::string input) { *value = input; }
-  std::string get_key();
-  std::string get_value();
-  std::string get_text();
+  void set_key(std::string input);
+  void set_value(std::string input);
+  const std::string &get_key();
+  const std::string &get_value();
+  // const std::string &get_text();
   bool has_value() const { return _has_value; }
   void parse();
 
 private:
   ObjectType _keyword{ObjectType::KEYVALUE};
   const bool _is_done{true};
-  std::shared_ptr<std::string> key;
-  std::shared_ptr<std::string> value;
+  std::string key;
+  std::string value;
   bool _has_value{false};
+  void build_text();
 };
 
 class PortWord : public StatementWord {
@@ -124,15 +125,17 @@ public:
   PortWord(std::unique_ptr<std::string> input)
       : StatementWord(std::move(input)) {}
 
-  const ObjectType &get_keyword() const { return _keyword; }
+  ObjectType get_keyword() const { return _keyword; }
 
-  std::string get_text();
   void parse();
-  std::string get_port();
+  const std::string &get_port();
+  void set_port(std::string input);
 
 private:
   ObjectType _keyword{ObjectType::PORT};
   const bool _is_done{true};
+  std::string port;
+  void build_text();
 };
 
 #endif

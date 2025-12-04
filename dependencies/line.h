@@ -84,7 +84,9 @@ class SimulatorStatement : public SkipFirstWordStatement {
 public:
   SimulatorStatement(
       std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input)
-      : SkipFirstWordStatement(input) {}
+      : SkipFirstWordStatement(input) {
+    // std::cout << "Creating SimulatorStatement" << std::endl;
+  }
 };
 
 // -------------------------------
@@ -105,7 +107,9 @@ class PortStatement : public SkipSecondWordStatement {
 public:
   PortStatement(
       std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input)
-      : SkipSecondWordStatement(input) {}
+      : SkipSecondWordStatement(input) {
+    // std::cout << "Creating PortStatement" << std::endl;
+  }
 };
 
 #endif
