@@ -2,9 +2,28 @@
 #define LINE_H
 
 #include "word.h"
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
+
+// ------------
+// --- List ---
+// ------------
+
+struct ListOfWords {
+public:
+  void add_word(std::shared_ptr<StatementWord> input);
+  std::shared_ptr<StatementWord> get_word(std::string key);
+  std::shared_ptr<StatementWord> pop_word();
+
+  friend std::ostream &operator<<(std::ostream &os, const ListOfWords &rhs);
+
+private:
+  std::vector<std::shared_ptr<StatementWord>> words;
+  std::unordered_map<std::string, int> index;
+  std::string create_key(std::string key, int iterator = 0);
+};
 
 // -----------------
 // --- Statement ---
