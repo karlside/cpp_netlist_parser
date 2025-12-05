@@ -47,10 +47,10 @@ public:
   void add_word(std::unique_ptr<Word> word);
   std::shared_ptr<StatementWord> pop_word();
   std::shared_ptr<StatementWord> *at(int index) const {
-    return &entries->at(index);
+    return &list->at(index);
   }
   const std::string &get_text();
-  int length() const { return entries->size(); }
+  int length() const { return list->size(); }
   bool is_done() const { return _is_done; }
 
   std::shared_ptr<Statement> objectify();
@@ -64,7 +64,7 @@ protected:
   std::shared_ptr<Statement> get_obj_from_keyword(ObjectType obj_keyword);
   bool _is_done{false};
   bool _text_is_built{false};
-  std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> entries{};
+  std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> list{};
   void build_text();
   std::string text;
 };

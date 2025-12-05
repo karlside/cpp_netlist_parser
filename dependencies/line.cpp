@@ -5,10 +5,9 @@
 #include <vector>
 
 Line::Line()
-    : entries{std::make_shared<std::vector<std::shared_ptr<StatementWord>>>()} {
-}
+    : list{std::make_shared<std::vector<std::shared_ptr<StatementWord>>>()} {}
 Line::Line(std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input) {
-  entries = std::move(input);
+  list = std::move(input);
 }
 
 void Line::add_word(std::unique_ptr<Word> word) {
@@ -19,12 +18,12 @@ void Line::add_word(std::unique_ptr<Word> word) {
   if (R"(\\)" == word->get_text())
     _is_done = false;
   std::shared_ptr statementWord = word->objectify();
-  entries->push_back(statementWord);
+  list->push_back(statementWord);
 }
 
 std::shared_ptr<StatementWord> Line::pop_word() {
-  std::shared_ptr<StatementWord> temp_word = std::move(entries->back());
-  entries->pop_back();
+  std::shared_ptr<StatementWord> temp_word = std::move(list->back());
+  list->pop_back();
   return temp_word;
 }
 
@@ -36,7 +35,7 @@ const std::string &Line::get_text() {
 
 void Line::build_text() {
   std::string new_text;
-  for (std::shared_ptr<StatementWord> word : *entries) {
+  for (std::shared_ptr<StatementWord> word : *list) {
     std::string word_text = word->get_text();
     new_text += word_text;
     if (R"(\\)" == text)
@@ -52,15 +51,15 @@ void Line::build_text() {
 std::shared_ptr<Statement> Line::get_obj_from_keyword(ObjectType obj_keyword) {
   switch (obj_keyword) {
   case ObjectType::SIMULATOR:
-    return std::make_shared<SimulatorStatement>(entries);
+    return std::make_shared<SimulatorStatement>(list);
   case ObjectType::PORT:
-    return std::make_shared<PortStatement>(entries);
+    return std::make_shared<PortStatement>(list);
   }
   return nullptr;
 }
 
 std::shared_ptr<Statement> Line::objectify() {
-  for (std::shared_ptr<StatementWord> &word : *entries) {
+  for (std::shared_ptr<StatementWord> &word : *list) {
     // TODO: Some function that returns the correct object based on keyword
     if (ObjectType::NONE == word->get_keyword())
       continue;
@@ -70,7 +69,7 @@ std::shared_ptr<Statement> Line::objectify() {
       continue;
     return ret_obj;
   }
-  return std::make_shared<Statement>(std::move(entries));
+  return std::make_shared<Statement>(std::move(list));
 }
 
 std::ostream &operator<<(std::ostream &os, Line &rhs) {
