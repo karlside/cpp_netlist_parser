@@ -20,6 +20,7 @@ public:
 
   virtual ObjectType get_keyword() const { return _keyword; }
   virtual const std::string &get_text() { return *text; }
+  virtual std::string print_word() { return get_text(); }
 
   virtual ~StatementWord() = default;
 

@@ -7,9 +7,26 @@
 #include <string>
 #include <vector>
 
-// ------------
-// --- List ---
-// ------------
+// ------------------
+// --- ListOfWord ---
+// ------------------
+
+struct WordPair {
+  WordPair(std::pair<std::string, std::shared_ptr<StatementWord>> input)
+      : name{input.first}, word{input.second} {}
+  std::shared_ptr<StatementWord> get_word() { return word; }
+  const std::string &get_text() const { return word->get_text(); }
+  const std::string &get_name() const { return name; }
+  ObjectType get_keyword() const { return word->get_keyword(); }
+  bool is_active() const { return word->is_active(); }
+  std::string print_word() {
+    return "ID: " + name + " - Word: " + word->print_word();
+  }
+
+private:
+  std::string const name;
+  std::shared_ptr<StatementWord> word;
+};
 
 struct ListOfWords {
 public:
@@ -19,7 +36,7 @@ public:
   // std::shared_ptr<StatementWord> at(int index) { return words.at(index); }
   int size() { return words.size(); }
 
-  std::vector<std::shared_ptr<StatementWord>> words;
+  std::vector<WordPair> words;
 
   friend std::ostream &operator<<(std::ostream &os, const ListOfWords &rhs);
 
