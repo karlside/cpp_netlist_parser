@@ -13,14 +13,17 @@
 
 struct ListOfWords {
 public:
-  void add_word(std::shared_ptr<StatementWord> input);
+  void push_back(std::shared_ptr<StatementWord> input);
   std::shared_ptr<StatementWord> get_word(std::string key);
-  std::shared_ptr<StatementWord> pop_word();
+  std::shared_ptr<StatementWord> pop_back();
+  // std::shared_ptr<StatementWord> at(int index) { return words.at(index); }
+  int size() { return words.size(); }
+
+  std::vector<std::shared_ptr<StatementWord>> words;
 
   friend std::ostream &operator<<(std::ostream &os, const ListOfWords &rhs);
 
 private:
-  std::vector<std::shared_ptr<StatementWord>> words;
   std::unordered_map<std::string, int> index;
   std::string create_key(std::string key, int iterator = 0);
 };
@@ -32,7 +35,7 @@ private:
 class Statement {
 public:
   Statement() {};
-  Statement(std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input);
+  Statement(std::shared_ptr<ListOfWords> input);
 
   void activate() { _is_active = true; }
   void deactivate() { _is_active = false; }
@@ -49,7 +52,8 @@ public:
 
 protected:
   bool _is_active;
-  std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> list;
+  // std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> list;
+  std::shared_ptr<ListOfWords> list;
   std::string text;
   void build_text();
   bool _text_is_built{false};
@@ -62,12 +66,11 @@ protected:
 class Line {
 public:
   Line();
-  Line(std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input);
+  Line(std::shared_ptr<ListOfWords> input);
   void add_word(std::unique_ptr<Word> word);
   std::shared_ptr<StatementWord> pop_word();
-  std::shared_ptr<StatementWord> *at(int index) const {
-    return &list->at(index);
-  }
+  // std::shared_ptr<StatementWord> at(int index) const { return
+  // list->at(index); }
   const std::string &get_text();
   int length() const { return list->size(); }
   bool is_done() const { return _is_done; }
@@ -83,7 +86,8 @@ protected:
   std::shared_ptr<Statement> get_obj_from_keyword(ObjectType obj_keyword);
   bool _is_done{false};
   bool _text_is_built{false};
-  std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> list{};
+  // std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> list{};
+  std::shared_ptr<ListOfWords> list;
   void build_text();
   std::string text;
 };
@@ -95,8 +99,7 @@ protected:
 class SkipFirstWordStatement : public Statement {
 public:
   SkipFirstWordStatement() {};
-  SkipFirstWordStatement(
-      std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input)
+  SkipFirstWordStatement(std::shared_ptr<ListOfWords> input)
       : Statement(input) {}
 
   ~SkipFirstWordStatement() = default;
@@ -104,8 +107,7 @@ public:
 
 class SimulatorStatement : public SkipFirstWordStatement {
 public:
-  SimulatorStatement(
-      std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input)
+  SimulatorStatement(std::shared_ptr<ListOfWords> input)
       : SkipFirstWordStatement(input) {
     // std::cout << "Creating SimulatorStatement" << std::endl;
   }
@@ -118,8 +120,7 @@ public:
 class SkipSecondWordStatement : public Statement {
 public:
   SkipSecondWordStatement() {};
-  SkipSecondWordStatement(
-      std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input)
+  SkipSecondWordStatement(std::shared_ptr<ListOfWords> input)
       : Statement(input) {}
 
   ~SkipSecondWordStatement() = default;
@@ -127,8 +128,7 @@ public:
 
 class PortStatement : public SkipSecondWordStatement {
 public:
-  PortStatement(
-      std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> input)
+  PortStatement(std::shared_ptr<ListOfWords> input)
       : SkipSecondWordStatement(input) {
     // std::cout << "Creating PortStatement" << std::endl;
   }
