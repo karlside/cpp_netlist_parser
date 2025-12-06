@@ -18,7 +18,7 @@ public:
   void deactivate() { _is_active = false; }
   bool is_active() const { return _is_active; }
 
-  virtual ObjectType get_keyword() const { return _keyword; }
+  virtual const ObjectType get_keyword() const { return _keyword; }
   virtual const std::string &get_text() { return *text; }
 
   virtual ~StatementWord() = default;
@@ -87,7 +87,7 @@ public:
   SimulatorWord(std::unique_ptr<std::string> input)
       : StatementWord(std::move(input)) {}
 
-  ObjectType get_keyword() const { return _keyword; }
+  const ObjectType get_keyword() const { return _keyword; }
   const std::string &get_text();
 
 protected:
@@ -100,7 +100,7 @@ public:
   KeyValueWord(std::unique_ptr<std::string> input)
       : StatementWord(std::move(input)) {}
 
-  ObjectType get_keyword() const { return _keyword; }
+  const ObjectType get_keyword() const { return _keyword; }
 
   void set_key(std::string input);
   void set_value(std::string input);
@@ -125,7 +125,7 @@ public:
   PortWord(std::unique_ptr<std::string> input)
       : StatementWord(std::move(input)) {}
 
-  ObjectType get_keyword() const { return _keyword; }
+  const ObjectType get_keyword() const { return _keyword; }
 
   void parse();
   const std::string &get_port();
