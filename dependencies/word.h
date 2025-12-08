@@ -21,7 +21,7 @@ public:
   virtual ObjectType get_keyword() const { return _keyword; }
   const std::string &get_text() const { return *text; }
   virtual std::string produce_id() { return *text; }
-  virtual std::string print_word();
+  virtual std::string print_list();
 
   virtual ~StatementWord() = default;
 
@@ -106,7 +106,7 @@ public:
 
   ObjectType get_keyword() const { return _keyword; }
   std::string produce_id() { return get_key(); }
-  virtual std::string print_word();
+  virtual std::string print_list();
 
   // void set_key(std::string input);
   void set_value(std::string input);
@@ -133,7 +133,7 @@ public:
 
   ObjectType get_keyword() const { return _keyword; }
   std::string produce_id() { return "port"; }
-  std::string print_word();
+  std::string print_list();
 
   void parse();
   const std::string &get_port();

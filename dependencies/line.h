@@ -18,7 +18,7 @@ struct WordPair {
   std::string const key;
   std::shared_ptr<StatementWord> word;
   std::string print_word() {
-    return "ID:'" + key + "' - " + word->print_word();
+    return "ID:'" + key + "' - " + word->print_list();
   }
 };
 

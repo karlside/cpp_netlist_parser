@@ -191,7 +191,7 @@ std::ostream &operator<<(std::ostream &os, const Word &rhs) {
 // --- StatementWord ---
 // ---------------------
 
-std::string StatementWord::print_word() {
+std::string StatementWord::print_list() {
   std::string ret_text = "text:'" + get_text() + "'";
   if (!is_active())
     ret_text += " - DEACTIVATED";
@@ -248,7 +248,7 @@ const std::string &KeyValueWord::get_value() {
   return value;
 }
 
-std::string KeyValueWord::print_word() {
+std::string KeyValueWord::print_list() {
   std::string ret_text = "text:'" + get_text() + "' - key:'" + get_key() +
                          "' - value:'" + get_value() + "'";
   if (!is_active())
@@ -282,7 +282,7 @@ const std::string &PortWord::get_port() {
   return port;
 }
 
-std::string PortWord::print_word() {
+std::string PortWord::print_list() {
   std::string ret_text =
       "text:'" + get_text() + "' - port string:'" + get_port() + "'";
   if (!is_active())
