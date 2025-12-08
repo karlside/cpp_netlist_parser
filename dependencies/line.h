@@ -20,7 +20,7 @@ struct WordPair {
   ObjectType get_keyword() const { return word->get_keyword(); }
   bool is_active() const { return word->is_active(); }
   std::string print_word() {
-    return "ID: " + name + " - Word: " + word->print_word();
+    return "ID: '" + name + "'\t - Word: " + word->print_word();
   }
 
 private:
@@ -57,13 +57,17 @@ public:
   void activate() { _is_active = true; }
   void deactivate() { _is_active = false; }
   bool is_active() const { return _is_active; }
+  std::shared_ptr<StatementWord> get_word(std::string name) {
+    return list->get_word(name);
+  }
 
   void add_param(
       std::string input_string); // Parse the input and turn it into a word
   const std::string &get_text();
   virtual std::string get_list() const;
+  std::string print_line();
 
-  friend std::ostream &operator<<(std::ostream &os, const Statement &rhs);
+  friend std::ostream &operator<<(std::ostream &os, Statement &rhs);
 
   ~Statement() = default;
 

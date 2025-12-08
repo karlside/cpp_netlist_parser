@@ -133,6 +133,8 @@ const std::string &Statement::get_text() {
 }
 
 void Statement::build_text() {
+  // TODO: This don't work.
+  //  If a word is deactivted the _text_is_built flag is not reset
   std::string new_text;
   for (WordPair &word : list->words) {
     if (!word.is_active())
@@ -146,7 +148,7 @@ void Statement::build_text() {
   }
   new_text.pop_back(); // Remove last whitespace
   text = new_text;
-  _text_is_built = true;
+  // _text_is_built = true;
 }
 
 std::ostream &operator<<(std::ostream &os, Statement &rhs) {
@@ -161,6 +163,14 @@ std::string Statement::get_list() const {
   //  to the word anywhere, without worring about
   //  memory saftey..
   return "";
+}
+
+std::string Statement::print_line() {
+  std::string ret_str;
+  for (WordPair word : list->words) {
+    ret_str += word.print_word() + "\n";
+  }
+  return ret_str;
 }
 
 // --------------------------
