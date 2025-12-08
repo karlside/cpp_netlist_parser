@@ -1,4 +1,5 @@
 #include "line.h"
+#include <cassert>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -21,14 +22,14 @@ std::shared_ptr<StatementWord> ListOfWords::get_word(std::string key) {
   if (index.find(key) == index.end())
     throw std::runtime_error("Key not in List");
   // TODO: Create new errors
-  return words.at(index.at(key)).get_word();
+  return words.at(index.at(key)).word;
 }
 
 std::shared_ptr<StatementWord> ListOfWords::pop_back() {
   WordPair temp_word = words.back();
   words.pop_back();
-  index.erase(temp_word.get_text());
-  return temp_word.get_word();
+  index.erase(temp_word.word->get_text());
+  return temp_word.word;
 }
 
 std::string ListOfWords::create_key(std::string key, int iterator) {
@@ -40,8 +41,8 @@ std::string ListOfWords::create_key(std::string key, int iterator) {
 }
 
 std::ostream &operator<<(std::ostream &os, const ListOfWords &rhs) {
-  for (WordPair word : rhs.words)
-    os << word.get_text() << " ";
+  for (WordPair wordPair : rhs.words)
+    os << wordPair.word->get_text() << " ";
   return os;
 }
 
@@ -78,8 +79,8 @@ const std::string &Line::get_text() {
 
 void Line::build_text() {
   std::string new_text;
-  for (WordPair word : list->words) {
-    std::string word_text = word.get_text();
+  for (WordPair wordPair : list->words) {
+    std::string word_text = wordPair.word->get_text();
     new_text += word_text;
     if (R"(\\)" == text)
       new_text += "\n";
@@ -102,12 +103,12 @@ std::shared_ptr<Statement> Line::get_obj_from_keyword(ObjectType obj_keyword) {
 }
 
 std::shared_ptr<Statement> Line::objectify() {
-  for (WordPair &word : list->words) {
+  for (WordPair &wordPair : list->words) {
     // TODO: Some function that returns the correct object based on keyword
-    if (ObjectType::NONE == word.get_keyword())
+    if (ObjectType::NONE == wordPair.word->get_keyword())
       continue;
     std::shared_ptr<Statement> ret_obj =
-        get_obj_from_keyword(word.get_keyword());
+        get_obj_from_keyword(wordPair.word->get_keyword());
     if (nullptr == ret_obj)
       continue;
     return ret_obj;
@@ -126,29 +127,22 @@ std::ostream &operator<<(std::ostream &os, Line &rhs) {
 
 Statement::Statement(std::shared_ptr<ListOfWords> input) : list{input} {}
 
-const std::string &Statement::get_text() {
-  if (!_text_is_built)
-    build_text();
-  return text;
-}
+std::string Statement::get_text() { return build_text(); }
 
-void Statement::build_text() {
-  // TODO: This don't work.
-  //  If a word is deactivted the _text_is_built flag is not reset
-  std::string new_text;
-  for (WordPair &word : list->words) {
-    if (!word.is_active())
+std::string Statement::build_text() {
+  std::string ret_text;
+  for (WordPair &wordPair : list->words) {
+    if (!wordPair.word->is_active())
       continue;
-    std::string text = word.get_text();
-    new_text += text;
+    std::string text = wordPair.word->get_text();
+    ret_text += text;
     if (R"(\\)" == text)
-      new_text += "\n";
+      ret_text += "\n";
     else
-      new_text += " ";
+      ret_text += " ";
   }
-  new_text.pop_back(); // Remove last whitespace
-  text = new_text;
-  // _text_is_built = true;
+  ret_text.pop_back(); // Remove last whitespace
+  return ret_text;
 }
 
 std::ostream &operator<<(std::ostream &os, Statement &rhs) {

@@ -14,18 +14,12 @@
 struct WordPair {
   WordPair(std::pair<std::string, std::shared_ptr<StatementWord>> input)
       : name{input.first}, word{input.second} {}
-  std::shared_ptr<StatementWord> get_word() { return word; }
-  const std::string &get_text() const { return word->get_text(); }
-  const std::string &get_name() const { return name; }
-  ObjectType get_keyword() const { return word->get_keyword(); }
-  bool is_active() const { return word->is_active(); }
+
+  std::string const name;
+  std::shared_ptr<StatementWord> word;
   std::string print_word() {
     return "ID: '" + name + "'\t - Word: " + word->print_word();
   }
-
-private:
-  std::string const name;
-  std::shared_ptr<StatementWord> word;
 };
 
 struct ListOfWords {
@@ -63,7 +57,7 @@ public:
 
   void add_param(
       std::string input_string); // Parse the input and turn it into a word
-  const std::string &get_text();
+  std::string get_text();
   virtual std::string get_list() const;
   std::string print_line();
 
@@ -72,12 +66,11 @@ public:
   ~Statement() = default;
 
 protected:
-  bool _is_active;
+  bool _is_active{true};
   // std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> list;
   std::shared_ptr<ListOfWords> list;
-  std::string text;
-  void build_text();
-  bool _text_is_built{false};
+  // std::string text;
+  std::string build_text();
 };
 
 // ------------
