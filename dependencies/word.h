@@ -19,8 +19,10 @@ public:
   bool is_active() const { return _is_active; }
 
   virtual ObjectType get_keyword() const { return _keyword; }
-  virtual const std::string &get_text() { return *text; }
-  virtual std::string print_word() { return get_text(); }
+  const std::string &get_text() const { return *text; }
+  virtual std::string print_word() {
+    return get_text();
+  } // TODO: Might remove this one..
 
   virtual ~StatementWord() = default;
 
@@ -31,7 +33,7 @@ protected:
   bool has_been_parsed() const { return _has_been_parsed; }
 
   std::shared_ptr<std::string> text;
-  void set_text(std::string input);
+  void set_text(std::string input) { *text = input; }
   virtual void parse() { _has_been_parsed = true; }
 };
 
@@ -136,7 +138,7 @@ private:
   ObjectType _keyword{ObjectType::PORT};
   const bool _is_done{true};
   std::string port;
-  void build_text();
+  void build_text() { *text = "(" + port + ")"; }
 };
 
 #endif

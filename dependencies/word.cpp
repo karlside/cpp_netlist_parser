@@ -195,20 +195,9 @@ std::ostream &operator<<(std::ostream &os, const Word &rhs) {
 // --- StatementWord ---
 // ---------------------
 
-void StatementWord::set_text(std::string input) {
-  *text = input;
-  parse();
-}
-
 // ---------------------
 // --- SimulatorWord ---
 // ---------------------
-
-const std::string &SimulatorWord::get_text() {
-  if (!has_been_parsed())
-    return *text;
-  return *text;
-}
 
 // --------------------
 // --- KeyValueWord ---
@@ -231,11 +220,15 @@ void KeyValueWord::build_text() {
 }
 
 void KeyValueWord::set_key(std::string input) {
+  if (!has_been_parsed())
+    parse();
   key = input;
   build_text();
 }
 
 void KeyValueWord::set_value(std::string input) {
+  if (!has_been_parsed())
+    parse();
   value = input;
   build_text();
 }
@@ -266,8 +259,6 @@ void PortWord::parse() {
   _has_been_parsed = true;
 }
 
-void PortWord::build_text() { *text = "(" + port + ")"; }
-
 void PortWord::set_port(std::string input) {
   // TODO: input formatting?
   port = input;
@@ -275,7 +266,6 @@ void PortWord::set_port(std::string input) {
 }
 
 const std::string &PortWord::get_port() {
-  // TODO: this has not been tested
   if (!has_been_parsed())
     parse();
   return port;
