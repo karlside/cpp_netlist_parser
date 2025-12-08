@@ -18,21 +18,22 @@ int main() {
   std::cout << "PRINTING NETLIST:" << std::endl;
   std::cout << netlist << std::endl;
 
-  // std::shared_ptr<StatementWord> word0 = std::make_shared<StatementWord>(
-  //     std::make_unique<std::string>("lang=spectre"));
-  // std::shared_ptr<StatementWord> word1 =
-  //     std::make_shared<StatementWord>(std::make_unique<std::string>("(1 2
-  //     3)"));
+  // std::shared_ptr<ListOfWords> myWords = std::make_shared<ListOfWords>();
+  // std::shared_ptr<Word> word = std::make_shared<Word>("lang=spectre");
+  // std::shared_ptr<StatementWord> word0 = word->objectify();
+  // word = std::make_shared<Word>("(1 2 3)");
+  // std::shared_ptr<StatementWord> word1 = word->objectify();
+  // // word0->deactivate();
   // myWords->push_back(word0);
   // myWords->push_back(word1);
+  //
   // Statement myLine = Statement(myWords);
   //
   // std::cout << myLine << std::endl;
   // std::cout << myLine.print_line() << std::endl;
-  // myLine.get_word("(1 2 3)")->deactivate();
+  // // myLine.get_word("lang")->deactivate();
+  // // myLine.get_word("port")->deactivate();
+  // std::cout << myLine.print_line() << std::endl;
   // std::cout << myLine << std::endl;
-  // return 0;
-
-  // TODO:
-  // Calling print_line need to parse the objects.
+  return 0;
 }

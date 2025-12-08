@@ -6,10 +6,6 @@
 #include <iostream>
 #include <sstream>
 
-// ---------------------
-// --- StatementWord ---
-// ---------------------
-
 // ------------
 // --- Word ---
 // ------------
@@ -195,6 +191,13 @@ std::ostream &operator<<(std::ostream &os, const Word &rhs) {
 // --- StatementWord ---
 // ---------------------
 
+std::string StatementWord::print_word() {
+  std::string ret_text = "text:'" + get_text() + "'";
+  if (!is_active())
+    ret_text += " - DEACTIVATED";
+  return ret_text;
+}
+
 // ---------------------
 // --- SimulatorWord ---
 // ---------------------
@@ -219,12 +222,12 @@ void KeyValueWord::build_text() {
     *text = key;
 }
 
-void KeyValueWord::set_key(std::string input) {
-  if (!has_been_parsed())
-    parse();
-  key = input;
-  build_text();
-}
+// void KeyValueWord::set_key(std::string input) {
+//   if (!has_been_parsed())
+//     parse();
+//   key = input;
+//   build_text();
+// }
 
 void KeyValueWord::set_value(std::string input) {
   if (!has_been_parsed())
@@ -245,6 +248,14 @@ const std::string &KeyValueWord::get_value() {
   return value;
 }
 
+std::string KeyValueWord::print_word() {
+  std::string ret_text = "text:'" + get_text() + "' - key:'" + get_key() +
+                         "' - value:'" + get_value() + "'";
+  if (!is_active())
+    ret_text += " - DEACTIVATED";
+  return ret_text;
+}
+
 // ----------------
 // --- PortWord ---
 // ----------------
@@ -252,7 +263,7 @@ const std::string &KeyValueWord::get_value() {
 void PortWord::parse() {
   // TODO: parse don't handle input formating in a good way.
   std::string dump;
-  std::istringstream iss(port);
+  std::istringstream iss(*text);
   std::getline(iss, dump, '(');
   // std::getline(iss, dump, ' ');
   std::getline(iss, port, ')');
@@ -269,4 +280,12 @@ const std::string &PortWord::get_port() {
   if (!has_been_parsed())
     parse();
   return port;
+}
+
+std::string PortWord::print_word() {
+  std::string ret_text =
+      "text:'" + get_text() + "' - port string:'" + get_port() + "'";
+  if (!is_active())
+    ret_text += " - DEACTIVATED";
+  return ret_text;
 }

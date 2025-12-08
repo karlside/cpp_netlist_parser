@@ -20,9 +20,8 @@ public:
 
   virtual ObjectType get_keyword() const { return _keyword; }
   const std::string &get_text() const { return *text; }
-  virtual std::string print_word() {
-    return get_text();
-  } // TODO: Might remove this one..
+  virtual std::string produce_id() { return *text; }
+  virtual std::string print_word();
 
   virtual ~StatementWord() = default;
 
@@ -41,7 +40,9 @@ class Word {
 
 public:
   Word() : text(std::make_unique<std::string>()) {}
-  Word(std::string input) { add_string(input); }
+  Word(std::string input) : text(std::make_unique<std::string>()) {
+    add_string(input);
+  }
   Word(const Word *input_word) { append_word(*input_word); }
 
   void add_char(char input);
@@ -104,8 +105,10 @@ public:
       : StatementWord(std::move(input)) {}
 
   ObjectType get_keyword() const { return _keyword; }
+  std::string produce_id() { return get_key(); }
+  virtual std::string print_word();
 
-  void set_key(std::string input);
+  // void set_key(std::string input);
   void set_value(std::string input);
   const std::string &get_key();
   const std::string &get_value();
@@ -129,6 +132,8 @@ public:
       : StatementWord(std::move(input)) {}
 
   ObjectType get_keyword() const { return _keyword; }
+  std::string produce_id() { return "port"; }
+  std::string print_word();
 
   void parse();
   const std::string &get_port();

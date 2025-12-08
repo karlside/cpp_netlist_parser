@@ -13,7 +13,7 @@
 void ListOfWords::push_back(std::shared_ptr<StatementWord> input_word) {
   //  std::string key = input_word->get_text();
   // TODO: Create new keys if needed
-  std::string key = create_key(input_word->get_text());
+  std::string key = create_key(input_word->produce_id());
   words.push_back(WordPair(std::make_pair(key, input_word)));
   index[key] = index.size();
 };
@@ -141,7 +141,8 @@ std::string Statement::build_text() {
     else
       ret_text += " ";
   }
-  ret_text.pop_back(); // Remove last whitespace
+  if (!ret_text.empty()) // Undefiend behavior if the text is empty
+    ret_text.pop_back(); // Remove last whitespace
   return ret_text;
 }
 

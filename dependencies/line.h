@@ -13,12 +13,12 @@
 
 struct WordPair {
   WordPair(std::pair<std::string, std::shared_ptr<StatementWord>> input)
-      : name{input.first}, word{input.second} {}
+      : key{input.first}, word{input.second} {}
 
-  std::string const name;
+  std::string const key;
   std::shared_ptr<StatementWord> word;
   std::string print_word() {
-    return "ID: '" + name + "'\t - Word: " + word->print_word();
+    return "ID:'" + key + "' - " + word->print_word();
   }
 };
 
