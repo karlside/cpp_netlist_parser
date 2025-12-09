@@ -43,8 +43,8 @@ const std::string &Line::get_text() {
 
 void Line::build_text() {
   std::string new_text;
-  for (auto wordPair : list->items) {
-    std::string word_text = wordPair.item->get_text();
+  for (auto wordItem : *list) {
+    std::string word_text = wordItem.item->get_text();
     new_text += word_text;
     if (R"(\\)" == text)
       new_text += "\n";
@@ -67,12 +67,12 @@ std::shared_ptr<Statement> Line::get_obj_from_keyword(ObjectType obj_keyword) {
 }
 
 std::shared_ptr<Statement> Line::objectify() {
-  for (auto &wordPair : list->items) {
+  for (auto &wordItem : *list) {
     // TODO: Some function that returns the correct object based on keyword
-    if (ObjectType::NONE == wordPair.item->get_keyword())
+    if (ObjectType::NONE == wordItem.item->get_keyword())
       continue;
     std::shared_ptr<Statement> ret_obj =
-        get_obj_from_keyword(wordPair.item->get_keyword());
+        get_obj_from_keyword(wordItem.item->get_keyword());
     if (nullptr == ret_obj)
       continue;
     return ret_obj;
@@ -95,10 +95,10 @@ std::string Statement::get_text() { return build_text(); }
 
 std::string Statement::build_text() {
   std::string ret_text;
-  for (auto &wordPair : list->items) {
-    if (!wordPair.item->is_active())
+  for (auto &wordItem : *list) {
+    if (!wordItem.item->is_active())
       continue;
-    std::string text = wordPair.item->get_text();
+    std::string text = wordItem.item->get_text();
     ret_text += text;
     if (R"(\\)" == text)
       ret_text += "\n";
@@ -126,8 +126,8 @@ std::string Statement::get_list() const {
 
 std::string Statement::print_line() {
   std::string ret_str;
-  for (auto item : list->items) {
-    ret_str += item.print_list() + "\n";
+  for (auto wordItem : *list) {
+    ret_str += wordItem.print_list() + "\n";
   }
   return ret_str;
 }

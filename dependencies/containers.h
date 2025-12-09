@@ -4,6 +4,7 @@
 // #include "line.h"
 #include <cassert>
 #include <iostream>
+#include <iterator>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -28,9 +29,14 @@ public:
   void push_back(std::shared_ptr<StatementType> input);
   std::shared_ptr<StatementType> pop_back();
   int size() { return items.size(); }
-  std::vector<Item<StatementType>> items;
+
+  auto begin() { return items.begin(); }
+  auto end() { return items.end(); }
+  auto begin() const { return items.begin(); }
+  auto end() const { return items.end(); }
 
 private:
+  std::vector<Item<StatementType>> items;
   std::unordered_map<std::string, int> index;
   std::string create_key(std::string key, int iterator = 0);
 };
