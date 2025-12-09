@@ -6,50 +6,6 @@
 #include <string>
 #include <vector>
 
-// -------------------
-// --- ListOfWords ---
-// -------------------
-
-void ListOfWords::push_back(std::shared_ptr<StatementWord> input_word) {
-  //  std::string key = input_word->get_text();
-  // TODO: Create new keys if needed
-  std::string key = create_key(input_word->produce_id());
-  words.push_back(WordPair(std::make_pair(key, input_word)));
-  index[key] = index.size();
-};
-
-std::shared_ptr<StatementWord> ListOfWords::get_word(std::string key) {
-  if (index.find(key) == index.end())
-    throw std::runtime_error("Key not in List");
-  // TODO: Create new errors
-  return words.at(index.at(key)).word;
-}
-
-std::shared_ptr<StatementWord> ListOfWords::pop_back() {
-  WordPair temp_word = words.back();
-  words.pop_back();
-  index.erase(temp_word.word->get_text());
-  return temp_word.word;
-}
-
-std::string ListOfWords::create_key(std::string key, int iterator) {
-  if (index.find(key) == index.end())
-    return key;
-  iterator += 1;
-  key = key + "_" + std::to_string(iterator);
-  return create_key(key, iterator);
-}
-
-std::ostream &operator<<(std::ostream &os, const ListOfWords &rhs) {
-  for (WordPair wordPair : rhs.words)
-    os << wordPair.word->get_text() << " ";
-  return os;
-}
-
-// ------------
-// --- Line ---
-// ------------
-
 Line::Line() : list{std::make_shared<ListOfWords>()} {}
 Line::Line(std::shared_ptr<ListOfWords> input) : list{input} {}
 Line::Line(std::string input) : list{std::make_shared<ListOfWords>()} {
@@ -77,12 +33,7 @@ void Line::add_word(std::unique_ptr<Word> word) {
   list->push_back(statementWord);
 }
 
-std::shared_ptr<StatementWord> Line::pop_word() {
-  return list->pop_back();
-  // std::shared_ptr<StatementWord> temp_word = std::move(list->back());
-  // list->pop_back();
-  // return temp_word;
-}
+std::shared_ptr<StatementWord> Line::pop_word() { return list->pop_back(); }
 
 const std::string &Line::get_text() {
   if (!_text_is_built)
@@ -92,8 +43,8 @@ const std::string &Line::get_text() {
 
 void Line::build_text() {
   std::string new_text;
-  for (WordPair wordPair : list->words) {
-    std::string word_text = wordPair.word->get_text();
+  for (auto wordPair : list->items) {
+    std::string word_text = wordPair.item->get_text();
     new_text += word_text;
     if (R"(\\)" == text)
       new_text += "\n";
@@ -116,12 +67,12 @@ std::shared_ptr<Statement> Line::get_obj_from_keyword(ObjectType obj_keyword) {
 }
 
 std::shared_ptr<Statement> Line::objectify() {
-  for (WordPair &wordPair : list->words) {
+  for (auto &wordPair : list->items) {
     // TODO: Some function that returns the correct object based on keyword
-    if (ObjectType::NONE == wordPair.word->get_keyword())
+    if (ObjectType::NONE == wordPair.item->get_keyword())
       continue;
     std::shared_ptr<Statement> ret_obj =
-        get_obj_from_keyword(wordPair.word->get_keyword());
+        get_obj_from_keyword(wordPair.item->get_keyword());
     if (nullptr == ret_obj)
       continue;
     return ret_obj;
@@ -144,10 +95,10 @@ std::string Statement::get_text() { return build_text(); }
 
 std::string Statement::build_text() {
   std::string ret_text;
-  for (WordPair &wordPair : list->words) {
-    if (!wordPair.word->is_active())
+  for (auto &wordPair : list->items) {
+    if (!wordPair.item->is_active())
       continue;
-    std::string text = wordPair.word->get_text();
+    std::string text = wordPair.item->get_text();
     ret_text += text;
     if (R"(\\)" == text)
       ret_text += "\n";
@@ -175,8 +126,8 @@ std::string Statement::get_list() const {
 
 std::string Statement::print_line() {
   std::string ret_str;
-  for (WordPair word : list->words) {
-    ret_str += word.print_word() + "\n";
+  for (auto item : list->items) {
+    ret_str += item.print_list() + "\n";
   }
   return ret_str;
 }

@@ -1,47 +1,18 @@
 #ifndef LINE_H
 #define LINE_H
 
+#include "containers.h"
 #include "word.h"
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-// ------------------
-// --- ListOfWord ---
-// ------------------
-
-struct WordPair {
-  WordPair(std::pair<std::string, std::shared_ptr<StatementWord>> input)
-      : key{input.first}, word{input.second} {}
-
-  std::string const key;
-  std::shared_ptr<StatementWord> word;
-  std::string print_word() {
-    return "ID:'" + key + "' - " + word->print_list();
+struct ListOfWords : ListOfTypes<StatementWord> {
+  std::shared_ptr<StatementWord> get_word(std::string key) {
+    return ListOfTypes::get_item(key);
   }
 };
-
-struct ListOfWords {
-public:
-  void push_back(std::shared_ptr<StatementWord> input);
-  std::shared_ptr<StatementWord> get_word(std::string key);
-  std::shared_ptr<StatementWord> pop_back();
-  // std::shared_ptr<StatementWord> at(int index) { return words.at(index); }
-  int size() { return words.size(); }
-
-  std::vector<WordPair> words;
-
-  friend std::ostream &operator<<(std::ostream &os, const ListOfWords &rhs);
-
-private:
-  std::unordered_map<std::string, int> index;
-  std::string create_key(std::string key, int iterator = 0);
-};
-
-// -----------------
-// --- Statement ---
-// -----------------
 
 class Statement {
 public:

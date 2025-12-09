@@ -11,18 +11,17 @@
 std::string FILE_PATH = "files/netlist.cir";
 
 int main() {
-  // Netlist netlist = Netlist();
-  // std::unique_ptr<std::fstream> file = netlist.load_file(FILE_PATH);
-  // netlist.load_netlist_from_file(file);
-  //
-  // std::cout << "PRINTING NETLIST:" << std::endl;
-  // std::cout << netlist << std::endl;
-  //
+  Netlist netlist = Netlist();
+  std::unique_ptr<std::fstream> file = netlist.load_file(FILE_PATH);
+  netlist.load_netlist_from_file(file);
 
-  Line myLine("simulator lang=spectre");
-  std::shared_ptr<Statement> myStatement = myLine.objectify();
-  std::cout << myStatement->get_text() << std::endl;
+  std::cout << "PRINTING NETLIST:" << std::endl;
+  std::cout << netlist << std::endl;
 
+  // Line myLine("simulator lang=spectre");
+  // std::shared_ptr<Statement> myStatement = myLine.objectify();
+  // std::cout << myStatement->get_text() << std::endl;
+  //
   // std::shared_ptr<ListOfWords> myWords = std::make_shared<ListOfWords>();
   // std::shared_ptr<Word> word = std::make_shared<Word>("lang=spectre");
   // std::shared_ptr<StatementWord> word0 = word->objectify();
