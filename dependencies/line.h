@@ -58,6 +58,7 @@ public:
   void add_param(
       std::string input_string); // Parse the input and turn it into a word
   std::string get_text();
+  std::string produce_id() { return get_text(); } // TODO: Fix this
   virtual std::string get_list() const;
   std::string print_line();
 
