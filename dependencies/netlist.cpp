@@ -7,46 +7,6 @@
 #include <stdexcept>
 #include <unordered_map>
 
-// -------------------
-// --- ListOfLines ---
-// -------------------
-
-void ListOfLines::push_back(std::shared_ptr<Statement> input_line) {
-  //  std::string key = input_word->get_text();
-  // TODO: Create new keys if needed
-  std::string key = create_key(input_line->produce_id());
-  lines.push_back(LineEntry(std::make_pair(key, input_line)));
-  index[key] = index.size();
-};
-
-std::shared_ptr<Statement> ListOfLines::get_word(std::string key) {
-  if (index.find(key) == index.end())
-    throw std::runtime_error("Key not in List");
-  // TODO: Create new errors
-  return lines.at(index.at(key)).line;
-}
-
-std::shared_ptr<Statement> ListOfLines::pop_back() {
-  LineEntry temp_word = lines.back();
-  lines.pop_back();
-  index.erase(temp_word.line->get_text());
-  return temp_word.line;
-}
-
-std::string ListOfLines::create_key(std::string key, int iterator) {
-  if (index.find(key) == index.end())
-    return key;
-  iterator += 1;
-  key = key + "_" + std::to_string(iterator);
-  return create_key(key, iterator);
-}
-
-std::ostream &operator<<(std::ostream &os, const ListOfLines &rhs) {
-  for (LineEntry wordPair : rhs.lines)
-    os << wordPair.line->get_text() << " ";
-  return os;
-}
-
 std::unordered_map<std::string, std::string> ignore_newline_keywords = {
     {R"(\\)", "\n"}, {"subckt", "ends"}};
 
