@@ -52,6 +52,19 @@ std::ostream &operator<<(std::ostream &os, const ListOfWords &rhs) {
 
 Line::Line() : list{std::make_shared<ListOfWords>()} {}
 Line::Line(std::shared_ptr<ListOfWords> input) : list{input} {}
+Line::Line(std::string input) : list{std::make_shared<ListOfWords>()} {
+  // TODO: Input formatting
+  std::unique_ptr<Word> word = std::make_unique<Word>();
+  for (char ch : input) {
+    if (' ' == ch) {
+      add_word(std::move(word));
+      word = std::make_unique<Word>();
+      continue;
+    }
+    word->add_char(ch);
+  }
+  add_word(std::move(word));
+}
 
 void Line::add_word(std::unique_ptr<Word> word) {
   if (word->is_end_of_line()) {

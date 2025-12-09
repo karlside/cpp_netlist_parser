@@ -80,6 +80,7 @@ protected:
 class Line {
 public:
   Line();
+  Line(std::string input);
   Line(std::shared_ptr<ListOfWords> input);
   void add_word(std::unique_ptr<Word> word);
   std::shared_ptr<StatementWord> pop_word();
