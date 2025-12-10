@@ -18,6 +18,7 @@ struct ListOfLines : ListOfTypes<Statement> {
 
 class Netlist {
 public:
+  Netlist() : list{std::make_unique<ListOfLines>()} {}
   void add_line(std::shared_ptr<Statement> line);
   std::shared_ptr<Statement> pop_line();
   void load_netlist_from_file(const std::unique_ptr<std::fstream> &file);
@@ -28,7 +29,7 @@ public:
 private:
   std::unique_ptr<Word> merge_to_prev_word(std::shared_ptr<Line> &line,
                                            std::unique_ptr<Word> word);
-  std::vector<std::shared_ptr<Statement>> list{};
+  std::unique_ptr<ListOfLines> list{};
 };
 
 #endif
