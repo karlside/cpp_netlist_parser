@@ -86,16 +86,14 @@ std::ostream &operator<<(std::ostream &os, Line &rhs) {
 
 Statement::Statement(std::shared_ptr<ListOfWords> input) : list{input} {}
 
-std::string Statement::get_text() { return build_text(); }
-
-std::string Statement::build_text() {
+std::string const Statement::get_text() {
   std::string ret_text;
   for (auto &wordItem : *list) {
     if (!wordItem.item->is_active())
       continue;
-    std::string text = wordItem.item->get_text();
-    ret_text += text;
-    if (R"(\\)" == text)
+    std::string word_text = wordItem.item->get_text();
+    ret_text += word_text;
+    if (R"(\\)" == word_text)
       ret_text += "\n";
     else
       ret_text += " ";

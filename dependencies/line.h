@@ -26,9 +26,9 @@ public:
     return list->get_word(name);
   }
 
-  void add_param(
-      std::string input_string); // Parse the input and turn it into a word
-  std::string get_text();
+  void add_param(std::string input_string); // TODO: Parse the input and turn it
+                                            // into a word
+  std::string const get_text();
   std::string produce_id() { return get_text(); } // TODO: Fix this
   virtual std::string get_list() const;
   std::string print_line();
@@ -39,10 +39,7 @@ public:
 
 protected:
   bool _is_active{true};
-  // std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> list;
   std::shared_ptr<ListOfWords> list;
-  // std::string text;
-  std::string build_text();
   void parse(); // Analyse the entries in ListOfWords and 'label'
 };
 
