@@ -25,9 +25,10 @@ template <typename StatementType> struct Item {
 
 template <typename StatementType> struct ListOfTypes {
 public:
-  std::shared_ptr<StatementType> get_item(std::string key);
   void push_back(std::shared_ptr<StatementType> input);
   std::shared_ptr<StatementType> pop_back();
+  std::shared_ptr<StatementType> get_item(std::string key);
+  std::shared_ptr<StatementType> at(int index) { return items.at(index).item; }
   int size() { return items.size(); }
 
   auto begin() { return items.begin(); }

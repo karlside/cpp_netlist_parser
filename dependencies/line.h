@@ -43,6 +43,7 @@ protected:
   std::shared_ptr<ListOfWords> list;
   // std::string text;
   std::string build_text();
+  void parse(); // Analyse the entries in ListOfWords and 'label'
 };
 
 // ------------
@@ -55,10 +56,9 @@ public:
   Line(std::string input);
   Line(std::shared_ptr<ListOfWords> input);
   void add_word(std::unique_ptr<Word> word);
-  std::shared_ptr<StatementWord> pop_word();
-  // std::shared_ptr<StatementWord> at(int index) const { return
-  // list->at(index); }
-  const std::string &get_text();
+  std::shared_ptr<StatementWord> pop_word() { return list->pop_back(); }
+  std::shared_ptr<StatementWord> at(int index) const { return list->at(index); }
+  std::string const get_text();
   int length() const { return list->size(); }
   bool is_done() const { return _is_done; }
 
@@ -66,17 +66,11 @@ public:
 
   friend std::ostream &operator<<(std::ostream &os, const Line &rhs);
 
-  virtual ~Line() = default;
-
 private:
 protected:
   std::shared_ptr<Statement> get_obj_from_keyword(ObjectType obj_keyword);
   bool _is_done{false};
-  bool _text_is_built{false};
-  // std::shared_ptr<std::vector<std::shared_ptr<StatementWord>>> list{};
   std::shared_ptr<ListOfWords> list;
-  void build_text();
-  std::string text;
 };
 
 // -------------------------------

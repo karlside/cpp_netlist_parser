@@ -6,10 +6,15 @@
 #include <string>
 #include <vector>
 
+// ------------
+// --- Line ---
+// ------------
+
 Line::Line() : list{std::make_shared<ListOfWords>()} {}
 Line::Line(std::shared_ptr<ListOfWords> input) : list{input} {}
 Line::Line(std::string input) : list{std::make_shared<ListOfWords>()} {
   // TODO: Input formatting
+  // This is hacked together and is not a good solution.
   std::unique_ptr<Word> word = std::make_unique<Word>();
   for (char ch : input) {
     if (' ' == ch) {
@@ -29,41 +34,22 @@ void Line::add_word(std::unique_ptr<Word> word) {
   // TODO: Change this to some falg instead of using get_text()
   if (R"(\\)" == word->get_text())
     _is_done = false;
-  std::shared_ptr statementWord = word->objectify();
-  list->push_back(statementWord);
+  list->push_back(word->objectify());
 }
 
-std::shared_ptr<StatementWord> Line::pop_word() { return list->pop_back(); }
-
-const std::string &Line::get_text() {
-  if (!_text_is_built)
-    build_text();
-  return text;
-}
-
-void Line::build_text() {
-  std::string new_text;
+std::string const Line::get_text() {
+  std::string ret_text;
   for (auto wordItem : *list) {
     std::string word_text = wordItem.item->get_text();
-    new_text += word_text;
-    if (R"(\\)" == text)
-      new_text += "\n";
+    ret_text += word_text;
+    if (R"(\\)" == word_text)
+      ret_text += "\n";
     else
-      new_text += " ";
+      ret_text += " ";
   }
-  new_text.pop_back(); // Remove last whitespace
-  text = new_text;
-  _text_is_built = true;
-}
-
-std::shared_ptr<Statement> Line::get_obj_from_keyword(ObjectType obj_keyword) {
-  switch (obj_keyword) {
-  case ObjectType::SIMULATOR:
-    return std::make_shared<SimulatorStatement>(list);
-  case ObjectType::PORT:
-    return std::make_shared<PortStatement>(list);
-  }
-  return nullptr;
+  if (!ret_text.empty()) // Undefiend behavior if the text is empty
+    ret_text.pop_back(); // Remove last whitespace
+  return ret_text;
 }
 
 std::shared_ptr<Statement> Line::objectify() {
@@ -78,6 +64,16 @@ std::shared_ptr<Statement> Line::objectify() {
     return ret_obj;
   }
   return std::make_shared<Statement>(std::move(list));
+}
+
+std::shared_ptr<Statement> Line::get_obj_from_keyword(ObjectType obj_keyword) {
+  switch (obj_keyword) {
+  case ObjectType::SIMULATOR:
+    return std::make_shared<SimulatorStatement>(list);
+  case ObjectType::PORT:
+    return std::make_shared<PortStatement>(list);
+  }
+  return nullptr;
 }
 
 std::ostream &operator<<(std::ostream &os, Line &rhs) {
