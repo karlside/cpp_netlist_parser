@@ -54,20 +54,19 @@ std::string const Line::get_text() {
 
 std::shared_ptr<Statement> Line::objectify() {
   for (auto &wordItem : *list) {
-    // TODO: Some function that returns the correct object based on keyword
-    if (ObjectType::NONE == wordItem.item->get_keyword())
-      continue;
     std::shared_ptr<Statement> ret_obj =
         get_obj_from_keyword(wordItem.item->get_keyword());
     if (nullptr == ret_obj)
       continue;
     return ret_obj;
   }
-  return std::make_shared<Statement>(std::move(list));
+  return std::make_shared<Statement>(list);
 }
 
 std::shared_ptr<Statement> Line::get_obj_from_keyword(ObjectType obj_keyword) {
   switch (obj_keyword) {
+  case ObjectType::NONE:
+    return nullptr;
   case ObjectType::SIMULATOR:
     return std::make_shared<SimulatorStatement>(list);
   case ObjectType::PORT:
