@@ -64,10 +64,49 @@ public:
   friend std::ostream &operator<<(std::ostream &os, const Line &rhs);
 
 private:
-protected:
   std::shared_ptr<Statement> get_obj_from_keyword(ObjectType obj_keyword);
   bool _is_done{false};
   std::shared_ptr<ListOfWords> list;
+  bool first_word_is_keyword() const;
+  bool second_word_is_keyword() const;
+  bool second_word_is_port() const;
+  bool second_word_is_simulation() const;
+};
+
+// ------------------------
+// --- ControlStatement ---
+// ------------------------
+
+class ControlStatement : public Statement {
+public:
+  ControlStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
+};
+
+// -------------------------
+// --- InstanceStatement ---
+// -------------------------
+
+class InstanceStatement : public Statement {
+public:
+  InstanceStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
+};
+
+// -----------------------
+// --- DeviceStatement ---
+// -----------------------
+
+class DeviceStatement : public Statement {
+public:
+  DeviceStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
+};
+
+// ---------------------------
+// --- SimulationStatement ---
+// ---------------------------
+
+class SimulationStatement : public Statement {
+public:
+  SimulationStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
 };
 
 // -------------------------------

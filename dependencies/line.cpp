@@ -53,6 +53,14 @@ std::string const Line::get_text() {
 }
 
 std::shared_ptr<Statement> Line::objectify() {
+  //   if (first_word_is_keyword())
+  //     return controlStatement();
+  //  if (second_word_is_keyword())
+  //     return InstanceControlStatement();
+  // if (second_word_is_simulation())
+  //     return SimulationStatement();
+  //
+
   for (auto &wordItem : *list) {
     std::shared_ptr<Statement> ret_obj =
         get_obj_from_keyword(wordItem.item->get_keyword());
