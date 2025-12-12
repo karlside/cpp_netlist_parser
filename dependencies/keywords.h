@@ -179,6 +179,42 @@ static const std::unordered_map<std::string, ObjectType> keywordMap = {
     {"visible", VISIBLE}};
 
 // ------------------------------------------------------------
+// reservedWords
+// ------------------------------------------------------------
+static const std::unordered_map<std::string, ObjectType> reservedWordsMap = {
+    {"freq", FREQ},     {"scalem", SCALEM}, {"temp", TEMP},
+    {"temper", TEMPER}, {"time", TIME},     {"tnom", TNOM},
+};
+
+// ------------------------------------------------------------
+// mathConstantMap
+// ------------------------------------------------------------
+static const std::unordered_map<std::string, ObjectType> mathConstantMap = {
+    {"M_1_PI", M_1_PI},
+    {"M_2_PI", M_2_PI},
+    {"M_2_SQRTPI", M_2_SQRTPI},
+    {"M_DEGPERRAD", M_DEGPERRAD},
+    {"M_E", M_E},
+    {"M_LN10", M_LN10},
+    {"M_LN2", M_LN2},
+    {"M_LOG10E", M_LOG10E},
+    {"M_LOG2E", M_LOG2E},
+    {"M_PI", M_PI},
+    {"M_PI_2", M_PI_2},
+    {"M_PI_4", M_PI_4},
+    {"M_SQRT1_2", M_SQRT1_2},
+    {"M_SQRT2", M_SQRT2},
+    {"M_TWO_PI", M_TWO_PI},
+    {"P_C", P_C},
+    {"P_CELSIUS0", P_CELSIUS0},
+    {"P_EPS0", P_EPS0},
+    {"P_H", P_H},
+    {"P_K", P_K},
+    {"P_Q", P_Q},
+    {"P_U0", P_U0},
+};
+
+// ------------------------------------------------------------
 // simKeywordMap
 // ------------------------------------------------------------
 static const std::unordered_map<std::string, ObjectType> simKeywordMap = {

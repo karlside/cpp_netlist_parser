@@ -7,7 +7,9 @@
 #include <string>
 #include <unordered_map>
 
-// enum WordKeyword { NONE, SIMULATOR, KEYVALUE, PORT };
+// ---------------------
+// --- StatementWord ---
+// ---------------------
 
 class StatementWord {
 public:
@@ -26,7 +28,7 @@ public:
   virtual ~StatementWord() = default;
 
 protected:
-  ObjectType _keyword{ObjectType::NONE};
+  const ObjectType _keyword{ObjectType::NONE};
   bool _is_active{true};
   bool _has_been_parsed{false};
   bool has_been_parsed() const { return _has_been_parsed; }
@@ -36,8 +38,11 @@ protected:
   virtual void parse() { _has_been_parsed = true; }
 };
 
-class Word {
+// ------------
+// --- Word ---
+// ------------
 
+class Word {
 public:
   Word() : text(std::make_unique<std::string>()) {}
   Word(std::string input) : text(std::make_unique<std::string>()) {
@@ -86,37 +91,51 @@ private:
       {'=', ANY}, {'(', OPENING_PARENTHESIS}, {')', CLOSING_PARENTHESIS}};
 };
 
-template <ObjectType keyword> class OneWord : public StatementWord {
+// --------------------
+// --- KeywordWord---
+// --------------------
+
+class KeywordWord : public StatementWord {
 public:
-  OneWord(std::unique_ptr<std::string> input)
-      : StatementWord(std::move(input)) {}
+  KeywordWord(std::unique_ptr<std::string> input, ObjectType keyword)
+      : StatementWord(std::move(input)), _keyword{keyword} {}
   ObjectType get_keyword() const override { return _keyword; }
 
 private:
-  ObjectType _keyword{keyword};
+  const ObjectType _keyword;
 };
 
-class SimulatorWord : public OneWord<ObjectType::SIMULATOR> {
+// -----------------------
+// --- MathConstantWord---
+// -----------------------
+
+class MathConstantWord : public StatementWord {
 public:
-  SimulatorWord(std::unique_ptr<std::string> input)
-      : OneWord(std::move(input)) {}
+  MathConstantWord(std::unique_ptr<std::string> input, ObjectType keyword)
+      : StatementWord(std::move(input)), _keyword{keyword} {}
+  ObjectType get_keyword() const override { return _keyword; }
+
+private:
+  const ObjectType _keyword;
 };
 
-class GlobalWord : public OneWord<ObjectType::GLOBAL> {
+// ---------------------
+// --- SimulationWord---
+// ---------------------
+
+class SimulationWord : public StatementWord {
 public:
-  GlobalWord(std::unique_ptr<std::string> input) : OneWord(std::move(input)) {}
+  SimulationWord(std::unique_ptr<std::string> input, ObjectType keyword)
+      : StatementWord(std::move(input)), _keyword{keyword} {}
+  ObjectType get_keyword() const override { return _keyword; }
+
+private:
+  const ObjectType _keyword;
 };
-//
-// class SimulatorWord : public StatementWord {
-// public:
-//   SimulatorWord(std::unique_ptr<std::string> input)
-//       : StatementWord(std::move(input)) {}
-//
-//   ObjectType get_keyword() const override { return _keyword; }
-//
-// protected:
-//   ObjectType _keyword{ObjectType::SIMULATOR};
-// };
+
+// -------------------
+// --- keyValueWord---
+// -------------------
 
 class KeyValueWord : public StatementWord {
 public:
@@ -138,12 +157,15 @@ public:
 
 private:
   ObjectType _keyword{ObjectType::KEYVALUE};
-  const bool _is_done{true};
   std::string key;
   std::string value;
   bool _has_value{false};
   void build_text();
 };
+
+// ---------------
+// --- PortWord---
+// ---------------
 
 class PortWord : public StatementWord {
 public:
@@ -160,8 +182,7 @@ public:
   void set_port(std::string input);
 
 private:
-  ObjectType _keyword{ObjectType::PORT};
-  const bool _is_done{true};
+  const ObjectType _keyword{ObjectType::PORT};
   std::string port;
   void build_text() { *text = "(" + port + ")"; }
 };
