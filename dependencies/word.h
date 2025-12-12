@@ -86,17 +86,37 @@ private:
       {'=', ANY}, {'(', OPENING_PARENTHESIS}, {')', CLOSING_PARENTHESIS}};
 };
 
-class SimulatorWord : public StatementWord {
+template <ObjectType keyword> class OneWord : public StatementWord {
+public:
+  OneWord(std::unique_ptr<std::string> input)
+      : StatementWord(std::move(input)) {}
+  ObjectType get_keyword() const override { return _keyword; }
+
+private:
+  ObjectType _keyword{keyword};
+};
+
+class SimulatorWord : public OneWord<ObjectType::SIMULATOR> {
 public:
   SimulatorWord(std::unique_ptr<std::string> input)
-      : StatementWord(std::move(input)) {}
-
-  ObjectType get_keyword() const { return _keyword; }
-  const std::string &get_text();
-
-protected:
-  ObjectType _keyword{ObjectType::SIMULATOR};
+      : OneWord(std::move(input)) {}
 };
+
+class GlobalWord : public OneWord<ObjectType::GLOBAL> {
+public:
+  GlobalWord(std::unique_ptr<std::string> input) : OneWord(std::move(input)) {}
+};
+//
+// class SimulatorWord : public StatementWord {
+// public:
+//   SimulatorWord(std::unique_ptr<std::string> input)
+//       : StatementWord(std::move(input)) {}
+//
+//   ObjectType get_keyword() const override { return _keyword; }
+//
+// protected:
+//   ObjectType _keyword{ObjectType::SIMULATOR};
+// };
 
 class KeyValueWord : public StatementWord {
 public:

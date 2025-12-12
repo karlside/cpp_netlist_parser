@@ -11,12 +11,17 @@
 std::string FILE_PATH = "files/netlist.cir";
 
 int main() {
-  Netlist netlist = Netlist();
-  std::unique_ptr<std::fstream> file = netlist.load_file(FILE_PATH);
-  netlist.load_netlist_from_file(file);
-
-  std::cout << "PRINTING NETLIST:" << std::endl;
-  std::cout << netlist << std::endl;
+  // Netlist netlist = Netlist();
+  // std::unique_ptr<std::fstream> file = netlist.load_file(FILE_PATH);
+  // netlist.load_netlist_from_file(file);
+  //
+  // std::cout << "PRINTING NETLIST:" << std::endl;
+  // std::cout << netlist << std::endl;
+  //
+  Word myWord("simulator");
+  auto simWord = myWord.objectify();
+  std::cout << simWord->get_keyword() << std::endl;
+  std::cout << ObjectType::SIMULATOR << std::endl;
 
   // Line myLine("simulator lang=spectre");
   // std::shared_ptr<Statement> myStatement = myLine.objectify();
