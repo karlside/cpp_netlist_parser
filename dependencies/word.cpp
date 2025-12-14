@@ -135,15 +135,15 @@ std::shared_ptr<StatementWord> Word::objectify() {
     word_obj_type = reservedWordsMap.at(get_text());
   }
   if (ObjectType::NONE != word_obj_type)
-    return std::make_shared<KeywordWord>(std::move(text), word_obj_type);
+    return std::make_shared<KeywordWord>(std::move(text), ObjectType::KEYWORD);
 
   if (mathConstantMap.find(get_text()) != mathConstantMap.end())
     return std::make_shared<MathConstantWord>(std::move(text),
-                                              mathConstantMap.at(get_text()));
+                                              ObjectType::MATH_CONSTANT);
 
   if (simKeywordMap.find(get_text()) != simKeywordMap.end())
     return std::make_shared<SimulationWord>(std::move(text),
-                                            simKeywordMap.at(get_text()));
+                                            ObjectType::SIMULATION);
 
   if (ObjectType::NONE == word_obj_type) {
     for (char ch : get_text()) {

@@ -130,8 +130,12 @@ enum ObjectType {
   INCLUDE,
 
   // Word types
+  KEYWORD,
   KEYVALUE,
   PORT,
+  MATH_CONSTANT,
+  SIMULATION,
+  COMMENT
 };
 
 // ------------------------------------------------------------

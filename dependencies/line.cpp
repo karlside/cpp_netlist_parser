@@ -53,21 +53,12 @@ std::string const Line::get_text() {
 }
 
 std::shared_ptr<Statement> Line::objectify() {
-  //   if (first_word_is_keyword())
-  //     return controlStatement();
-  //  if (second_word_is_keyword())
-  //     return InstanceControlStatement();
-  // if (second_word_is_simulation())
-  //     return SimulationStatement();
-  //
-
-  for (auto &wordItem : *list) {
-    std::shared_ptr<Statement> ret_obj =
-        get_obj_from_keyword(wordItem.item->get_keyword());
-    if (nullptr == ret_obj)
-      continue;
-    return ret_obj;
-  }
+  if (first_word_is_keyword())
+    return std::make_shared<ControlStatement>(list);
+  if (second_word_is_keyword())
+    return std::make_shared<InstanceStatement>(list);
+  if (second_word_is_simulation())
+    return std::make_shared<SimulationStatement>(list);
   return std::make_shared<Statement>(list);
 }
 
@@ -81,6 +72,42 @@ std::shared_ptr<Statement> Line::get_obj_from_keyword(ObjectType obj_keyword) {
     return std::make_shared<PortStatement>(list);
   }
   return nullptr;
+}
+
+bool Line::first_word_is_keyword() const {
+  if (1 > list->size())
+    return false;
+  if (ObjectType::NONE == list->at(0)->get_keyword())
+    return true;
+  else
+    return false;
+}
+
+bool Line::second_word_is_keyword() const {
+  if (2 > list->size())
+    return false;
+  if (ObjectType::NONE == list->at(1)->get_keyword())
+    return true;
+  else
+    return false;
+}
+
+bool Line::second_word_is_port() const {
+  if (2 > list->size())
+    return false;
+  if (ObjectType::PORT == list->at(1)->get_keyword())
+    return true;
+  else
+    return false;
+}
+
+bool Line::second_word_is_simulation() const {
+  if (2 > list->size())
+    return false;
+  if (ObjectType::NONE == list->at(1)->get_keyword())
+    return true;
+  else
+    return false;
 }
 
 std::ostream &operator<<(std::ostream &os, Line &rhs) {

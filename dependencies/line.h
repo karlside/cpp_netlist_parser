@@ -68,6 +68,7 @@ private:
   bool _is_done{false};
   std::shared_ptr<ListOfWords> list;
   bool first_word_is_keyword() const;
+  bool first_word_is_comment() const;
   bool second_word_is_keyword() const;
   bool second_word_is_port() const;
   bool second_word_is_simulation() const;
@@ -79,7 +80,9 @@ private:
 
 class ControlStatement : public Statement {
 public:
-  ControlStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
+  ControlStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {
+    std::cout << "Creating ControlStatement" << std::endl;
+  }
 };
 
 // -------------------------
@@ -88,7 +91,9 @@ public:
 
 class InstanceStatement : public Statement {
 public:
-  InstanceStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
+  InstanceStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {
+    std::cout << "Creating InstanceStatement" << std::endl;
+  }
 };
 
 // -----------------------
@@ -97,7 +102,9 @@ public:
 
 class DeviceStatement : public Statement {
 public:
-  DeviceStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
+  DeviceStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {
+    std::cout << "Creating DeviceStatement" << std::endl;
+  }
 };
 
 // ---------------------------
@@ -106,7 +113,9 @@ public:
 
 class SimulationStatement : public Statement {
 public:
-  SimulationStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
+  SimulationStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {
+    std::cout << "Creating SimulationStatemen" << std::endl;
+  }
 };
 
 // -------------------------------
