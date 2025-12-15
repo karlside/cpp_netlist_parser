@@ -2,6 +2,7 @@
 #define KEYWORD_H
 
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 
 enum ObjectType {
@@ -51,7 +52,7 @@ static const std::unordered_set<std::string> mathConstantSet = {
 
 };
 
-static const std::unordered_set<std::string> SimulationSet = {
+static const std::unordered_set<std::string> simulationSet = {
     // --------------------
     // Simulations Keywords
     // --------------------
@@ -65,6 +66,11 @@ static const std::unordered_set<std::string> SimulationSet = {
     "set",        "shell",   "sp",      "stb",        "stress",
     "sweep",      "tdr",     "thermal", "tran",       "uti",
     "xf",
+};
+
+static const std::unordered_map<char, ObjectType> charKeywordMap = {
+    {'(', PORT}, {'=', KEYVALUE}
+
 };
 
 #endif

@@ -75,6 +75,7 @@ void Word::add_char(char ch) {
   if (is_done())
     throw WordIsDoneError("Cannot add more characters when a Word is done");
 
+  check_char_for_type(ch);
   clear_whitespace_flag(ch);
 
   switch (ch) {
@@ -125,6 +126,20 @@ void Word::add_string(std::string input) {
   }
 }
 
+void Word::check_char_for_type(char input_char) {
+  if (type_flag_is_set())
+    return;
+  if (charKeywordMap.find(input_char) != charKeywordMap.end())
+    set_type_flag(charKeywordMap.at(input_char));
+}
+
+void Word::set_type_flag(ObjectType input_type) {
+  if (type_flag_is_set())
+    return;
+  _type_flag = true;
+  object_type = input_type;
+}
+
 // TODO: Mark word as done after objectify
 // This is important to avoid segfault if objectify is called twice
 std::shared_ptr<StatementWord> Word::objectify() {
@@ -135,21 +150,22 @@ std::shared_ptr<StatementWord> Word::objectify() {
     return std::make_shared<MathConstantWord>(std::move(text));
 
   // TODO:
-  if (SimulationSet.find(get_text()) != SimulationSet.end())
-    ObjectType word_obj_type{ObjectType::SIMULATION};
-  return std::make_shared<SimulationWord>(std::move(text));
+  if (simulationSet.find(get_text()) != simulationSet.end())
+    return std::make_shared<SimulationWord>(std::move(text));
 
-  for (char ch : get_text()) {
-    if ('=' == ch) {
-
+  if (type_flag_is_set()) {
+    switch (object_type) {
+    case ObjectType::KEYVALUE:
       return std::make_shared<KeyValueWord>(std::move(text));
-      break;
-    }
-    if ('(' == ch) {
+    case ObjectType::PORT:
       return std::make_shared<PortWord>(std::move(text));
-      break;
+      // case ObjectType::COMMENT:
+      // TODO:
+      // case ObjectType::STRING:
+      // TODO:
     }
   }
+
   return std::make_shared<StatementWord>(std::move(text));
 }
 
@@ -160,8 +176,8 @@ void Word::append_word(const Word &input_word) {
   } catch (const std::exception &e) {
     throw std::runtime_error("Error while appending to word");
   }
-  _append_to_prev_word = false; // The _append_to_prev_word flag is cleared
-                                // during the addition operation
+  _append_to_prev_word = false; // The _append_to_prev_word flag is
+                                // cleared during the addition operation
   _is_done = input_word._is_done;
   _is_end_of_line = input_word._is_end_of_line;
   _ignore_whitespace = input_word._ignore_whitespace;

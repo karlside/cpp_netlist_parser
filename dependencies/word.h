@@ -59,6 +59,7 @@ public:
   bool is_done() const { return _is_done; }
   bool is_end_of_line() const { return _is_end_of_line; }
   bool is_append_to_prev_word() const { return _append_to_prev_word; }
+  void clear(); // TODO: clear the text and flag
 
   virtual const std::string &get_text() const { return *text; }
 
@@ -84,6 +85,12 @@ private:
   void set_ignore_whitespace(char ch);
   void set_add_whitespace(char ch);
   void clear_whitespace_flag(char ch);
+
+  bool _type_flag{false};
+  bool type_flag_is_set() const { return _type_flag; }
+  void set_type_flag(ObjectType input_type);
+  void check_char_for_type(char input_char);
+  ObjectType object_type{ObjectType::NONE};
 
   enum CharKeyword { NONE, ANY, OPENING_PARENTHESIS, CLOSING_PARENTHESIS };
   CharKeyword charKeyword;
