@@ -18,6 +18,12 @@ int main() {
   std::cout << "PRINTING NETLIST:" << std::endl;
   std::cout << netlist << std::endl;
 
+  // Word myWord("global");
+  // auto globalWord = myWord.objectify();
+  // std::cout << globalWord->get_keyword() << std::endl;
+  // Word myWord1("ac");
+  // auto acWord = myWord1.objectify();
+  // std::cout << acWord->get_keyword() << std::endl;
   // Word myWord("include");
   // auto objWord = myWord.objectify();
   // std::cout << objWord->get_keyword() << std::endl;

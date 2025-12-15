@@ -62,18 +62,6 @@ std::shared_ptr<Statement> Line::objectify() {
   return std::make_shared<Statement>(list);
 }
 
-std::shared_ptr<Statement> Line::get_obj_from_keyword(ObjectType obj_keyword) {
-  switch (obj_keyword) {
-  case ObjectType::NONE:
-    return nullptr;
-  case ObjectType::SIMULATOR:
-    return std::make_shared<SimulatorStatement>(list);
-  case ObjectType::PORT:
-    return std::make_shared<PortStatement>(list);
-  }
-  return nullptr;
-}
-
 bool Line::first_word_is_keyword() const {
   if (1 > list->size())
     return false;

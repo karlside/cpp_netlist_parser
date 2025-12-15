@@ -2,277 +2,69 @@
 #define KEYWORD_H
 
 #include <string>
-#include <unordered_map>
+#include <unordered_set>
 
 enum ObjectType {
   NONE,
-  ALTERGROUP,
-  CORRELATE,
-  ELSE_,
-  END,
-  ENDS,
-  EXPORT,
-  FOR,
-  FUNCTION,
-  GLOBAL,
-  IC,
-  IF_,
-  IN,
-  INLINE,
-  INPUT,
-  INVISIBLE,
-  LIBRARY,
-  LOCAL,
-  MARCH,
-  MODEL,
-  NODESET,
-  OUT,
-  OUTPUT,
-  PARAMETERS,
-  PARAMSET,
-  PLOT,
-  PRINT,
-  PROTECT,
-  PWR,
-  REAL,
-  RETURN_,
-  SAVE,
-  SENS,
-  STATISTICS,
-  SUBCKT,
-  TO,
-  TRUNCATE,
-  UNPROTECT,
-  VARY,
-  VISIBLE,
-
-  // Reserved words
-  FREQ,
-  SCALEM,
-  TEMP,
-  TEMPER,
-  TIME,
-  TNOM,
-
-  // Math constants
-  M_1_PI,
-  M_2_PI,
-  M_2_SQRTPI,
-  M_DEGPERRAD,
-  M_E,
-  M_LN10,
-  M_LN2,
-  M_LOG10E,
-  M_LOG2E,
-  M_PI,
-  M_PI_2,
-  M_PI_4,
-  M_SQRT1_2,
-  M_SQRT2,
-  M_TWO_PI,
-  P_C,
-  P_CELSIUS0,
-  P_EPS0,
-  P_H,
-  P_K,
-  P_Q,
-  P_U0,
-
-  // simKeywordMap
-  AC,
-  ACMATCH,
-  ALTER,
-  CHECK,
-  CHECKLIMIT,
-  COSIM,
-  DC,
-  DCMATCH,
-  ENVLP,
-  HP,
-  HBAC,
-  HBNOISE,
-  HBSP,
-  HBSTB,
-  HBXF,
-  INFO,
-  LF,
-  LOADPULL,
-  MONTECARLO,
-  NOISE,
-  OPTIONS,
-  PAC,
-  PNOISE,
-  PSP,
-  PSS,
-  PSTB,
-  PXF,
-  PZ,
-  QPAC,
-  QPNOISE,
-  QPSP,
-  QPSS,
-  QPXF,
-  RELIABILITY,
-  SET,
-  SHELL,
-  SP,
-  STB,
-  STRESS,
-  SWEEP,
-  TDR,
-  THERMAL,
-  TRAN,
-  UTI,
-  XF,
-
-  // otherKeywordMap
-  SIMULATOR,
-  INCLUDE,
-
-  // Word types
   KEYWORD,
-  KEYVALUE,
-  PORT,
   MATH_CONSTANT,
   SIMULATION,
-  COMMENT
+  COMMENT,
+  KEYVALUE,
+  PORT,
+  STRING,
 };
 
 // ------------------------------------------------------------
 // keywordMap
-// ------------------------------------------------------------
-static const std::unordered_map<std::string, ObjectType> keywordMap = {
-    {"altergroup", ALTERGROUP},
-    {"correlate", CORRELATE},
-    {"else", ELSE_},
-    {"end", END},
-    {"ends", ENDS},
-    {"export", EXPORT},
-    {"for", FOR},
-    {"function", FUNCTION},
-    {"global", GLOBAL},
-    {"ic", IC},
-    {"if", IF_},
-    {"in", IN},
-    {"inline", INLINE},
-    {"input", INPUT},
-    {"invisible", INVISIBLE},
-    {"library", LIBRARY},
-    {"local", LOCAL},
-    {"march", MARCH},
-    {"model", MODEL},
-    {"nodeset", NODESET},
-    {"out", OUT},
-    {"output", OUTPUT},
-    {"parameters", PARAMETERS},
-    {"paramset", PARAMSET},
-    {"plot", PLOT},
-    {"print", PRINT},
-    {"protect", PROTECT},
-    {"pwr", PWR},
-    {"real", REAL},
-    {"return", RETURN_},
-    {"save", SAVE},
-    {"sens", SENS},
-    {"statistics", STATISTICS},
-    {"subckt", SUBCKT},
-    {"to", TO},
-    {"truncate", TRUNCATE},
-    {"unprotect", UNPROTECT},
-    {"vary", VARY},
-    {"visible", VISIBLE}};
+// ------------------------------------------------------------v
+static const std::unordered_set<std::string> keywordSet = {
+    // ----------------
+    // General Keywords
+    // ----------------
+    "altergroup", "correlate", "else", "end", "ends", "export", "for",
+    "function", "global", "ic", "if", "in", "inline", "input", "invisible",
+    "library", "local", "march", "model", "nodeset", "out", "output",
+    "parameters", "paramset", "plot", "print", "protect", "pwr", "real",
+    "return", "save", "sens", "statistics", "subckt", "to", "truncate",
+    "unprotect", "vary", "visible",
 
-// ------------------------------------------------------------
-// reservedWords
-// ------------------------------------------------------------
-static const std::unordered_map<std::string, ObjectType> reservedWordsMap = {
-    {"freq", FREQ},     {"scalem", SCALEM}, {"temp", TEMP},
-    {"temper", TEMPER}, {"time", TIME},     {"tnom", TNOM},
+    // --------------
+    // Reserved Words
+    // --------------
+    "freq", "scalem", "temp", "temper", "time", "tnom",
+
+    // --------------
+    // Other Keywords
+    // --------------
+    "simulator", "include"};
+
+static const std::unordered_set<std::string> mathConstantSet = {
+    // --------------
+    // Math Constants
+    // --------------
+    "M_1_PI", "M_2_PI",     "M_2_SQRTPI", "M_DEGPERRAD", "M_E",
+    "M_LN10", "M_LN2",      "M_LOG10E",   "M_LOG2E",     "M_PI",
+    "M_PI_2", "M_PI_4",     "M_SQRT1_2",  "M_SQRT2",     "M_TWO_PI",
+    "P_C",    "P_CELSIUS0", "P_EPS0",     "P_H",         "P_K",
+    "P_Q",    "P_U0",
+
 };
 
-// ------------------------------------------------------------
-// mathConstantMap
-// ------------------------------------------------------------
-static const std::unordered_map<std::string, ObjectType> mathConstantMap = {
-    {"M_1_PI", M_1_PI},
-    {"M_2_PI", M_2_PI},
-    {"M_2_SQRTPI", M_2_SQRTPI},
-    {"M_DEGPERRAD", M_DEGPERRAD},
-    {"M_E", M_E},
-    {"M_LN10", M_LN10},
-    {"M_LN2", M_LN2},
-    {"M_LOG10E", M_LOG10E},
-    {"M_LOG2E", M_LOG2E},
-    {"M_PI", M_PI},
-    {"M_PI_2", M_PI_2},
-    {"M_PI_4", M_PI_4},
-    {"M_SQRT1_2", M_SQRT1_2},
-    {"M_SQRT2", M_SQRT2},
-    {"M_TWO_PI", M_TWO_PI},
-    {"P_C", P_C},
-    {"P_CELSIUS0", P_CELSIUS0},
-    {"P_EPS0", P_EPS0},
-    {"P_H", P_H},
-    {"P_K", P_K},
-    {"P_Q", P_Q},
-    {"P_U0", P_U0},
+static const std::unordered_set<std::string> SimulationSet = {
+    // --------------------
+    // Simulations Keywords
+    // --------------------
+    "ac",         "acmatch", "alter",   "altergroup", "check",
+    "checklimit", "cosim",   "dc",      "dcmatch",    "envlp",
+    "hp",         "hbac",    "hbnoise", "hbsp",       "hbstb",
+    "hbxf",       "info",    "lf",      "loadpull",   "montecarlo",
+    "noise",      "options", "pac",     "pnoise",     "psp",
+    "pss",        "pstb",    "pxf",     "pz",         "qpac",
+    "qpnoise",    "qpsp",    "qpss",    "qpxf",       "reliability",
+    "set",        "shell",   "sp",      "stb",        "stress",
+    "sweep",      "tdr",     "thermal", "tran",       "uti",
+    "xf",
 };
-
-// ------------------------------------------------------------
-// simKeywordMap
-// ------------------------------------------------------------
-static const std::unordered_map<std::string, ObjectType> simKeywordMap = {
-    {"ac", AC},
-    {"acmatch", ACMATCH},
-    {"alter", ALTER},
-    {"altergroup", ALTERGROUP},
-    {"check", CHECK},
-    {"checklimit", CHECKLIMIT},
-    {"cosim", COSIM},
-    {"dc", DC},
-    {"dcmatch", DCMATCH},
-    {"envlp", ENVLP},
-    {"hp", HP},
-    {"hbac", HBAC},
-    {"hbnoise", HBNOISE},
-    {"hbsp", HBSP},
-    {"hbstb", HBSTB},
-    {"hbxf", HBXF},
-    {"info", INFO},
-    {"lf", LF},
-    {"loadpull", LOADPULL},
-    {"montecarlo", MONTECARLO},
-    {"noise", NOISE},
-    {"options", OPTIONS},
-    {"pac", PAC},
-    {"pnoise", PNOISE},
-    {"psp", PSP},
-    {"pss", PSS},
-    {"pstb", PSTB},
-    {"pxf", PXF},
-    {"pz", PZ},
-    {"qpac", QPAC},
-    {"qpnoise", QPNOISE},
-    {"qpsp", QPSP},
-    {"qpss", QPSS},
-    {"qpxf", QPXF},
-    {"reliability", RELIABILITY},
-    {"set", SET},
-    {"shell", SHELL},
-    {"sp", SP},
-    {"stb", STB},
-    {"stress", STRESS},
-    {"sweep", SWEEP},
-    {"tdr", TDR},
-    {"thermal", THERMAL},
-    {"tran", TRAN},
-    {"uti", UTI},
-    {"xf", XF}};
-
-// ------------------------------------------------------------
-// otherKeywordMap
-// ------------------------------------------------------------
-static const std::unordered_map<std::string, ObjectType> otherKeywordMap = {
-    {"simulator", SIMULATOR}, {"include", INCLUDE}};
 
 #endif

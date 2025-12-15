@@ -97,12 +97,12 @@ private:
 
 class KeywordWord : public StatementWord {
 public:
-  KeywordWord(std::unique_ptr<std::string> input, ObjectType keyword)
-      : StatementWord(std::move(input)), _keyword{keyword} {}
+  KeywordWord(std::unique_ptr<std::string> input)
+      : StatementWord(std::move(input)) {}
   ObjectType get_keyword() const override { return _keyword; }
 
 private:
-  const ObjectType _keyword;
+  const ObjectType _keyword{ObjectType::KEYWORD};
 };
 
 // -----------------------
@@ -111,26 +111,25 @@ private:
 
 class MathConstantWord : public StatementWord {
 public:
-  MathConstantWord(std::unique_ptr<std::string> input, ObjectType keyword)
-      : StatementWord(std::move(input)), _keyword{keyword} {}
+  MathConstantWord(std::unique_ptr<std::string> input)
+      : StatementWord(std::move(input)) {}
   ObjectType get_keyword() const override { return _keyword; }
 
 private:
-  const ObjectType _keyword;
+  const ObjectType _keyword{ObjectType::MATH_CONSTANT};
 };
-
 // ---------------------
 // --- SimulationWord---
 // ---------------------
 
 class SimulationWord : public StatementWord {
 public:
-  SimulationWord(std::unique_ptr<std::string> input, ObjectType keyword)
-      : StatementWord(std::move(input)), _keyword{keyword} {}
+  SimulationWord(std::unique_ptr<std::string> input)
+      : StatementWord(std::move(input)) {}
   ObjectType get_keyword() const override { return _keyword; }
 
 private:
-  const ObjectType _keyword;
+  const ObjectType _keyword{ObjectType::SIMULATION};
 };
 
 // -------------------

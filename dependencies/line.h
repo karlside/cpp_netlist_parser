@@ -64,7 +64,6 @@ public:
   friend std::ostream &operator<<(std::ostream &os, const Line &rhs);
 
 private:
-  std::shared_ptr<Statement> get_obj_from_keyword(ObjectType obj_keyword);
   bool _is_done{false};
   std::shared_ptr<ListOfWords> list;
   bool first_word_is_keyword() const;
@@ -115,48 +114,6 @@ class SimulationStatement : public Statement {
 public:
   SimulationStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {
     std::cout << "Creating SimulationStatemen" << std::endl;
-  }
-};
-
-// -------------------------------
-// --- SkipSecondWordStatement ---
-// -------------------------------
-
-class SkipFirstWordStatement : public Statement {
-public:
-  SkipFirstWordStatement() {};
-  SkipFirstWordStatement(std::shared_ptr<ListOfWords> input)
-      : Statement(input) {}
-
-  ~SkipFirstWordStatement() = default;
-};
-
-class SimulatorStatement : public SkipFirstWordStatement {
-public:
-  SimulatorStatement(std::shared_ptr<ListOfWords> input)
-      : SkipFirstWordStatement(input) {
-    // std::cout << "Creating SimulatorStatement" << std::endl;
-  }
-};
-
-// -------------------------------
-// --- SkipSecondWordStatement ---
-// -------------------------------
-
-class SkipSecondWordStatement : public Statement {
-public:
-  SkipSecondWordStatement() {};
-  SkipSecondWordStatement(std::shared_ptr<ListOfWords> input)
-      : Statement(input) {}
-
-  ~SkipSecondWordStatement() = default;
-};
-
-class PortStatement : public SkipSecondWordStatement {
-public:
-  PortStatement(std::shared_ptr<ListOfWords> input)
-      : SkipSecondWordStatement(input) {
-    // std::cout << "Creating PortStatement" << std::endl;
   }
 };
 

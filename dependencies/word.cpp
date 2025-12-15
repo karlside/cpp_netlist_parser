@@ -125,50 +125,30 @@ void Word::add_string(std::string input) {
   }
 }
 
+// TODO: Mark word as done after objectify
+// This is important to avoid segfault if objectify is called twice
 std::shared_ptr<StatementWord> Word::objectify() {
-  ObjectType word_obj_type{ObjectType::NONE};
-  if (keywordMap.find(get_text()) != keywordMap.end()) {
-    word_obj_type = keywordMap.at(get_text());
-  } else if (otherKeywordMap.find(get_text()) != otherKeywordMap.end()) {
-    word_obj_type = otherKeywordMap.at(get_text());
-  } else if (reservedWordsMap.find(get_text()) != reservedWordsMap.end()) {
-    word_obj_type = reservedWordsMap.at(get_text());
-  }
-  if (ObjectType::NONE != word_obj_type)
-    return std::make_shared<KeywordWord>(std::move(text), ObjectType::KEYWORD);
+  if (keywordSet.find(get_text()) != keywordSet.end())
+    return std::make_shared<KeywordWord>(std::move(text));
 
-  if (mathConstantMap.find(get_text()) != mathConstantMap.end())
-    return std::make_shared<MathConstantWord>(std::move(text),
-                                              ObjectType::MATH_CONSTANT);
+  if (mathConstantSet.find(get_text()) != mathConstantSet.end())
+    return std::make_shared<MathConstantWord>(std::move(text));
 
-  if (simKeywordMap.find(get_text()) != simKeywordMap.end())
-    return std::make_shared<SimulationWord>(std::move(text),
-                                            ObjectType::SIMULATION);
+  // TODO:
+  if (SimulationSet.find(get_text()) != SimulationSet.end())
+    ObjectType word_obj_type{ObjectType::SIMULATION};
+  return std::make_shared<SimulationWord>(std::move(text));
 
-  if (ObjectType::NONE == word_obj_type) {
-    for (char ch : get_text()) {
-      if ('=' == ch) {
-        word_obj_type = ObjectType::KEYVALUE;
-        break;
-      }
-      if ('(' == ch) {
-        word_obj_type = ObjectType::PORT;
-        break;
-      }
+  for (char ch : get_text()) {
+    if ('=' == ch) {
+
+      return std::make_shared<KeyValueWord>(std::move(text));
+      break;
     }
-  }
-  if (ObjectType::NONE == word_obj_type) {
-    // check get_text() vs. list of keywords
-  }
-  switch (word_obj_type) {
-  case ObjectType::NONE:
-    return std::make_shared<StatementWord>(std::move(text));
-  // case ObjectType::SIMULATOR:
-  //   return std::make_shared<SimulatorWord>(std::move(text));
-  case ObjectType::KEYVALUE:
-    return std::make_shared<KeyValueWord>(std::move(text));
-  case ObjectType::PORT:
-    return std::make_shared<PortWord>(std::move(text));
+    if ('(' == ch) {
+      return std::make_shared<PortWord>(std::move(text));
+      break;
+    }
   }
   return std::make_shared<StatementWord>(std::move(text));
 }
