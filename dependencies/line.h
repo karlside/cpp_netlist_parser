@@ -28,8 +28,8 @@ public:
 
   void add_param(std::string input_string); // TODO: Parse the input and turn it
                                             // into a word
-  std::string const get_text();
-  std::string produce_id() { return get_text(); } // TODO: Fix this
+  std::string get_text() const;
+  virtual std::string produce_id() { return list->at(0)->produce_id(); }
   virtual std::string get_list() const;
   std::string print_line();
 
@@ -40,7 +40,6 @@ public:
 protected:
   bool _is_active{true};
   std::shared_ptr<ListOfWords> list;
-  void parse(); // Analyse the entries in ListOfWords and 'label'
 };
 
 // ------------
@@ -55,7 +54,7 @@ public:
   void add_word(std::unique_ptr<Word> word);
   std::shared_ptr<StatementWord> pop_word() { return list->pop_back(); }
   std::shared_ptr<StatementWord> at(int index) const { return list->at(index); }
-  std::string const get_text();
+  std::string get_text() const;
   int length() const { return list->size(); }
   bool is_done() const { return _is_done; }
 
@@ -79,9 +78,7 @@ private:
 
 class ControlStatement : public Statement {
 public:
-  ControlStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {
-    std::cout << "Creating ControlStatement" << std::endl;
-  }
+  ControlStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
 };
 
 // -------------------------
@@ -90,9 +87,7 @@ public:
 
 class InstanceStatement : public Statement {
 public:
-  InstanceStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {
-    std::cout << "Creating InstanceStatement" << std::endl;
-  }
+  InstanceStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
 };
 
 // -----------------------
@@ -101,9 +96,7 @@ public:
 
 class DeviceStatement : public Statement {
 public:
-  DeviceStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {
-    std::cout << "Creating DeviceStatement" << std::endl;
-  }
+  DeviceStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
 };
 
 // ---------------------------
@@ -112,9 +105,7 @@ public:
 
 class SimulationStatement : public Statement {
 public:
-  SimulationStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {
-    std::cout << "Creating SimulationStatemen" << std::endl;
-  }
+  SimulationStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
 };
 
 #endif

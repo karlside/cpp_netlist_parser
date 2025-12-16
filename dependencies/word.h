@@ -22,7 +22,7 @@ public:
 
   virtual ObjectType get_keyword() const { return _keyword; }
   const std::string &get_text() const { return *text; }
-  virtual std::string produce_id() { return *text; }
+  virtual std::string produce_id() { return get_text(); }
   virtual std::string print_list();
 
   virtual ~StatementWord() = default;
@@ -149,9 +149,9 @@ public:
   KeyValueWord(std::unique_ptr<std::string> input)
       : StatementWord(std::move(input)) {}
 
-  ObjectType get_keyword() const { return _keyword; }
-  std::string produce_id() { return get_key(); }
-  virtual std::string print_list();
+  ObjectType get_keyword() const override { return _keyword; }
+  std::string produce_id() override { return get_key(); }
+  virtual std::string print_list() override;
 
   // void set_key(std::string input);
   void set_value(std::string input);
@@ -159,7 +159,7 @@ public:
   const std::string &get_value();
   // const std::string &get_text();
   bool has_value() const { return _has_value; }
-  void parse();
+  void parse() override;
 
 private:
   ObjectType _keyword{ObjectType::KEYVALUE};
@@ -179,11 +179,11 @@ public:
   PortWord(std::unique_ptr<std::string> input)
       : StatementWord(std::move(input)) {}
 
-  ObjectType get_keyword() const { return _keyword; }
-  std::string produce_id() { return "port"; }
-  std::string print_list();
+  ObjectType get_keyword() const override { return _keyword; }
+  std::string produce_id() override { return "port"; }
+  std::string print_list() override;
 
-  void parse();
+  void parse() override;
   const std::string &get_port();
   void set_port(std::string input);
 

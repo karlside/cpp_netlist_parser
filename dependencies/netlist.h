@@ -19,8 +19,12 @@ struct ListOfLines : ListOfTypes<Statement> {
 class Netlist {
 public:
   Netlist() : list{std::make_unique<ListOfLines>()} {}
-  void add_line(std::shared_ptr<Statement> line);
-  std::shared_ptr<Statement> pop_line();
+  void add_line(std::shared_ptr<Statement> line) { list->push_back(line); }
+  std::shared_ptr<Statement> pop_line() { return list->pop_back(); }
+  std::shared_ptr<Statement> get_line(std::string name) {
+    return list->get_line(name);
+  }
+
   void load_netlist_from_file(const std::unique_ptr<std::fstream> &file);
   std::unique_ptr<std::fstream> load_file(std::string file_path);
 

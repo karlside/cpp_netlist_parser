@@ -7,15 +7,6 @@
 #include <stdexcept>
 #include <unordered_map>
 
-std::unordered_map<std::string, std::string> ignore_newline_keywords = {
-    {R"(\\)", "\n"}, {"subckt", "ends"}};
-
-void Netlist::add_line(std::shared_ptr<Statement> line) {
-  list->push_back(line);
-}
-
-std::shared_ptr<Statement> Netlist::pop_line() { return list->pop_back(); }
-
 std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
   std::unique_ptr<std::fstream> file =
       std::make_unique<std::fstream>(file_path);

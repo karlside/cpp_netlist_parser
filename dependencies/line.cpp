@@ -37,7 +37,7 @@ void Line::add_word(std::unique_ptr<Word> word) {
   list->push_back(word->objectify());
 }
 
-std::string const Line::get_text() {
+std::string Line::get_text() const {
   std::string ret_text;
   for (auto wordItem : *list) {
     std::string word_text = wordItem.item->get_text();
@@ -109,7 +109,7 @@ std::ostream &operator<<(std::ostream &os, Line &rhs) {
 
 Statement::Statement(std::shared_ptr<ListOfWords> input) : list{input} {}
 
-std::string const Statement::get_text() {
+std::string Statement::get_text() const {
   std::string ret_text;
   for (auto &wordItem : *list) {
     if (!wordItem.item->is_active())

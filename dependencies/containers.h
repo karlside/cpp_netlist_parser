@@ -1,7 +1,6 @@
 #ifndef CONTAINERS_H
 #define CONTAINERS_H
 
-// #include "line.h"
 #include <cassert>
 #include <iostream>
 #include <iterator>
@@ -27,9 +26,11 @@ template <typename StatementType> struct ListOfTypes {
 public:
   void push_back(std::shared_ptr<StatementType> input);
   std::shared_ptr<StatementType> pop_back();
-  std::shared_ptr<StatementType> get_item(std::string key);
-  std::shared_ptr<StatementType> at(int index) { return items.at(index).item; }
-  int size() { return items.size(); }
+  std::shared_ptr<StatementType> get_item(std::string key) const;
+  std::shared_ptr<StatementType> at(int index) const {
+    return items.at(index).item;
+  }
+  int size() const { return items.size(); }
 
   auto begin() { return items.begin(); }
   auto end() { return items.end(); }
@@ -54,7 +55,7 @@ std::string ListOfTypes<StatementType>::create_key(std::string key,
 
 template <typename StatementType>
 std::shared_ptr<StatementType>
-ListOfTypes<StatementType>::get_item(std::string key) {
+ListOfTypes<StatementType>::get_item(std::string key) const {
   if (index.find(key) == index.end())
     throw std::runtime_error("Key not in List");
   // TODO: Create new errors
