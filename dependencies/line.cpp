@@ -140,10 +140,11 @@ std::string Statement::get_list() const {
   return "";
 }
 
-std::string Statement::print_line() {
+std::string Statement::print_list() const {
   std::string ret_str;
   for (auto wordItem : *list) {
-    ret_str += wordItem.print_list() + "\n";
+    ret_str += "ID: '" + wordItem.key + "' Text: '" +
+               wordItem.item->get_text() + "'\n";
   }
   return ret_str;
 }

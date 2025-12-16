@@ -12,6 +12,7 @@ struct ListOfWords : ListOfTypes<StatementWord> {
   std::shared_ptr<StatementWord> get_word(std::string key) {
     return ListOfTypes::get_item(key);
   }
+  std::string print_list() const { return "TOOD"; }
 };
 
 class Statement {
@@ -31,7 +32,7 @@ public:
   std::string get_text() const;
   virtual std::string produce_id() { return list->at(0)->produce_id(); }
   virtual std::string get_list() const;
-  std::string print_line();
+  virtual std::string print_list() const;
 
   friend std::ostream &operator<<(std::ostream &os, Statement &rhs);
 

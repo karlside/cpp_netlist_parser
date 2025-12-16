@@ -14,6 +14,7 @@ struct ListOfLines : ListOfTypes<Statement> {
   std::shared_ptr<Statement> get_line(std::string key) {
     return ListOfTypes::get_item(key);
   }
+  std::string print_list() const { return "TOOD"; }
 };
 
 class Netlist {

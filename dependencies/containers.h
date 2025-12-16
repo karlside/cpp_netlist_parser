@@ -19,7 +19,7 @@ template <typename StatementType> struct Item {
       : key{input.first}, item{input.second} {}
   std::string const key;
   std::shared_ptr<StatementType> item;
-  std::string print_list() { return "TODO:"; }
+  // std::string print_list() { return "TODO:"; }
 };
 
 template <typename StatementType> struct ListOfTypes {
@@ -31,6 +31,7 @@ public:
     return items.at(index).item;
   }
   int size() const { return items.size(); }
+  virtual std::string print_list() const = 0;
 
   auto begin() { return items.begin(); }
   auto end() { return items.end(); }
