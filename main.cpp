@@ -14,9 +14,12 @@ int main() {
   Netlist netlist = Netlist();
   std::unique_ptr<std::fstream> file = netlist.load_file(FILE_PATH);
   netlist.load_netlist_from_file(file);
-
-  std::cout << "PRINTING NETLIST:" << std::endl;
-  std::cout << netlist << std::endl;
+  std::cout << netlist.print_list() << std::endl;
+  auto sim = netlist.get_line("dc");
+  std::cout << sim->print_list() << std::endl;
+  //
+  // std::cout << "PRINTING NETLIST:" << std::endl;
+  // std::cout << netlist << std::endl;
 
   // Word myWord("(1 2 3)");
   // auto globalWord = myWord.objectify();
@@ -29,9 +32,10 @@ int main() {
   // std::cout << objWord->get_keyword() << std::endl;
   // std::cout << ObjectType::INCLUDE << std::endl;
 
-  // Line myLine("simulator lang=spectre");
+  // Line myLine("parameters vi_sig=vdd/2 cl=0.1f vdd=100m low=0 high=vdd "
+  //             "period=20u numSamples=300");
   // std::shared_ptr<Statement> myStatement = myLine.objectify();
-  // std::cout << myStatement->get_text() << std::endl;
+  // std::cout << myStatement->print_list() << std::endl;
   //
   // std::shared_ptr<ListOfWords> myWords = std::make_shared<ListOfWords>();
   // std::shared_ptr<Word> word = std::make_shared<Word>("lang=spectre");

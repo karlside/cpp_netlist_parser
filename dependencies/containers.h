@@ -31,7 +31,6 @@ public:
     return items.at(index).item;
   }
   int size() const { return items.size(); }
-  virtual std::string print_list() const = 0;
 
   auto begin() { return items.begin(); }
   auto end() { return items.end(); }

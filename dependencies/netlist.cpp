@@ -55,6 +55,15 @@ void print_state(State state) {
   std::cout << std::endl;
 }
 
+std::string Netlist::print_list() const {
+  std::string ret_str;
+  for (auto wordItem : *list) {
+    ret_str += "ID: '" + wordItem.key + "' - Text: '" +
+               wordItem.item->get_text() + "'\n";
+  }
+  return ret_str;
+}
+
 void Netlist::load_netlist_from_file(
     const std::unique_ptr<std::fstream> &file) {
   char ch;

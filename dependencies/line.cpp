@@ -131,19 +131,10 @@ std::ostream &operator<<(std::ostream &os, Statement &rhs) {
   return os;
 }
 
-std::string Statement::get_list() const {
-  // I guess the list should be a shared pointer,
-  //  with a vector of shared pointers to the words...
-  //  That way I can pass the shared pointers around and make changes
-  //  to the word anywhere, without worring about
-  //  memory saftey..
-  return "";
-}
-
 std::string Statement::print_list() const {
   std::string ret_str;
   for (auto wordItem : *list) {
-    ret_str += "ID: '" + wordItem.key + "' Text: '" +
+    ret_str += "ID: '" + wordItem.key + "' - Text: '" +
                wordItem.item->get_text() + "'\n";
   }
   return ret_str;

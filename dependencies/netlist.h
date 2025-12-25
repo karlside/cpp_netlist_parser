@@ -14,7 +14,6 @@ struct ListOfLines : ListOfTypes<Statement> {
   std::shared_ptr<Statement> get_line(std::string key) {
     return ListOfTypes::get_item(key);
   }
-  std::string print_list() const { return "TOOD"; }
 };
 
 class Netlist {
@@ -28,6 +27,7 @@ public:
 
   void load_netlist_from_file(const std::unique_ptr<std::fstream> &file);
   std::unique_ptr<std::fstream> load_file(std::string file_path);
+  virtual std::string print_list() const;
 
   friend std::ostream &operator<<(std::ostream &os, const Netlist &rhs);
 
