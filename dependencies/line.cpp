@@ -27,13 +27,32 @@ Line::Line(std::string input) : list{std::make_shared<ListOfWords>()} {
   add_word(std::move(word));
 }
 
+void Line::set_ignore_end_of_line(std::string word) {
+  wordKeyword = word_keyword_map.at(word);
+  _ignore_newline = true;
+}
+
+void Line::clear_newline_flag(std::string word) {
+  switch (wordKeyword) {
+  case WordKeyword::ENDS:
+    if ("ends" != word)
+      return;
+    break;
+  }
+  _ignore_newline = false;
+}
+
 void Line::add_word(std::unique_ptr<Word> word) {
-  if (word->is_end_of_line()) {
+  clear_newline_flag(word->get_text());
+
+  if (word->is_end_of_line() && !(_ignore_newline)) {
     _is_done = true;
   }
   // TODO: Change this to some falg instead of using get_text()
   if (R"(\\)" == word->get_text())
     _is_done = false;
+  if ("subckt" == word->get_text())
+    set_ignore_end_of_line(word->get_text());
   list->push_back(word->objectify());
 }
 

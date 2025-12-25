@@ -15,8 +15,6 @@ int main() {
   std::unique_ptr<std::fstream> file = netlist.load_file(FILE_PATH);
   netlist.load_netlist_from_file(file);
   std::cout << netlist.print_list() << std::endl;
-  auto sim = netlist.get_line("dc");
-  std::cout << sim->print_list() << std::endl;
   //
   // std::cout << "PRINTING NETLIST:" << std::endl;
   // std::cout << netlist << std::endl;

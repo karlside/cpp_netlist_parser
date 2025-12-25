@@ -86,8 +86,8 @@ void Word::add_char(char ch) {
   case ' ':
     assert(!(_ignore_whitespace && _add_whitespace));
     if (!_add_whitespace && !_ignore_whitespace) {
+      // This makes sure double whitespaces are not added as empty words..
       if (0 != text->size()) {
-        // This makes sure double whitespaces are not added as empty words..
         set_done();
       }
       return;

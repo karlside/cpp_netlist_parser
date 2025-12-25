@@ -16,3 +16,15 @@ cl (load_out 0) capacitor c=cl
 tran tran stop=period annotate=status strobeperiod=period/numSamples
 dcOp dc maxiters=150 maxsteps=10000 annotate=status
 dc dc param=vi_sig start=0 stop=vdd lin=numSamples
+
+
+subckt tran_gate IN OUT HIGHZ HIGHZ_BAR VDD VSS
+    NM1 (IN HIGHZ_BAR OUT VSS) g45n1lvt w=(200n) l=90n nf=1 as=28f ad=28f \
+            ps=680n pd=680n nrd=700m nrs=700m sa=140n sb=140n sd=160n \
+            sca=162.68789 scb=0.10361 scc=0.01965 m=(1)
+    PM1 (IN HIGHZ OUT VDD) g45p1lvt w=(200n) l=90n nf=1 as=28f ad=28f ps=680n \
+            pd=680n nrd=700m nrs=700m sa=140n sb=140n sd=160n sca=162.68789 \
+            scb=0.10361 scc=0.01965 m=(1)
+ends
+
+

@@ -63,7 +63,16 @@ public:
 
 private:
   bool _is_done{false};
+  bool _ignore_newline{false};
   std::shared_ptr<ListOfWords> list;
+
+  void set_ignore_end_of_line(std::string word);
+  void clear_newline_flag(std::string word);
+  enum WordKeyword { NONE, ANY, ENDS };
+  WordKeyword wordKeyword;
+  const std::unordered_map<std::string, WordKeyword> word_keyword_map = {
+      {"subckt", ENDS}};
+
   bool first_word_is_keyword() const;
   bool first_word_is_comment() const;
   bool second_word_is_keyword() const;

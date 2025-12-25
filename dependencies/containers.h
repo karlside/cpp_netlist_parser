@@ -41,7 +41,19 @@ private:
   std::vector<Item<StatementType>> items;
   std::unordered_map<std::string, int> index;
   std::string create_key(std::string key, int iterator = 0);
+  std::string _create_key(std::string key, int iterator = 0);
 };
+
+template <typename StatementType>
+std::string ListOfTypes<StatementType>::_create_key(std::string key,
+                                                    int iterator) {
+  // TODO: add support if the iterator is larger than '9'.
+  if (index.find(key) == index.end())
+    return key;
+  iterator += 1;
+  key.at(key.size() - 1) = iterator + '0';
+  return _create_key(key, iterator);
+}
 
 template <typename StatementType>
 std::string ListOfTypes<StatementType>::create_key(std::string key,
@@ -50,7 +62,7 @@ std::string ListOfTypes<StatementType>::create_key(std::string key,
     return key;
   iterator += 1;
   key = key + "_" + std::to_string(iterator);
-  return create_key(key, iterator);
+  return _create_key(key, iterator);
 }
 
 template <typename StatementType>
