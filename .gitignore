@@ -2,6 +2,7 @@
 # Compiled object files
 *.o
 *.gch
+/build/
 
 # Executable
 *.out
