@@ -1,5 +1,6 @@
-# Class Structure
+This is a work in progress
 
+# Class Structure
 
 # Object Hierarchy
 NetlistStatement
