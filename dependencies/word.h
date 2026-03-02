@@ -13,8 +13,9 @@
 
 class StatementWord {
 public:
-  StatementWord() {}
-  StatementWord(std::unique_ptr<std::string> input) { text = std::move(input); }
+  StatementWord(std::string input)
+      : text{std::make_shared<std::string>(input)} {}
+  StatementWord(std::unique_ptr<std::string> input) : text{std::move(input)} {}
 
   void activate() { _is_active = true; }
   void deactivate() { _is_active = false; }
@@ -104,6 +105,7 @@ private:
 
 class KeywordWord : public StatementWord {
 public:
+  KeywordWord(std::string input) : StatementWord(input) {}
   KeywordWord(std::unique_ptr<std::string> input)
       : StatementWord(std::move(input)) {}
   ObjectType get_keyword() const override { return _keyword; }
@@ -118,6 +120,7 @@ private:
 
 class MathConstantWord : public StatementWord {
 public:
+  MathConstantWord(std::string input) : StatementWord(input) {}
   MathConstantWord(std::unique_ptr<std::string> input)
       : StatementWord(std::move(input)) {}
   ObjectType get_keyword() const override { return _keyword; }
@@ -125,12 +128,14 @@ public:
 private:
   const ObjectType _keyword{ObjectType::MATH_CONSTANT};
 };
+
 // ---------------------
 // --- SimulationWord---
 // ---------------------
 
 class SimulationWord : public StatementWord {
 public:
+  SimulationWord(std::string input) : StatementWord(input) {}
   SimulationWord(std::unique_ptr<std::string> input)
       : StatementWord(std::move(input)) {}
   ObjectType get_keyword() const override { return _keyword; }
@@ -145,7 +150,7 @@ private:
 
 class KeyValueWord : public StatementWord {
 public:
-  KeyValueWord();
+  KeyValueWord(std::string input) : StatementWord(input) {}
   KeyValueWord(std::unique_ptr<std::string> input)
       : StatementWord(std::move(input)) {}
 
@@ -175,7 +180,7 @@ private:
 
 class PortWord : public StatementWord {
 public:
-  PortWord();
+  PortWord(std::string input) : StatementWord(input) {}
   PortWord(std::unique_ptr<std::string> input)
       : StatementWord(std::move(input)) {}
 
