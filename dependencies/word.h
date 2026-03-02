@@ -26,6 +26,8 @@ public:
   virtual std::string produce_id() { return get_text(); }
   virtual std::string print_list();
 
+  friend std::ostream &operator<<(std::ostream &os, const StatementWord &rhs);
+
   virtual ~StatementWord() = default;
 
 protected:

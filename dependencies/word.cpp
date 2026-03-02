@@ -205,6 +205,11 @@ std::string StatementWord::print_list() {
   return ret_text;
 }
 
+std::ostream &operator<<(std::ostream &os, const StatementWord &rhs) {
+  os << rhs.get_text();
+  return os;
+}
+
 // ---------------------
 // --- SimulatorWord ---
 // ---------------------
