@@ -13,7 +13,8 @@ NetlistStatement
     └── ...
 
 # Compile
-'g++ -std=c++17 -I dependencies/ main.cpp dependencies/*.cpp'
+`cmake . -B build`
+`cmake --build build`
 
 # Words - Object Structure and Inheritance
 Word is an abstract class. Specificly it has the analyse() method return a pointer to itself (this).
