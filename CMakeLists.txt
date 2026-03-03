@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.23)
 project(NetlistParser)
 
-# Main
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 add_executable(NetlistParser)
 target_sources(NetlistParser
 	PRIVATE

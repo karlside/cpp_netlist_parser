@@ -6,3 +6,7 @@
 
 # Executable
 *.out
+
+# CMake stuff
+.cache/
+compile_commands.json
