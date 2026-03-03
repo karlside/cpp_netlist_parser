@@ -37,6 +37,13 @@ public:
   auto begin() const { return items.begin(); }
   auto end() const { return items.end(); }
 
+  friend std::ostream &operator<<(std::ostream &os,
+                                  const ListOfTypes<StatementType> &rhs) {
+    for (Item<StatementType> item : rhs.items)
+      os << item.item->get_text() << " ";
+    return os;
+  }
+
 private:
   std::vector<Item<StatementType>> items;
   std::unordered_map<std::string, int> index;
@@ -88,14 +95,6 @@ std::shared_ptr<StatementType> ListOfTypes<StatementType>::pop_back() {
   items.pop_back();
   index.erase(ret_item.key);
   return ret_item.item;
-}
-
-template <typename StatementType>
-std::ostream &operator<<(std::ostream &os,
-                         const ListOfTypes<StatementType> &rhs) {
-  for (Item<StatementType> item : rhs.items)
-    os << item.item->get_text() << " ";
-  return os;
 }
 
 #endif
