@@ -1,8 +1,5 @@
-#include "word.h"
-#include "exceptions.h"
+#include "netlist_objects/word.h"
 #include <cassert>
-// #include <exception>
-#include "keywords.h"
 #include <iostream>
 #include <sstream>
 

@@ -1,9 +1,9 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include "containers.h"
-#include "exceptions.h"
-#include "word.h"
+#include "misc/containers.h"
+#include "misc/exceptions.h"
+#include "netlist_objects/word.h"
 #include <map>
 #include <memory>
 #include <string>

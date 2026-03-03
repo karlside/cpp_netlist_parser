@@ -1,11 +1,11 @@
 #ifndef PARSING_OBJECTS_H
 #define PARSING_OBJECTS_H
 
-#include "exceptions.h"
-#include "keywords.h"
-#include "line.h"
+#include "misc/exceptions.h"
+#include "misc/keywords.h"
+#include "netlist_objects/line.h"
 // #include "netlist.h"
-#include "word.h"
+#include "netlist_objects/word.h"
 #include <iostream>
 #include <memory>
 #include <string>

@@ -1,6 +1,6 @@
 #include "netlist.h"
-#include "line.h"
-#include "word.h"
+// #include "line.h"
+// #include "word.h"
 #include <fstream>
 #include <iostream>
 #include <memory>

@@ -1,9 +1,9 @@
 #ifndef WORD_H
 #define WORD_H
 
-#include "containers.h"
-#include "exceptions.h"
-#include "keywords.h"
+#include "misc/containers.h"
+#include "misc/exceptions.h"
+#include "misc/keywords.h"
 #include <iostream>
 #include <memory>
 #include <string>

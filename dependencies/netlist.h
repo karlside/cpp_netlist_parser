@@ -1,11 +1,11 @@
 #ifndef NETLIST_H
 #define NETLIST_H
 
-#include "containers.h"
-#include "exceptions.h"
-#include "line.h"
-#include "parsing_objects.h"
-#include "word.h"
+#include "input_parser/parsing_objects.h"
+#include "misc/containers.h"
+#include "misc/exceptions.h"
+#include "netlist_objects/line.h"
+#include "netlist_objects/word.h"
 #include <fstream>
 #include <memory>
 
