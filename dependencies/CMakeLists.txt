@@ -3,7 +3,6 @@ target_sources(NetlistParserLib
 	PRIVATE
 		line.cpp
 		netlist.cpp
-		netlistObjects.cpp
 		word.cpp
 	PUBLIC
 		FILE_SET HEADERS
@@ -13,6 +12,5 @@ target_sources(NetlistParserLib
 			keywords.h
 			line.h
 			netlist.h
-			netlistObjects.h
 			word.h
 )
