@@ -86,10 +86,7 @@ template <typename StatementType>
 std::shared_ptr<StatementType> ListOfTypes<StatementType>::pop_back() {
   Item ret_item = items.back();
   items.pop_back();
-  index.erase(
-      ret_item.item->get_text()); // TODO: groc says there is a bug here. It
-                                  // says it should use ret_item.key
-                                  // istead of ret_item.time-get_text()
+  index.erase(ret_item.key);
   return ret_item.item;
 }
 
