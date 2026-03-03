@@ -10,8 +10,6 @@
 // --- Line ---
 // ------------
 
-Line::Line() : list{std::make_shared<ListOfWords>()} {}
-Line::Line(std::shared_ptr<ListOfWords> input) : list{input} {}
 Line::Line(std::string input) : list{std::make_shared<ListOfWords>()} {
   // TODO: Input formatting
   // This is hacked together and is not a good solution.

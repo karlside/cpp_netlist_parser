@@ -47,9 +47,9 @@ protected:
 
 class Line {
 public:
-  Line();
+  Line() : list{std::make_shared<ListOfWords>()} {};
+  Line(std::shared_ptr<ListOfWords> input) : list{input} {};
   Line(std::string input);
-  Line(std::shared_ptr<ListOfWords> input);
   void add_word(std::unique_ptr<Word> word);
   std::shared_ptr<StatementWord> pop_word() { return list->pop_back(); }
   std::shared_ptr<StatementWord> at(int index) const { return list->at(index); }
