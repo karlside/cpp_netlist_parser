@@ -4,6 +4,7 @@
 #include "exceptions.h"
 #include "keywords.h"
 #include "line.h"
+// #include "netlist.h"
 #include "word.h"
 #include <iostream>
 #include <memory>

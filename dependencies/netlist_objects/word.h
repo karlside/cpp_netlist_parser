@@ -2,6 +2,7 @@
 #define WORD_H
 
 #include "containers.h"
+#include "exceptions.h"
 #include "keywords.h"
 #include <iostream>
 #include <memory>

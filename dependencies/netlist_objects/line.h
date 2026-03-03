@@ -2,6 +2,7 @@
 #define LINE_H
 
 #include "containers.h"
+#include "exceptions.h"
 #include "word.h"
 #include <map>
 #include <memory>

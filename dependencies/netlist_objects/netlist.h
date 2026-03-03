@@ -2,6 +2,7 @@
 #define NETLIST_H
 
 #include "containers.h"
+#include "exceptions.h"
 #include "line.h"
 #include "parsing_objects.h"
 #include "word.h"
