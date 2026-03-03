@@ -1,6 +1,7 @@
 #ifndef PARSING_OBJECTS_H
 #define PARSING_OBJECTS_H
 
+#include "exceptions.h"
 #include "keywords.h"
 #include "line.h"
 #include "word.h"

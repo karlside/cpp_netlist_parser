@@ -3,6 +3,8 @@
 
 #include "containers.h"
 #include "line.h"
+#include "parsing_objects.h"
+#include "word.h"
 #include <fstream>
 #include <memory>
 

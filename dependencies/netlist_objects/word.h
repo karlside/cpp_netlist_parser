@@ -1,6 +1,7 @@
 #ifndef WORD_H
 #define WORD_H
 
+#include "containers.h"
 #include "keywords.h"
 #include <iostream>
 #include <memory>
