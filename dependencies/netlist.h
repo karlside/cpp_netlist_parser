@@ -5,19 +5,10 @@
 #include "misc/containers.h"
 #include "misc/exceptions.h"
 #include "netlist_objects/line.h"
+#include "netlist_objects/list_of_lines.h"
 #include "netlist_objects/word.h"
 #include <fstream>
 #include <memory>
-
-// -------------------
-// --- ListOfLines ---
-// -------------------
-
-struct ListOfLines : ListOfTypes<Line> {
-  std::shared_ptr<Line> get_line(std::string key) {
-    return ListOfTypes::get_item(key);
-  }
-};
 
 class Netlist {
 public:
