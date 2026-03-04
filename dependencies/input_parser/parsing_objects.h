@@ -149,14 +149,14 @@ private:
   std::unique_ptr<ListOfLines> list{};
 };
 
-char ch;
-std::unique_ptr<WordParser> word;
-std::shared_ptr<LineParser> line;
-State state{START};
-State next_state{START};
-bool ignore_newline{false};
-std::string keyword;
-
+// char ch;
+// std::unique_ptr<WordParser> word;
+// std::shared_ptr<LineParser> line;
+// State state{START};
+// State next_state{START};
+// bool ignore_newline{false};
+// std::string keyword;
+//
 // while (State::DONE != state) {
 //   // print_state(state);
 //
@@ -207,5 +207,5 @@ std::string keyword;
 //
 //   state = next_state;
 // }
-
+//
 #endif
