@@ -15,19 +15,19 @@
 // --- Word ---
 // ------------
 
-class Word {
+class WordParser {
 public:
-  Word() : text(std::make_unique<std::string>()) {}
-  Word(std::string input) : text(std::make_unique<std::string>()) {
+  WordParser() : text(std::make_unique<std::string>()) {}
+  WordParser(std::string input) : text(std::make_unique<std::string>()) {
     add_string(input);
   }
-  Word(const Word *input_word) { append_word(*input_word); }
+  WordParser(const WordParser *input_word) { append_word(*input_word); }
 
   void add_char(char input);
   void add_string(std::string input);
-  void append_word(const Word &input_word);
+  void append_word(const WordParser &input_word);
   void merge_word_in_front(const std::string text);
-  std::shared_ptr<StatementWord> objectify();
+  std::shared_ptr<Word> objectify();
 
   bool is_done() const { return _is_done; }
   bool is_end_of_line() const { return _is_end_of_line; }
@@ -36,9 +36,9 @@ public:
 
   virtual const std::string &get_text() const { return *text; }
 
-  friend std::ostream &operator<<(std::ostream &os, const Word &rhs);
+  friend std::ostream &operator<<(std::ostream &os, const WordParser &rhs);
 
-  virtual ~Word() = default;
+  virtual ~WordParser() = default;
 
 private:
   bool _is_done{false};
@@ -75,21 +75,21 @@ private:
 // --- Line ---
 // ------------
 
-class Line {
+class LineParser {
 public:
-  Line() : list{std::make_shared<ListOfWords>()} {};
-  Line(std::shared_ptr<ListOfWords> input) : list{input} {};
-  Line(std::string input);
-  void add_word(std::unique_ptr<Word> word);
-  std::shared_ptr<StatementWord> pop_word() { return list->pop_back(); }
-  std::shared_ptr<StatementWord> at(int index) const { return list->at(index); }
+  LineParser() : list{std::make_shared<ListOfWords>()} {};
+  LineParser(std::shared_ptr<ListOfWords> input) : list{input} {};
+  LineParser(std::string input);
+  void add_word(std::unique_ptr<WordParser> word);
+  std::shared_ptr<Word> pop_word() { return list->pop_back(); }
+  std::shared_ptr<Word> at(int index) const { return list->at(index); }
   std::string get_text() const;
   int length() const { return list->size(); }
   bool is_done() const { return _is_done; }
 
-  std::shared_ptr<Statement> objectify();
+  std::shared_ptr<Line> objectify();
 
-  friend std::ostream &operator<<(std::ostream &os, const Line &rhs);
+  friend std::ostream &operator<<(std::ostream &os, const LineParser &rhs);
 
 private:
   bool _is_done{false};

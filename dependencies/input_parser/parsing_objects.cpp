@@ -9,26 +9,28 @@
 // ------------
 // --- Word ---
 // ------------
-void Word::set_end_of_line() {
+void WordParser::set_end_of_line() {
   _is_done = true;
   _is_end_of_line = true;
 }
 
-void Word::set_append_to_prev_word(char ch) { _append_to_prev_word = true; }
+void WordParser::set_append_to_prev_word(char ch) {
+  _append_to_prev_word = true;
+}
 
-void Word::set_ignore_whitespace(char ch) {
+void WordParser::set_ignore_whitespace(char ch) {
   charKeyword = char_keyword_map.at(ch);
   _ignore_whitespace = true;
   _add_whitespace = false;
 }
 
-void Word::set_add_whitespace(char ch) {
+void WordParser::set_add_whitespace(char ch) {
   charKeyword = char_keyword_map.at(ch);
   _ignore_whitespace = false;
   _add_whitespace = true;
 }
 
-void Word::clear_whitespace_flag(char ch) {
+void WordParser::clear_whitespace_flag(char ch) {
   switch (charKeyword) {
   case CharKeyword::NONE:
     return;
@@ -55,7 +57,7 @@ void Word::clear_whitespace_flag(char ch) {
   charKeyword = CharKeyword::NONE;
 }
 
-bool Word::is_double_whitespace(char ch) const {
+bool WordParser::is_double_whitespace(char ch) const {
   // check if the current character and the previous one is both whitespacees
   int last_index = text->size();
   if (0 == last_index)
@@ -65,13 +67,13 @@ bool Word::is_double_whitespace(char ch) const {
   return false;
 }
 
-void Word::remove_previous_whitespace() {
+void WordParser::remove_previous_whitespace() {
   if (' ' != text->at(text->size() - 1))
     return;
   text->pop_back();
 }
 
-void Word::add_char(char ch) {
+void WordParser::add_char(char ch) {
   if (is_done())
     throw WordIsDoneError("Cannot add more characters when a Word is done");
 
@@ -115,7 +117,7 @@ void Word::add_char(char ch) {
   *text += ch;
 }
 
-void Word::add_string(std::string input) {
+void WordParser::add_string(std::string input) {
   try {
     for (char ch : input)
       add_char(ch);
@@ -126,14 +128,14 @@ void Word::add_string(std::string input) {
   }
 }
 
-void Word::check_char_for_type(char input_char) {
+void WordParser::check_char_for_type(char input_char) {
   if (type_flag_is_set())
     return;
   if (charKeywordMap.find(input_char) != charKeywordMap.end())
     set_type_flag(charKeywordMap.at(input_char));
 }
 
-void Word::set_type_flag(ObjectType input_type) {
+void WordParser::set_type_flag(ObjectType input_type) {
   if (type_flag_is_set())
     return;
   _type_flag = true;
@@ -142,7 +144,7 @@ void Word::set_type_flag(ObjectType input_type) {
 
 // TODO: Mark word as done after objectify
 // This is important to avoid segfault if objectify is called twice
-std::shared_ptr<StatementWord> Word::objectify() {
+std::shared_ptr<Word> WordParser::objectify() {
   if (keywordSet.find(get_text()) != keywordSet.end())
     return std::make_shared<KeywordWord>(std::move(text));
 
@@ -166,10 +168,10 @@ std::shared_ptr<StatementWord> Word::objectify() {
     }
   }
 
-  return std::make_shared<StatementWord>(std::move(text));
+  return std::make_shared<Word>(std::move(text));
 }
 
-void Word::append_word(const Word &input_word) {
+void WordParser::append_word(const WordParser &input_word) {
   _is_done = false;
   try {
     add_string(input_word.get_text());
@@ -184,12 +186,12 @@ void Word::append_word(const Word &input_word) {
   _add_whitespace = input_word._add_whitespace;
 }
 
-void Word::merge_word_in_front(const std::string input_text) {
+void WordParser::merge_word_in_front(const std::string input_text) {
   *text = input_text + *text;
   _append_to_prev_word = false;
 }
 
-std::ostream &operator<<(std::ostream &os, const Word &rhs) {
+std::ostream &operator<<(std::ostream &os, const WordParser &rhs) {
   os << rhs.get_text();
   return os;
 }
@@ -198,14 +200,15 @@ std::ostream &operator<<(std::ostream &os, const Word &rhs) {
 // --- Line ---
 // ------------
 
-Line::Line(std::string input) : list{std::make_shared<ListOfWords>()} {
+LineParser::LineParser(std::string input)
+    : list{std::make_shared<ListOfWords>()} {
   // TODO: Input formatting
   // This is hacked together and is not a good solution.
-  std::unique_ptr<Word> word = std::make_unique<Word>();
+  std::unique_ptr<WordParser> word = std::make_unique<WordParser>();
   for (char ch : input) {
     if (' ' == ch) {
       add_word(std::move(word));
-      word = std::make_unique<Word>();
+      word = std::make_unique<WordParser>();
       continue;
     }
     word->add_char(ch);
@@ -213,12 +216,12 @@ Line::Line(std::string input) : list{std::make_shared<ListOfWords>()} {
   add_word(std::move(word));
 }
 
-void Line::set_ignore_end_of_line(std::string word) {
+void LineParser::set_ignore_end_of_line(std::string word) {
   wordKeyword = word_keyword_map.at(word);
   _ignore_newline = true;
 }
 
-void Line::clear_newline_flag(std::string word) {
+void LineParser::clear_newline_flag(std::string word) {
   switch (wordKeyword) {
   case WordKeyword::ENDS:
     if ("ends" != word)
@@ -228,7 +231,7 @@ void Line::clear_newline_flag(std::string word) {
   _ignore_newline = false;
 }
 
-void Line::add_word(std::unique_ptr<Word> word) {
+void LineParser::add_word(std::unique_ptr<WordParser> word) {
   clear_newline_flag(word->get_text());
 
   if (word->is_end_of_line() && !(_ignore_newline)) {
@@ -242,7 +245,7 @@ void Line::add_word(std::unique_ptr<Word> word) {
   list->push_back(word->objectify());
 }
 
-std::string Line::get_text() const {
+std::string LineParser::get_text() const {
   std::string ret_text;
   for (auto wordItem : *list) {
     std::string word_text = wordItem.item->get_text();
@@ -257,17 +260,17 @@ std::string Line::get_text() const {
   return ret_text;
 }
 
-std::shared_ptr<Statement> Line::objectify() {
+std::shared_ptr<Line> LineParser::objectify() {
   if (first_word_is_keyword())
     return std::make_shared<ControlStatement>(list);
   if (second_word_is_keyword())
     return std::make_shared<InstanceStatement>(list);
   if (second_word_is_simulation())
     return std::make_shared<SimulationStatement>(list);
-  return std::make_shared<Statement>(list);
+  return std::make_shared<Line>(list);
 }
 
-bool Line::first_word_is_keyword() const {
+bool LineParser::first_word_is_keyword() const {
   if (1 > list->size())
     return false;
   if (ObjectType::NONE == list->at(0)->get_keyword())
@@ -276,7 +279,7 @@ bool Line::first_word_is_keyword() const {
     return false;
 }
 
-bool Line::second_word_is_keyword() const {
+bool LineParser::second_word_is_keyword() const {
   if (2 > list->size())
     return false;
   if (ObjectType::NONE == list->at(1)->get_keyword())
@@ -285,7 +288,7 @@ bool Line::second_word_is_keyword() const {
     return false;
 }
 
-bool Line::second_word_is_port() const {
+bool LineParser::second_word_is_port() const {
   if (2 > list->size())
     return false;
   if (ObjectType::PORT == list->at(1)->get_keyword())
@@ -294,7 +297,7 @@ bool Line::second_word_is_port() const {
     return false;
 }
 
-bool Line::second_word_is_simulation() const {
+bool LineParser::second_word_is_simulation() const {
   if (2 > list->size())
     return false;
   if (ObjectType::NONE == list->at(1)->get_keyword())
@@ -303,7 +306,7 @@ bool Line::second_word_is_simulation() const {
     return false;
 }
 
-std::ostream &operator<<(std::ostream &os, Line &rhs) {
+std::ostream &operator<<(std::ostream &os, LineParser &rhs) {
   os << rhs.get_text();
   return os;
 }

@@ -9,21 +9,21 @@
 #include <string>
 #include <vector>
 
-struct ListOfWords : ListOfTypes<StatementWord> {
-  std::shared_ptr<StatementWord> get_word(std::string key) {
+struct ListOfWords : ListOfTypes<Word> {
+  std::shared_ptr<Word> get_word(std::string key) {
     return ListOfTypes::get_item(key);
   }
 };
 
-class Statement {
+class Line {
 public:
-  Statement() {};
-  Statement(std::shared_ptr<ListOfWords> input);
+  Line() {};
+  Line(std::shared_ptr<ListOfWords> input);
 
   void activate() { _is_active = true; }
   void deactivate() { _is_active = false; }
   bool is_active() const { return _is_active; }
-  std::shared_ptr<StatementWord> get_word(std::string name) {
+  std::shared_ptr<Word> get_word(std::string name) {
     return list->get_word(name);
   }
 
@@ -33,9 +33,9 @@ public:
   virtual std::string produce_id() { return list->at(0)->produce_id(); }
   virtual std::string print_list() const;
 
-  friend std::ostream &operator<<(std::ostream &os, Statement &rhs);
+  friend std::ostream &operator<<(std::ostream &os, Line &rhs);
 
-  ~Statement() = default;
+  ~Line() = default;
 
 protected:
   bool _is_active{true};
@@ -46,36 +46,36 @@ protected:
 // --- ControlStatement ---
 // ------------------------
 
-class ControlStatement : public Statement {
+class ControlStatement : public Line {
 public:
-  ControlStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
+  ControlStatement(std::shared_ptr<ListOfWords> input) : Line(input) {}
 };
 
 // -------------------------
 // --- InstanceStatement ---
 // -------------------------
 
-class InstanceStatement : public Statement {
+class InstanceStatement : public Line {
 public:
-  InstanceStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
+  InstanceStatement(std::shared_ptr<ListOfWords> input) : Line(input) {}
 };
 
 // -----------------------
 // --- DeviceStatement ---
 // -----------------------
 
-class DeviceStatement : public Statement {
+class DeviceStatement : public Line {
 public:
-  DeviceStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
+  DeviceStatement(std::shared_ptr<ListOfWords> input) : Line(input) {}
 };
 
 // ---------------------------
 // --- SimulationStatement ---
 // ---------------------------
 
-class SimulationStatement : public Statement {
+class SimulationStatement : public Line {
 public:
-  SimulationStatement(std::shared_ptr<ListOfWords> input) : Statement(input) {}
+  SimulationStatement(std::shared_ptr<ListOfWords> input) : Line(input) {}
 };
 
 #endif

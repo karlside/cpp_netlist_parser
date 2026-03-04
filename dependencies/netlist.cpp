@@ -17,12 +17,13 @@ std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
   return file;
 }
 
-std::unique_ptr<Word> Netlist::merge_to_prev_word(std::shared_ptr<Line> &line,
-                                                  std::unique_ptr<Word> word) {
+std::unique_ptr<WordParser>
+Netlist::merge_to_prev_word(std::shared_ptr<LineParser> &line,
+                            std::unique_ptr<WordParser> word) {
   if (0 == line->length()) {
     return word;
   }
-  std::shared_ptr<StatementWord> statementWord = line->pop_word();
+  std::shared_ptr<Word> statementWord = line->pop_word();
   // Because the word retrived from the line is already objectified it needs to
   // be prepended to the unobjectified word
   word->merge_word_in_front(statementWord->get_text());
@@ -67,8 +68,8 @@ std::string Netlist::print_list() const {
 void Netlist::load_netlist_from_file(
     const std::unique_ptr<std::fstream> &file) {
   char ch;
-  std::unique_ptr<Word> word;
-  std::shared_ptr<Line> line;
+  std::unique_ptr<WordParser> word;
+  std::shared_ptr<LineParser> line;
   State state{START};
   State next_state{START};
   bool ignore_newline{false};
@@ -80,8 +81,8 @@ void Netlist::load_netlist_from_file(
     switch (state) {
 
     case State::START:
-      word = std::make_unique<Word>();
-      line = std::make_shared<Line>();
+      word = std::make_unique<WordParser>();
+      line = std::make_shared<LineParser>();
       next_state = READ_CHAR;
       break;
 
@@ -104,7 +105,7 @@ void Netlist::load_netlist_from_file(
 
     case State::ADD_WORD:
       line->add_word(std::move(word));
-      word = std::make_unique<Word>();
+      word = std::make_unique<WordParser>();
       if (line->is_done()) {
         next_state = ADD_LINE;
       } else {
@@ -114,7 +115,7 @@ void Netlist::load_netlist_from_file(
 
     case State::ADD_LINE:
       add_line(std::move(line->objectify()));
-      line = std::make_shared<Line>();
+      line = std::make_shared<LineParser>();
       next_state = READ_CHAR;
       break;
 

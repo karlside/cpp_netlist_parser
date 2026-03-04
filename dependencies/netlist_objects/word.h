@@ -13,11 +13,10 @@
 // --- StatementWord ---
 // ---------------------
 
-class StatementWord {
+class Word {
 public:
-  StatementWord(std::string input)
-      : text{std::make_shared<std::string>(input)} {}
-  StatementWord(std::unique_ptr<std::string> input) : text{std::move(input)} {}
+  Word(std::string input) : text{std::make_shared<std::string>(input)} {}
+  Word(std::unique_ptr<std::string> input) : text{std::move(input)} {}
 
   void activate() { _is_active = true; }
   void deactivate() { _is_active = false; }
@@ -28,9 +27,9 @@ public:
   virtual std::string produce_id() { return get_text(); }
   virtual std::string print_list();
 
-  friend std::ostream &operator<<(std::ostream &os, const StatementWord &rhs);
+  friend std::ostream &operator<<(std::ostream &os, const Word &rhs);
 
-  virtual ~StatementWord() = default;
+  virtual ~Word() = default;
 
 protected:
   const ObjectType _keyword{ObjectType::NONE};
@@ -47,11 +46,10 @@ protected:
 // --- KeywordWord---
 // --------------------
 
-class KeywordWord : public StatementWord {
+class KeywordWord : public Word {
 public:
-  KeywordWord(std::string input) : StatementWord(input) {}
-  KeywordWord(std::unique_ptr<std::string> input)
-      : StatementWord(std::move(input)) {}
+  KeywordWord(std::string input) : Word(input) {}
+  KeywordWord(std::unique_ptr<std::string> input) : Word(std::move(input)) {}
   ObjectType get_keyword() const override { return _keyword; }
 
 private:
@@ -62,11 +60,11 @@ private:
 // --- MathConstantWord---
 // -----------------------
 
-class MathConstantWord : public StatementWord {
+class MathConstantWord : public Word {
 public:
-  MathConstantWord(std::string input) : StatementWord(input) {}
+  MathConstantWord(std::string input) : Word(input) {}
   MathConstantWord(std::unique_ptr<std::string> input)
-      : StatementWord(std::move(input)) {}
+      : Word(std::move(input)) {}
   ObjectType get_keyword() const override { return _keyword; }
 
 private:
@@ -77,11 +75,10 @@ private:
 // --- SimulationWord---
 // ---------------------
 
-class SimulationWord : public StatementWord {
+class SimulationWord : public Word {
 public:
-  SimulationWord(std::string input) : StatementWord(input) {}
-  SimulationWord(std::unique_ptr<std::string> input)
-      : StatementWord(std::move(input)) {}
+  SimulationWord(std::string input) : Word(input) {}
+  SimulationWord(std::unique_ptr<std::string> input) : Word(std::move(input)) {}
   ObjectType get_keyword() const override { return _keyword; }
 
 private:
@@ -92,11 +89,10 @@ private:
 // --- keyValueWord---
 // -------------------
 
-class KeyValueWord : public StatementWord {
+class KeyValueWord : public Word {
 public:
-  KeyValueWord(std::string input) : StatementWord(input) {}
-  KeyValueWord(std::unique_ptr<std::string> input)
-      : StatementWord(std::move(input)) {}
+  KeyValueWord(std::string input) : Word(input) {}
+  KeyValueWord(std::unique_ptr<std::string> input) : Word(std::move(input)) {}
 
   ObjectType get_keyword() const override { return _keyword; }
   std::string produce_id() override { return get_key(); }
@@ -122,11 +118,10 @@ private:
 // --- PortWord---
 // ---------------
 
-class PortWord : public StatementWord {
+class PortWord : public Word {
 public:
-  PortWord(std::string input) : StatementWord(input) {}
-  PortWord(std::unique_ptr<std::string> input)
-      : StatementWord(std::move(input)) {}
+  PortWord(std::string input) : Word(input) {}
+  PortWord(std::unique_ptr<std::string> input) : Word(std::move(input)) {}
 
   ObjectType get_keyword() const override { return _keyword; }
   std::string produce_id() override { return "port"; }

@@ -13,8 +13,8 @@
 // --- ListOfLines ---
 // -------------------
 
-struct ListOfLines : ListOfTypes<Statement> {
-  std::shared_ptr<Statement> get_line(std::string key) {
+struct ListOfLines : ListOfTypes<Line> {
+  std::shared_ptr<Line> get_line(std::string key) {
     return ListOfTypes::get_item(key);
   }
 };
@@ -22,9 +22,9 @@ struct ListOfLines : ListOfTypes<Statement> {
 class Netlist {
 public:
   Netlist() : list{std::make_unique<ListOfLines>()} {}
-  void add_line(std::shared_ptr<Statement> line) { list->push_back(line); }
-  std::shared_ptr<Statement> pop_line() { return list->pop_back(); }
-  std::shared_ptr<Statement> get_line(std::string name) {
+  void add_line(std::shared_ptr<Line> line) { list->push_back(line); }
+  std::shared_ptr<Line> pop_line() { return list->pop_back(); }
+  std::shared_ptr<Line> get_line(std::string name) {
     return list->get_line(name);
   }
 
@@ -35,8 +35,9 @@ public:
   friend std::ostream &operator<<(std::ostream &os, const Netlist &rhs);
 
 private:
-  std::unique_ptr<Word> merge_to_prev_word(std::shared_ptr<Line> &line,
-                                           std::unique_ptr<Word> word);
+  std::unique_ptr<WordParser>
+  merge_to_prev_word(std::shared_ptr<LineParser> &line,
+                     std::unique_ptr<WordParser> word);
   std::unique_ptr<ListOfLines> list{};
 };
 

@@ -7,14 +7,14 @@
 // --- StatementWord ---
 // ---------------------
 
-std::string StatementWord::print_list() {
+std::string Word::print_list() {
   std::string ret_text = "text:'" + get_text() + "'";
   if (!is_active())
     ret_text += " - DEACTIVATED";
   return ret_text;
 }
 
-std::ostream &operator<<(std::ostream &os, const StatementWord &rhs) {
+std::ostream &operator<<(std::ostream &os, const Word &rhs) {
   os << rhs.get_text();
   return os;
 }

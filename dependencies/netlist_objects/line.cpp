@@ -10,9 +10,9 @@
 // --- Statement ---
 // -----------------
 
-Statement::Statement(std::shared_ptr<ListOfWords> input) : list{input} {}
+Line::Line(std::shared_ptr<ListOfWords> input) : list{input} {}
 
-std::string Statement::get_text() const {
+std::string Line::get_text() const {
   std::string ret_text;
   for (auto &wordItem : *list) {
     if (!wordItem.item->is_active())
@@ -29,12 +29,12 @@ std::string Statement::get_text() const {
   return ret_text;
 }
 
-std::ostream &operator<<(std::ostream &os, Statement &rhs) {
+std::ostream &operator<<(std::ostream &os, Line &rhs) {
   os << rhs.get_text();
   return os;
 }
 
-std::string Statement::print_list() const {
+std::string Line::print_list() const {
   std::string ret_str;
   for (auto wordItem : *list) {
     ret_str += "ID: '" + wordItem.key + "' - Text: '" +
