@@ -115,13 +115,13 @@ private:
 // --- Netlist ---
 // ---------------
 
-enum State { START, READ_CHAR, ADD_WORD, ADD_LINE, DONE };
-
 class NetlistParser {
 public:
   NetlistParser() {};
-  std::unique_ptr<ListOfLines>
-  parse_netlist(const std::unique_ptr<std::fstream> &file);
+  std::unique_ptr<ListOfLines> parse_netlist(std::fstream &file);
+
+  enum State { START, READ_CHAR, ADD_WORD, ADD_LINE, DONE };
+  void print_state(State state);
 
 private:
   void add_line(std::shared_ptr<Line> line) { list->push_back(line); }

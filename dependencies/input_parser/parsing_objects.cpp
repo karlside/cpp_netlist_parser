@@ -329,21 +329,21 @@ NetlistParser::merge_to_prev_word(std::shared_ptr<LineParser> &line,
   return word;
 }
 
-void print_state(State state) {
+void NetlistParser::print_state(State state) {
   switch (state) {
-  case START:
+  case NetlistParser::START:
     std::cout << "START";
     break;
-  case READ_CHAR:
+  case NetlistParser::READ_CHAR:
     std::cout << "READ_CHAR";
     break;
-  case ADD_WORD:
+  case NetlistParser::ADD_WORD:
     std::cout << "ADD_WORD";
     break;
-  case ADD_LINE:
+  case NetlistParser::ADD_LINE:
     std::cout << "ADD_LINE";
     break;
-  case DONE:
+  case NetlistParser::DONE:
     std::cout << "DONE";
     break;
   default:
@@ -353,8 +353,7 @@ void print_state(State state) {
   std::cout << std::endl;
 }
 
-std::unique_ptr<ListOfLines>
-NetlistParser::parse_netlist(const std::unique_ptr<std::fstream> &file) {
+std::unique_ptr<ListOfLines> NetlistParser::parse_netlist(std::fstream &file) {
   list = std::make_unique<ListOfLines>();
   char ch;
   std::unique_ptr<WordParser> word_parser;
@@ -376,8 +375,8 @@ NetlistParser::parse_netlist(const std::unique_ptr<std::fstream> &file) {
       break;
 
     case State::READ_CHAR:
-      ch = file->get();
-      if (!*file) {
+      ch = file.get();
+      if (!file) {
         next_state = DONE;
         break;
       }

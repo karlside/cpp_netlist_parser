@@ -8,9 +8,12 @@
 std::string FILE_PATH = "files/netlist.cir";
 
 int main() {
-  Netlist netlist = Netlist();
-  std::unique_ptr<std::fstream> file = netlist.load_file(FILE_PATH);
-  netlist.load_netlist_from_file(file);
+  // Netlist netlist = Netlist(FILE_PATH);
+  std::fstream file = std::fstream(FILE_PATH);
+  Netlist netlist = Netlist(file);
+
+  // std::unique_ptr<std::fstream> file = netlist.load_file(FILE_PATH);
+  // netlist.load_netlist_from_file(file);
   // std::cout << netlist.print_list() << std::endl;
 
   std::cout << "PRINTING NETLIST:" << std::endl;

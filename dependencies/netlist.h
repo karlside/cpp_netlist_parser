@@ -12,20 +12,24 @@
 
 class Netlist {
 public:
-  Netlist() {};
-  std::shared_ptr<Line> pop_line() { return list->pop_back(); }
+  Netlist(const std::string &file_path);
+  Netlist(std::fstream &file);
+  // Netlist(std::string netlist); // TODO: Parse netlist from string
+
+  void add_line(std::string line); // TODO
+  void add_line(LineParser line);  // TODO
+  void add_line(Line line);        // TODO
   std::shared_ptr<Line> get_line(std::string name) {
     return list->get_line(name);
   }
 
-  void load_netlist_from_file(const std::unique_ptr<std::fstream> &file);
-  std::unique_ptr<std::fstream> load_file(std::string file_path);
   virtual std::string print_list() const;
 
   friend std::ostream &operator<<(std::ostream &os, const Netlist &rhs);
 
 private:
   std::unique_ptr<ListOfLines> list{};
+  std::fstream load_file(std::string file_path);
 };
 
 #endif

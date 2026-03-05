@@ -7,11 +7,20 @@
 #include <stdexcept>
 #include <unordered_map>
 
-std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
-  std::unique_ptr<std::fstream> file =
-      std::make_unique<std::fstream>(file_path);
-  // if (!*file || file->is_open()) {
-  if (!*file) {
+Netlist::Netlist(const std::string &file_path) {
+  std::fstream file = load_file(file_path);
+  NetlistParser netlistParser;
+  list = netlistParser.parse_netlist(file);
+}
+
+Netlist::Netlist(std::fstream &file) {
+  NetlistParser netlistParser;
+  list = netlistParser.parse_netlist(file);
+}
+
+std::fstream Netlist::load_file(std::string file_path) {
+  std::fstream file = std::fstream(file_path);
+  if (!file) {
     // TODO: Throw exception
   }
   return file;
@@ -24,12 +33,6 @@ std::string Netlist::print_list() const {
                wordItem.item->get_text() + "'\n";
   }
   return ret_str;
-}
-
-void Netlist::load_netlist_from_file(
-    const std::unique_ptr<std::fstream> &file) {
-  NetlistParser netlistParser;
-  list = netlistParser.parse_netlist(file);
 }
 
 std::ostream &operator<<(std::ostream &os, const Netlist &rhs) {
