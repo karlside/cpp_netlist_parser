@@ -17,19 +17,6 @@ std::unique_ptr<std::fstream> Netlist::load_file(std::string file_path) {
   return file;
 }
 
-std::unique_ptr<WordParser>
-Netlist::merge_to_prev_word(std::shared_ptr<LineParser> &line,
-                            std::unique_ptr<WordParser> word) {
-  if (0 == line->length()) {
-    return word;
-  }
-  std::shared_ptr<Word> statementWord = line->pop_word();
-  // Because the word retrived from the line is already objectified it needs to
-  // be prepended to the unobjectified word
-  word->merge_word_in_front(statementWord->get_text());
-  return word;
-}
-
 std::string Netlist::print_list() const {
   std::string ret_str;
   for (auto wordItem : *list) {
@@ -40,7 +27,10 @@ std::string Netlist::print_list() const {
 }
 
 void Netlist::load_netlist_from_file(
-    const std::unique_ptr<std::fstream> &file) {}
+    const std::unique_ptr<std::fstream> &file) {
+  NetlistParser netlistParser;
+  list = netlistParser.parse_netlist(file);
+}
 
 std::ostream &operator<<(std::ostream &os, const Netlist &rhs) {
   for (const auto &statementLine : *rhs.list) {
